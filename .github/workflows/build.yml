@@ -1,4 +1,4 @@
-name: Build Satta Pai Official App + Web (V4 Verified)
+name: Build Satta Pai Official Hybrid App
 
 on:
   push:
@@ -7,11 +7,9 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
-  build_satta_pai:
+  build_apk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -28,54 +26,38 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build Official Satta Pai App & Website
+      - name: Create Native Hybrid App
         run: |
           set -e
-          rm -rf /tmp/sp_bundle
-          mkdir -p /tmp/sp_bundle
+          # 1. Clean old files
+          rm -rf lib android ios web test build pubspec.yaml pubspec.lock
 
-          # 1. Extract satta_pai_hybrid_v4.zip (or newest zip containing index.html)
-          for z in satta_pai_hybrid_v4*.zip *.zip; do
-            if [ -f "$z" ] && unzip -l "$z" | grep -q "index.html"; then
-              echo "Extracting bundle: $z"
-              unzip -q -o "$z" -d /tmp/sp_bundle
-              break
-            fi
-          done
-
-          # 2. Remove old conflicting folders & old demo workflow
-          rm -rf lib android ios web linux macos windows test build pubspec.yaml pubspec.lock analysis_options.yaml .metadata .github/workflows/flutter_cloud_build.yml
-
-          # 3. Create fresh Flutter project & add packages
-          flutter create . --project-name satta_pai_arena --platforms=android,web
+          # 2. Create Flutter project
+          flutter create . --project-name satta_pai_arena --platforms=android
           rm -rf test/widget_test.dart
           flutter pub add webview_flutter url_launcher
 
-          # 4. Self-contained inline Python setup (Zero external script dependency!)
+          # 3. Embed index.html directly from repository root
+          mkdir -p assets/www
+          if [ -f "index.html" ]; then
+            cp -f index.html assets/www/index.html
+          else
+            echo "<h1>Satta Pai Loading...</h1>" > assets/www/index.html
+          fi
+
+          # 4. Generate & apply Satta Pai Dart engine & Android config
           python3 - << 'PYEOF'
-          import os, re, shutil
+          import os, re
 
-          os.makedirs("assets/www", exist_ok=True)
-          if os.path.exists("/tmp/sp_bundle/index.html"):
-              shutil.copy2("/tmp/sp_bundle/index.html", "assets/www/index.html")
-          elif os.path.exists("/tmp/sp_bundle/assets/www/index.html"):
-              shutil.copy2("/tmp/sp_bundle/assets/www/index.html", "assets/www/index.html")
-          else:
-              with open("assets/www/index.html", "w", encoding="utf-8") as f:
-                  f.write('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=https://satta-pai.github.io/"></head><body style="background:#05070B;color:#00FFFF;font-family:sans-serif;text-align:center;padding-top:40vh;">Loading Satta Pai Arena...</body></html>')
+          # Register assets in pubspec.yaml
+          with open("pubspec.yaml", "r") as f:
+              pub = f.read()
+          if "assets/www/index.html" not in pub:
+              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/www/index.html")
+          with open("pubspec.yaml", "w") as f:
+              f.write(pub)
 
-          for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
-              src_f = f"/tmp/sp_bundle/{folder}"
-              if not os.path.exists(src_f):
-                  src_f = f"/tmp/sp_bundle/android/app/src/main/res/{folder}"
-              if os.path.exists(src_f):
-                  shutil.rmtree("android/app/src/main/res/mipmap-anydpi-v26", ignore_errors=True)
-                  shutil.rmtree("android/app/src/main/res/mipmap-anydpi", ignore_errors=True)
-                  dst_f = f"android/app/src/main/res/{folder}"
-                  os.makedirs(dst_f, exist_ok=True)
-                  for fn in os.listdir(src_f):
-                      shutil.copy2(os.path.join(src_f, fn), os.path.join(dst_f, fn))
-
+          # Satta Pai Hybrid Dart Engine
           main_dart = '''import 'dart:async';
           import 'dart:io';
           import 'package:flutter/material.dart';
@@ -85,37 +67,19 @@ jobs:
 
           void main() async {
             WidgetsFlutterBinding.ensureInitialized();
-            SystemChrome.setSystemUIOverlayStyle(
-              const SystemUiOverlayStyle(
-                statusBarColor: Color(0xFF05070B),
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: Color(0xFF05070B),
-                systemNavigationBarIconBrightness: Brightness.light,
-              ),
-            );
-            runApp(const SattaPaiHybridApp());
-          }
-
-          class SattaPaiHybridApp extends StatelessWidget {
-            const SattaPaiHybridApp({super.key});
-
-            @override
-            Widget build(BuildContext context) {
-              return MaterialApp(
-                title: 'Satta Pai',
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData.dark().copyWith(
-                  scaffoldBackgroundColor: const Color(0xFF05070B),
-                  primaryColor: const Color(0xFF00FFFF),
-                ),
-                home: const SattaPaiArenaShell(),
-              );
-            }
+            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+              statusBarColor: Color(0xFF05070B),
+              statusBarIconBrightness: Brightness.light,
+            ));
+            runApp(const MaterialApp(
+              title: 'Satta Pai',
+              debugShowCheckedModeBanner: false,
+              home: SattaPaiArenaShell(),
+            ));
           }
 
           class SattaPaiArenaShell extends StatefulWidget {
             const SattaPaiArenaShell({super.key});
-
             @override
             State<SattaPaiArenaShell> createState() => _SattaPaiArenaShellState();
           }
@@ -123,96 +87,40 @@ jobs:
           class _SattaPaiArenaShellState extends State<SattaPaiArenaShell> {
             WebViewController? _controller;
             HttpServer? _localServer;
-            bool _isReady = false;
+            bool _ready = false;
 
             @override
             void initState() {
               super.initState();
-              _startLocalArenaEngine();
+              _initArena();
             }
 
-            Future<void> _startLocalArenaEngine() async {
+            Future<void> _initArena() async {
               try {
-                final String htmlContent = await rootBundle.loadString('assets/www/index.html');
-                try {
-                  _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
-                } catch (_) {
-                  _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0, shared: true);
-                }
-                final int port = _localServer!.port;
-
-                _localServer!.listen((HttpRequest request) async {
-                  request.response.headers.contentType = ContentType.html;
-                  request.response.headers.add('Access-Control-Allow-Origin', '*');
-                  request.response.write(htmlContent);
-                  await request.response.close();
+                final html = await rootBundle.loadString('assets/www/index.html');
+                _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
+                _localServer!.listen((req) async {
+                  req.response.headers.contentType = ContentType.html;
+                  req.response.headers.add('Access-Control-Allow-Origin', '*');
+                  req.response.write(html);
+                  await req.response.close();
                 });
-
-                final controller = WebViewController()
+                final c = WebViewController()
                   ..setJavaScriptMode(JavaScriptMode.unrestricted)
                   ..setBackgroundColor(const Color(0xFF05070B))
-                  ..setUserAgent(
-                    'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
-                  )
-                  ..setNavigationDelegate(
-                    NavigationDelegate(
-                      onNavigationRequest: (NavigationRequest request) {
-                        final String url = request.url;
-                        if (url.startsWith('intent://') ||
-                            url.startsWith('freefire://') ||
-                            url.startsWith('freefiremax://') ||
-                            url.startsWith('upi://') ||
-                            url.startsWith('whatsapp://') ||
-                            url.startsWith('tg://') ||
-                            url.startsWith('mailto:') ||
-                            url.contains('whatsapp.com/channel/') ||
-                            url.contains('t.me/') ||
-                            url.contains('play.google.com/store')) {
-                          _launchExternalAppUrl(url);
-                          return NavigationDecision.prevent;
-                        }
-                        return NavigationDecision.navigate;
-                      },
-                    ),
-                  )
-                  ..loadRequest(Uri.parse('http://localhost:\$port/index.html'));
-
-                if (mounted) {
-                  setState(() {
-                    _controller = controller;
-                    _isReady = true;
-                  });
-                }
-              } catch (e) {
-                final controller = WebViewController()
-                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                  ..setBackgroundColor(const Color(0xFF05070B))
-                  ..loadRequest(Uri.parse('https://satta-pai.github.io/'));
-                if (mounted) {
-                  setState(() {
-                    _controller = controller;
-                    _isReady = true;
-                  });
-                }
-              }
-            }
-
-            Future<void> _launchExternalAppUrl(String url) async {
-              try {
-                if (url.startsWith('intent://')) {
-                  final pkgMatch = RegExp(r'package=([a-zA-Z0-9._]+)').firstMatch(url);
-                  if (pkgMatch != null) {
-                    final pkg = pkgMatch.group(1)!;
-                    final marketUri = Uri.parse('market://details?id=\$pkg');
-                    if (await canLaunchUrl(marketUri)) {
-                      await launchUrl(marketUri, mode: LaunchMode.externalApplication);
-                      return;
-                    }
-                  }
-                  return;
-                }
-                final uri = Uri.parse(url);
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14) Chrome/125.0.0.0 Mobile')
+                  ..setNavigationDelegate(NavigationDelegate(
+                    onNavigationRequest: (req) {
+                      final u = req.url;
+                      if (u.startsWith('intent://') || u.startsWith('freefire://') || u.startsWith('upi://') || u.startsWith('whatsapp://') || u.startsWith('tg://')) {
+                        launchUrl(Uri.parse(u), mode: LaunchMode.externalApplication);
+                        return NavigationDecision.prevent;
+                      }
+                      return NavigationDecision.navigate;
+                    },
+                  ))
+                  ..loadRequest(Uri.parse('http://localhost:8765/index.html'));
+                if (mounted) setState(() { _controller = c; _ready = true; });
               } catch (_) {}
             }
 
@@ -235,75 +143,46 @@ jobs:
                 child: Scaffold(
                   backgroundColor: const Color(0xFF05070B),
                   body: SafeArea(
-                    child: _isReady && _controller != null
+                    child: _ready && _controller != null
                         ? WebViewWidget(controller: _controller!)
-                        : const Center(
-                            child: CircularProgressIndicator(color: Color(0xFF00FFFF)),
-                          ),
+                        : const Center(child: CircularProgressIndicator(color: Color(0xFF00FFFF))),
                   ),
                 ),
               );
             }
           }
           '''
-          with open("lib/main.dart", "w", encoding="utf-8") as f:
+          with open("lib/main.dart", "w") as f:
               f.write(main_dart)
 
-          with open("pubspec.yaml", "r", encoding="utf-8") as f:
-              pub = f.read()
-          if "assets/www/index.html" not in pub:
-              pub = pub.replace(
-                  "  uses-material-design: true",
-                  "  uses-material-design: true\n  assets:\n    - assets/www/index.html"
-              )
-          with open("pubspec.yaml", "w", encoding="utf-8") as f:
-              f.write(pub)
-
+          # Manifest Internet & Intent Permissions
           mf_path = "android/app/src/main/AndroidManifest.xml"
-          with open(mf_path, "r", encoding="utf-8") as f:
+          with open(mf_path, "r") as f:
               mf = f.read()
           perms = '''
-              <uses-permission android:name="android.permission.INTERNET"/>
-              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-              <uses-permission android:name="android.permission.VIBRATE"/>
-              <queries>
-                  <package android:name="com.dts.freefiremax" />
-                  <package android:name="com.dts.freefireth" />
-                  <package android:name="com.garena.game.ffi" />
-                  <package android:name="com.whatsapp" />
-                  <package android:name="org.telegram.messenger" />
-                  <intent>
-                      <action android:name="android.intent.action.VIEW" />
-                      <data android:scheme="https" />
-                  </intent>
-                  <intent>
-                      <action android:name="android.intent.action.VIEW" />
-                      <data android:scheme="upi" />
-                  </intent>
-              </queries>
+          <uses-permission android:name="android.permission.INTERNET"/>
+          <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+          <queries>
+              <package android:name="com.dts.freefiremax" />
+              <package android:name="com.dts.freefireth" />
+              <package android:name="com.garena.game.ffi" />
+              <package android:name="com.whatsapp" />
+              <package android:name="org.telegram.messenger" />
+          </queries>
           '''
-          if "android.permission.INTERNET" not in mf:
-              mf = mf.replace("<application", perms + "\n    <application", 1)
+          mf = mf.replace("<application", perms + "\n    <application", 1)
           mf = re.sub(r'android:label="[^"]*"', 'android:label="Satta Pai"', mf)
-          if "usesCleartextTraffic" not in mf:
-              mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"', 1)
-          with open(mf_path, "w", encoding="utf-8") as f:
+          mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"', 1)
+          with open(mf_path, "w") as f:
               f.write(mf)
           PYEOF
 
+          # 5. Build Release APK
           flutter pub get
-          mkdir -p build/web
-          cp -f assets/www/index.html build/web/index.html
           flutter build apk --release
 
-      - name: Downloadable Satta Pai Android APK
+      - name: Downloadable Satta Pai APK
         uses: actions/upload-artifact@v4
         with:
-          name: Satta-Pai-Android-APK
+          name: Satta-Pai-Official-APK
           path: build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Downloadable Satta Pai Website Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: Satta-Pai-Website-Files
-          path: build/web/

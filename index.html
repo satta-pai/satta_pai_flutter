@@ -1225,7 +1225,44 @@ html.theme-ghost-live {
             -webkit-touch-callout: none;
         }
 
+    
+        /* ⚡ APTOIDE-GRADE 120FPS SMOOTH TOUCH SCROLLING & GPU ACCELERATION */
+        html {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y pinch-zoom !important;
+        }
+        body {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+            min-height: 100vh;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y pinch-zoom !important;
+        }
+        button, a, input, select, textarea, [onclick] {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        @media (max-width: 900px), (hover: none) {
+            .cyber-card, .modal-backdrop, header, nav, #bottom-nav, #google-login-overlay, .glass-panel {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .cyber-card {
+                background: rgba(13, 19, 33, 0.96) !important;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+            }
+            canvas#live-theme-canvas, canvas#login-bg-video-canvas {
+                display: none !important;
+                pointer-events: none !important;
+            }
+        }
+
     </style>
+<meta name="sattapai-auth-fix" content="SattaPai-GoogleAuth-Fix-2026">
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
 
@@ -2667,7 +2704,7 @@ html.theme-ghost-live {
                     if (isLoggedInSession && !isSuper) {
                         var ms = document.getElementById('maintenance-screen');
                         if (ms) { ms.classList.remove('hidden'); ms.style.display = 'flex'; }
-                        document.body.style.overflow = 'hidden';
+                        document.body.style.overflow = '';
                     }
                 }
             } catch (e) {}
@@ -3129,13 +3166,7 @@ html.theme-ghost-live {
                 </div>
                 <p class="text-[10px] text-amber-400 font-semibold" id="dp-cooldown-text">Note: DP can only be changed once every 14 days.</p>
                 <div class="text-left"><label class="block font-bold text-xs mb-1">Player ID</label><input type="text" id="profile-player-id" readonly class="cyber-input w-full px-3 py-2 text-xs font-mono bg-zinc-800 cursor-not-allowed"></div>
-                <div class="text-left">
-                    <label class="block font-bold text-xs mb-1 text-emerald-400">🔑 Google Auth UID (For Firestore Verification)</label>
-                    <div class="flex gap-1.5">
-                        <input type="text" id="profile-auth-uid" readonly class="cyber-input flex-1 px-3 py-2 text-[11px] font-mono bg-zinc-800 text-emerald-300 cursor-not-allowed" placeholder="Sign in with Google to get UID">
-                        <button type="button" onclick="window.copyMyFirebaseUid()" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-black font-black text-[11px] shrink-0 cursor-pointer">📋 Copy UID</button>
-                    </div>
-                </div>
+
                 <div class="text-left"><label class="block font-bold text-xs mb-1">Username *</label><input type="text" id="profile-username" class="cyber-input w-full px-3 py-2 text-xs" placeholder="Unique Name"></div>
                 <div class="text-left"><label class="block font-bold text-xs mb-1">IGN *</label><input type="text" id="profile-ign" class="cyber-input w-full px-3 py-2 text-xs" placeholder="FF Name"></div>
                 <div class="text-left"><label class="block font-bold text-xs mb-1">Game UID *</label><input type="text" id="profile-game-uid" class="cyber-input w-full px-3 py-2 text-xs font-mono" placeholder="123456789"></div>
@@ -4911,11 +4942,14 @@ html.theme-ghost-live {
         // 🔐 Universal Auth Email Resolver & Quota-Safe Session Saver (Fixes Mobile Login Loop)
         window.resolveAuthUserEmail = function(u, credResult = null) {
             if (!u && !credResult) return '';
+            let nativePhoneEmail = '';
+            try { nativePhoneEmail = localStorage.getItem('satta_pai_native_google_email') || ''; } catch(e) {}
             const candidates = [
                 u?.email,
                 credResult?.user?.email,
                 credResult?._tokenResponse?.email,
-                u?.reloadUserInfo?.email
+                u?.reloadUserInfo?.email,
+                nativePhoneEmail
             ];
             if (Array.isArray(u?.providerData)) {
                 for (const p of u.providerData) {
@@ -6431,7 +6465,7 @@ Tap a quick button below or type your question!`
             window._isCurrentUserBannedLock = false;
             window._hasVerifiedAuthSession = false;
             try {
-                localStorage.removeItem('satta_pai_auth_email');
+                localStorage.removeItem('satta_pai_auth_email'); localStorage.removeItem('satta_pai_native_google_email');
                 sessionStorage.removeItem('satta_pai_auth_email');
                 sessionStorage.removeItem('satta_pai_guest_session');
             } catch(e) {}
@@ -6536,7 +6570,7 @@ Tap a quick button below or type your question!`
                     loginOv.removeAttribute('inert');
                     loginOv.style.display = 'flex';
                 }
-                document.body.style.overflow = 'hidden';
+                document.body.style.overflow = '';
 
                 if (loginNormalBox) loginNormalBox.classList.add('hidden');
                 if (loginBanBox) loginBanBox.classList.remove('hidden');
@@ -6673,6 +6707,7 @@ Tap a quick button below or type your question!`
                 try {
                     await setDoc(doc(db, 'users', email), {
                         email: email,
+                        uid: user.uid || localStorage.getItem('satta_pai_auth_uid') || '',
                         isBanned: true,
                         isPermanentBan: true,
                         banReason: reason,
@@ -6928,7 +6963,7 @@ Tap a quick button below or type your question!`
             window._hasVerifiedAuthSession = false;
             window._isCurrentUserBannedLock = false;
             try {
-                localStorage.removeItem('satta_pai_auth_email');
+                localStorage.removeItem('satta_pai_auth_email'); localStorage.removeItem('satta_pai_native_google_email');
                 sessionStorage.removeItem('satta_pai_auth_email');
                 sessionStorage.removeItem('satta_pai_guest_session');
             } catch (e) {}
@@ -6963,7 +6998,7 @@ Tap a quick button below or type your question!`
                 if (shouldBlock) {
                     ms.classList.remove('hidden');
                     ms.style.display = 'flex';
-                    document.body.style.overflow = 'hidden';
+                    document.body.style.overflow = '';
                     const intro = document.getElementById('sp-cinematic-intro');
                     if (intro) { intro.classList.add('hidden'); intro.style.display = 'none'; }
                     const loginOv = document.getElementById('google-login-overlay');
@@ -8352,6 +8387,8 @@ ${list}
         }
 
         window.startLoginVideoCanvas = function() {
+            // Skip heavy 60fps background canvas inside Android App / low-memory mobile to keep UI 100% lag-free!
+            if (navigator.userAgent.includes('SattaPaiApp') || window.innerWidth < 768) return;
             const ov = document.getElementById('google-login-overlay');
             const canvas = document.getElementById('login-video-canvas');
             if (!ov || !canvas) return;
@@ -9250,7 +9287,7 @@ ${list}
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInAnonymously, signInWithCredential, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
         import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, getDoc, onSnapshot, getDocs, query, where, orderBy, limit, updateDoc, increment, runTransaction } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-functions.js";
         import { initializeAppCheck, ReCaptchaEnterpriseProvider, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app-check.js";
@@ -9538,6 +9575,7 @@ ${list}
                     const norm = normalizeUserRecord(data, email);
                     const patch = {};
                     if (!data.playerId) patch.playerId = norm.playerId || stableId;
+                    if (user.uid && data.uid !== user.uid) patch.uid = user.uid;
                     if (!data.username && norm.username) patch.username = norm.username;
                     else if (!data.username) patch.username = googleName;
                     if (!data.ign && norm.ign) patch.ign = norm.ign;
@@ -9566,7 +9604,15 @@ ${list}
 
         async function checkSuperAdminStatus(user) {
             const emailLow = (window.resolveAuthUserEmail ? window.resolveAuthUserEmail(user) : (user?.email || '')).trim().toLowerCase();
-            const uid = String(user?.uid || '').trim();
+            let uid = String(user?.uid || localStorage.getItem('satta_pai_auth_uid') || '').trim();
+            if (emailLow && emailLow !== 'guest') {
+                try {
+                    const uSnap = await getDoc(doc(db, 'users', emailLow));
+                    if (uSnap.exists() && uSnap.data().uid && !uid) {
+                        uid = String(uSnap.data().uid).trim();
+                    }
+                } catch(e) {}
+            }
             window.loggedUid = uid;
             const uidInputEl = document.getElementById('profile-auth-uid');
             if (uidInputEl) uidInputEl.value = uid || 'Sign in with Google to view UID';
@@ -12739,10 +12785,58 @@ ${list}
             }
         };
 
+        // 📱 Native Android Phone Google Account Picker Callback (1-Tap Phone Google Login!)
+        window.completeNativeAndroidGoogleLogin = async function(emailRaw, displayNameRaw) {
+            // Android account picker returns an email only; it does not authenticate
+            // that account with Firebase. Continue through Firebase's real Google OAuth.
+            const email = String(emailRaw || '').trim().toLowerCase();
+            try {
+                if (email && email.includes('@')) {
+                    provider.setCustomParameters({
+                        prompt: 'select_account',
+                        login_hint: email
+                    });
+                } else {
+                    provider.setCustomParameters({ prompt: 'select_account' });
+                }
+
+                const result = await signInWithPopup(auth, provider);
+                if (!result || !result.user || !result.user.uid) {
+                    throw new Error('Firebase Google sign-in returned no authenticated user.');
+                }
+                await window.completeUserSignInSuccess(result.user, result, 'Google');
+            } catch (err) {
+                console.error('Google Firebase authentication failed:', err);
+                const code = String(err && err.code || '');
+
+                if (
+                    code.includes('popup-blocked') ||
+                    code.includes('operation-not-supported-in-this-environment') ||
+                    code.includes('web-storage-unsupported') ||
+                    code.includes('cancelled-popup-request')
+                ) {
+                    try {
+                        await signInWithRedirect(auth, provider);
+                        return;
+                    } catch (redirectErr) {
+                        console.error('Google redirect sign-in failed:', redirectErr);
+                    }
+                }
+
+                if (code.includes('unauthorized-domain')) {
+                    window.showToast("⚠️ Firebase Console-la localhost / 127.0.0.1 Authorized Domains-la add pannu.");
+                } else {
+                    window.showToast("❌ Google login failed. Firebase Authentication-la Google provider enable pannirukka-nu check pannu.");
+                }
+            }
+        };
+
         window.loginWithGoogleAuth = async function() { 
             const t = document.getElementById('terms-accept-checkbox');
             if (t && !t.checked) t.checked = true;
             try {
+                // Use Firebase Google OAuth directly. The Android account picker alone
+                // cannot provide a Firebase-authenticated user or a valid Firebase UID.
                 provider.setCustomParameters({ prompt: 'select_account' });
                 const r = await signInWithPopup(auth, provider);
                 await window.completeUserSignInSuccess(r.user, r, 'Google');
@@ -12774,7 +12868,7 @@ ${list}
             window.loggedEmail = 'guest';
             window._hasVerifiedAuthSession = false;
             try {
-                localStorage.removeItem('satta_pai_auth_email');
+                localStorage.removeItem('satta_pai_auth_email'); localStorage.removeItem('satta_pai_native_google_email');
                 sessionStorage.removeItem('satta_pai_auth_email');
                 sessionStorage.setItem('satta_pai_guest_session', '1');
             } catch(e) {}
@@ -12811,7 +12905,7 @@ ${list}
                 window._hasVerifiedAuthSession = false;
                 signOut(auth).then(() => {
                     try {
-                        localStorage.removeItem('satta_pai_auth_email');
+                        localStorage.removeItem('satta_pai_auth_email'); localStorage.removeItem('satta_pai_native_google_email');
                         sessionStorage.removeItem('satta_pai_auth_email');
                         sessionStorage.removeItem('satta_pai_guest_session');
                     } catch(e) {}
@@ -18123,32 +18217,6 @@ ${list}
             </div>
         </div>
     </div>
-
-
-<script>
-/* Satta Pai WebView startup watchdog: prevent a stuck cinematic intro */
-(function () {
-  function releaseIntro() {
-    try {
-      var intro = document.getElementById('sp-cinematic-intro');
-      if (intro) {
-        intro.classList.add('hidden');
-        intro.classList.remove('intro-hide');
-        intro.style.setProperty('display', 'none', 'important');
-        intro.style.setProperty('pointer-events', 'none', 'important');
-      }
-    } catch (_) {}
-  }
-  window.addEventListener('error', function () {
-    setTimeout(releaseIntro, 250);
-  });
-  window.addEventListener('unhandledrejection', function () {
-    setTimeout(releaseIntro, 250);
-  });
-  /* Normal intro is ~1.35s; this is only a fail-safe. */
-  setTimeout(releaseIntro, 6000);
-})();
-</script>
 
 </body>
 </html>

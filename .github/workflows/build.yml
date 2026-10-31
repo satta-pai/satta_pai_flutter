@@ -29,12 +29,18 @@ jobs:
         run: |
           mkdir -p /tmp/web_backup
           cp index.html /tmp/web_backup/index.html
+          if [ -f "The_Broken_Kunjan_Part1_Game.html" ]; then
+            cp The_Broken_Kunjan_Part1_Game.html /tmp/web_backup/The_Broken_Kunjan_Part1_Game.html
+          fi
 
           flutter create --org com.sattapai --project-name satta_pai app_build
           cd app_build
 
           mkdir -p assets/www
           cp /tmp/web_backup/index.html assets/www/index.html
+          if [ -f "/tmp/web_backup/The_Broken_Kunjan_Part1_Game.html" ]; then
+            cp /tmp/web_backup/The_Broken_Kunjan_Part1_Game.html assets/www/The_Broken_Kunjan_Part1_Game.html
+          fi
 
           flutter pub add webview_flutter webview_flutter_android url_launcher shared_preferences
 
@@ -43,7 +49,7 @@ jobs:
               content = f.read()
 
           if "assets/www/" not in content:
-              asset_block = "\n  assets:\n    - assets/www/index.html\n"
+              asset_block = "\n  assets:\n    - assets/www/index.html\n    - assets/www/The_Broken_Kunjan_Part1_Game.html\n"
               if "uses-material-design: true" in content:
                   content = content.replace("uses-material-design: true", "uses-material-design: true" + asset_block, 1)
               else:
@@ -272,22 +278,32 @@ jobs:
             Future<void> _startLocalServerAndWebView() async {
               try {
                 final indexHtml = await rootBundle.loadString('assets/www/index.html');
+                String gameHtml = '';
+                try {
+                  gameHtml = await rootBundle.loadString('assets/www/The_Broken_Kunjan_Part1_Game.html');
+                } catch (_) {}
 
                 _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
                 final int port = _server!.port;
 
                 _server!.listen((HttpRequest req) async {
+                  final path = req.uri.path;
                   req.response.headers.set('Access-Control-Allow-Origin', '*');
                   req.response.headers.set('Cache-Control', 'no-store');
-                  req.response.headers.contentType = ContentType.html;
-                  req.response.write(indexHtml);
+                  if (path.contains('The_Broken_Kunjan_Part1_Game.html') && gameHtml.isNotEmpty) {
+                    req.response.headers.contentType = ContentType.html;
+                    req.response.write(gameHtml);
+                  } else {
+                    req.response.headers.contentType = ContentType.html;
+                    req.response.write(indexHtml);
+                  }
                   await req.response.close();
                 });
 
                 final controller = WebViewController()
                   ..setJavaScriptMode(JavaScriptMode.unrestricted)
                   ..setBackgroundColor(const Color(0xFF0A0E17))
-                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/12.2')
+                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/12.0')
                   ..addJavaScriptChannel(
                     'SattaPaiNativeAuth',
                     onMessageReceived: (JavaScriptMessage message) {

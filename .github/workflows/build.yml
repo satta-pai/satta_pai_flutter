@@ -33,8 +33,8 @@ jobs:
           flutter create . --project-name satta_pai_arena
           rm -rf android/app/src/main/res/mipmap-anydpi-v26
           rm -rf test/widget_test.dart
-          if [ -f "satta_pai_flutter_arena.zip" ]; then
-            unzip -o satta_pai_flutter_arena.zip
+          if [ -f "satta_pai_flutter.zip" ]; then
+            unzip -o satta_pai_flutter.zip
           fi
           flutter pub get
 

@@ -1,4 +1,4 @@
-name: Build Satta Pai Official Hybrid App
+name: Build Satta Pai Protected App (V5 Anti-MT-Manager + Auto-Update)
 
 on:
   push:
@@ -26,108 +26,198 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Native Hybrid App
+      - name: Build Encrypted & Logo-Branded APK
         run: |
           set -e
-          # 1. Clean old files
-          rm -rf lib android ios web test build pubspec.yaml pubspec.lock
+          pip install -q pillow
 
-          # 2. Create Flutter project
+          # 1. Backup index.html before cleaning workspace
+          cp -f index.html /tmp/source_arena.html
+
+          # 2. Clean old files
+          rm -rf lib android ios web test build pubspec.yaml pubspec.lock .github/workflows/flutter_cloud_build.yml
+
+          # 3. Create fresh Flutter project & add packages
           flutter create . --project-name satta_pai_arena --platforms=android
           rm -rf test/widget_test.dart
-          flutter pub add webview_flutter url_launcher
+          flutter pub add webview_flutter url_launcher http
 
-          # 3. Embed index.html directly from repository root
-          mkdir -p assets/www
-          if [ -f "index.html" ]; then
-            cp -f index.html assets/www/index.html
-          else
-            echo "<h1>Satta Pai Loading...</h1>" > assets/www/index.html
-          fi
-
-          # 4. Generate & apply Satta Pai Dart engine & Android config
+          # 4. Extract Logo from index.html, Encrypt HTML to assets/core.bin (Anti-MT-Manager), and Write Dart Engine
           python3 - << 'PYEOF'
-          import os, re
+          import os, re, io, zlib, base64, shutil
+          from PIL import Image, ImageDraw
 
-          # Register assets in pubspec.yaml
+          with open("/tmp/source_arena.html", "rb") as f:
+              raw_html = f.read()
+
+          # A. Encrypt index.html into binary assets/core.bin so MT Manager sees ZERO html/js files!
+          os.makedirs("assets", exist_ok=True)
+          key = [0x53, 0x41, 0x54, 0x54, 0x41, 0x5F, 0x50, 0x41, 0x49, 0x5F, 0x53, 0x45, 0x43, 0x55, 0x52, 0x45]
+          comp = zlib.compress(raw_html, 9)
+          enc = bytes([b ^ key[i % len(key)] for i, b in enumerate(comp)])
+          with open("assets/core.bin", "wb") as f:
+              f.write(enc)
+
+          # B. Extract Satta Pai Logo directly from index.html and replace all Android launcher icons!
+          html_str = raw_html.decode("utf-8", errors="ignore")
+          m = re.search(r'window\.DEFAULT_SATTA_PAI_LOGO_DATA_URL\s*=\s*"data:image/[^;]+;base64,([^"]+)"', html_str)
+          if m:
+              shutil.rmtree("android/app/src/main/res/mipmap-anydpi-v26", ignore_errors=True)
+              shutil.rmtree("android/app/src/main/res/mipmap-anydpi", ignore_errors=True)
+              logo_im = Image.open(io.BytesIO(base64.b64decode(m.group(1)))).convert("RGBA")
+              sizes = {
+                  "mipmap-mdpi": 48,
+                  "mipmap-hdpi": 72,
+                  "mipmap-xhdpi": 96,
+                  "mipmap-xxhdpi": 144,
+                  "mipmap-xxxhdpi": 192,
+              }
+              for folder, px in sizes.items():
+                  dst_dir = f"android/app/src/main/res/{folder}"
+                  os.makedirs(dst_dir, exist_ok=True)
+                  sq = logo_im.resize((px, px), Image.Resampling.LANCZOS)
+                  sq.save(f"{dst_dir}/ic_launcher.png", format="PNG")
+                  mask = Image.new("L", (px, px), 0)
+                  ImageDraw.Draw(mask).ellipse((0, 0, px - 1, px - 1), fill=255)
+                  rd = Image.new("RGBA", (px, px), (0, 0, 0, 0))
+                  rd.paste(sq, (0, 0), mask=mask)
+                  rd.save(f"{dst_dir}/ic_launcher_round.png", format="PNG")
+
+          # C. Register encrypted assets/core.bin in pubspec.yaml
           with open("pubspec.yaml", "r") as f:
               pub = f.read()
-          if "assets/www/index.html" not in pub:
-              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/www/index.html")
+          if "assets/core.bin" not in pub:
+              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/core.bin")
           with open("pubspec.yaml", "w") as f:
               f.write(pub)
 
-          # Satta Pai Hybrid Dart Engine
+          # D. Write Zero-Lag, Anti-Theft, Auto-Updating Dart Engine (with Same-Origin Google Login Fix)
           main_dart = '''import 'dart:async';
+          import 'dart:convert';
           import 'dart:io';
           import 'package:flutter/material.dart';
           import 'package:flutter/services.dart';
           import 'package:webview_flutter/webview_flutter.dart';
           import 'package:url_launcher/url_launcher.dart';
+          import 'package:http/http.dart' as http;
 
           void main() async {
             WidgetsFlutterBinding.ensureInitialized();
             SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
               statusBarColor: Color(0xFF05070B),
               statusBarIconBrightness: Brightness.light,
+              systemNavigationBarColor: Color(0xFF05070B),
+              systemNavigationBarIconBrightness: Brightness.light,
             ));
             runApp(const MaterialApp(
               title: 'Satta Pai',
               debugShowCheckedModeBanner: false,
-              home: SattaPaiArenaShell(),
+              home: SattaPaiSecureShell(),
             ));
           }
 
-          class SattaPaiArenaShell extends StatefulWidget {
-            const SattaPaiArenaShell({super.key});
+          class SattaPaiSecureShell extends StatefulWidget {
+            const SattaPaiSecureShell({super.key});
             @override
-            State<SattaPaiArenaShell> createState() => _SattaPaiArenaShellState();
+            State<SattaPaiSecureShell> createState() => _SattaPaiSecureShellState();
           }
 
-          class _SattaPaiArenaShellState extends State<SattaPaiArenaShell> {
+          class _SattaPaiSecureShellState extends State<SattaPaiSecureShell> {
+            static const String _authBaseUrl = 'https://sattapai-tournament.firebaseapp.com/';
+            static const String _otaUpdateUrl = 'https://raw.githubusercontent.com/satta-pai/satta_pai_flutter/main/index.html';
+            static const List<int> _k = [0x53, 0x41, 0x54, 0x54, 0x41, 0x5F, 0x50, 0x41, 0x49, 0x5F, 0x53, 0x45, 0x43, 0x55, 0x52, 0x45];
+
             WebViewController? _controller;
-            HttpServer? _localServer;
+            String _arenaHtml = '';
             bool _ready = false;
 
             @override
             void initState() {
               super.initState();
-              _initArena();
+              _bootSecureArena();
             }
 
-            Future<void> _initArena() async {
+            // Decrypts assets/core.bin in RAM (Zero plain-text HTML on disk for MT Manager!)
+            Future<String> _decryptBundledCore() async {
+              final ByteData data = await rootBundle.load('assets/core.bin');
+              final Uint8List enc = data.buffer.asUint8List();
+              final Uint8List comp = Uint8List(enc.length);
+              for (int i = 0; i < enc.length; i++) {
+                comp[i] = enc[i] ^ _k[i % _k.length];
+              }
+              final List<int> raw = zlib.decode(comp);
+              return utf8.decode(raw, allowMalformed: true);
+            }
+
+            Future<void> _bootSecureArena() async {
+              // 1. Decrypt embedded core in RAM immediately
+              _arenaHtml = await _decryptBundledCore();
+
+              // 2. Check for Live OTA Auto-Update from GitHub (so old APK gets new updates automatically!)
               try {
-                final html = await rootBundle.loadString('assets/www/index.html');
-                _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
-                _localServer!.listen((req) async {
-                  req.response.headers.contentType = ContentType.html;
-                  req.response.headers.add('Access-Control-Allow-Origin', '*');
-                  req.response.write(html);
-                  await req.response.close();
-                });
-                final c = WebViewController()
-                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                  ..setBackgroundColor(const Color(0xFF05070B))
-                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14) Chrome/125.0.0.0 Mobile')
-                  ..setNavigationDelegate(NavigationDelegate(
-                    onNavigationRequest: (req) {
-                      final u = req.url;
-                      if (u.startsWith('intent://') || u.startsWith('freefire://') || u.startsWith('upi://') || u.startsWith('whatsapp://') || u.startsWith('tg://')) {
-                        launchUrl(Uri.parse(u), mode: LaunchMode.externalApplication);
-                        return NavigationDecision.prevent;
-                      }
-                      return NavigationDecision.navigate;
-                    },
-                  ))
-                  ..loadRequest(Uri.parse('http://localhost:8765/index.html'));
-                if (mounted) setState(() { _controller = c; _ready = true; });
+                final resp = await http.get(Uri.parse(_otaUpdateUrl)).timeout(const Duration(seconds: 3));
+                if (resp.statusCode == 200 && resp.body.length > 50000 && resp.body.contains('sattapai-tournament')) {
+                  _arenaHtml = resp.body;
+                }
               } catch (_) {}
+
+              final c = WebViewController()
+                ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                ..setBackgroundColor(const Color(0xFF05070B))
+                ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36 SattaPaiApp/2.0')
+                ..setNavigationDelegate(NavigationDelegate(
+                  onNavigationRequest: (req) {
+                    final u = req.url;
+                    // Intercept external apps (Free Fire India/MAX, UPI, WhatsApp, Telegram)
+                    if (u.startsWith('intent://') ||
+                        u.startsWith('freefire://') ||
+                        u.startsWith('freefiremax://') ||
+                        u.startsWith('upi://') ||
+                        u.startsWith('whatsapp://') ||
+                        u.startsWith('tg://') ||
+                        u.startsWith('mailto:') ||
+                        u.contains('whatsapp.com/channel/') ||
+                        u.contains('t.me/') ||
+                        u.contains('play.google.com/store')) {
+                      _openExternalApp(u);
+                      return NavigationDecision.prevent;
+                    }
+                    // When Firebase Google Sign-In Redirect finishes and returns to baseUrl root, reload Arena HTML on same origin!
+                    final uri = Uri.tryParse(u);
+                    if (uri != null &&
+                        uri.host == 'sattapai-tournament.firebaseapp.com' &&
+                        !uri.path.startsWith('/__/auth')) {
+                      _controller?.loadHtmlString(_arenaHtml, baseUrl: _authBaseUrl);
+                      return NavigationDecision.prevent;
+                    }
+                    return NavigationDecision.navigate;
+                  },
+                  onPageFinished: (url) {
+                    // Safety net: if Firebase /__/auth/handler finishes token exchange and stalls on blank screen, return to Arena automatically
+                    if (url.contains('/__/auth/handler') && (url.contains('code=') || url.contains('state='))) {
+                      Future.delayed(const Duration(milliseconds: 1800), () {
+                        _controller?.loadHtmlString(_arenaHtml, baseUrl: _authBaseUrl);
+                      });
+                    }
+                  },
+                ))
+                ..loadHtmlString(_arenaHtml, baseUrl: _authBaseUrl);
+
+              if (mounted) setState(() { _controller = c; _ready = true; });
             }
 
-            @override
-            void dispose() {
-              _localServer?.close(force: true);
-              super.dispose();
+            Future<void> _openExternalApp(String url) async {
+              try {
+                if (url.startsWith('intent://')) {
+                  final m = RegExp(r'package=([a-zA-Z0-9._]+)').firstMatch(url);
+                  if (m != null) {
+                    final pkg = m.group(1)!;
+                    await launchUrl(Uri.parse('market://details?id=\$pkg'), mode: LaunchMode.externalApplication);
+                    return;
+                  }
+                }
+                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+              } catch (_) {}
             }
 
             @override
@@ -155,13 +245,14 @@ jobs:
           with open("lib/main.dart", "w") as f:
               f.write(main_dart)
 
-          # Manifest Internet & Intent Permissions
+          # E. Patch AndroidManifest.xml with Hardware Acceleration, Internet & Free Fire Queries
           mf_path = "android/app/src/main/AndroidManifest.xml"
           with open(mf_path, "r") as f:
               mf = f.read()
           perms = '''
           <uses-permission android:name="android.permission.INTERNET"/>
           <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+          <uses-permission android:name="android.permission.VIBRATE"/>
           <queries>
               <package android:name="com.dts.freefiremax" />
               <package android:name="com.dts.freefireth" />
@@ -170,18 +261,20 @@ jobs:
               <package android:name="org.telegram.messenger" />
           </queries>
           '''
-          mf = mf.replace("<application", perms + "\n    <application", 1)
+          if "android.permission.INTERNET" not in mf:
+              mf = mf.replace("<application", perms + "\n    <application", 1)
           mf = re.sub(r'android:label="[^"]*"', 'android:label="Satta Pai"', mf)
-          mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"', 1)
+          if "usesCleartextTraffic" not in mf:
+              mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"', 1)
           with open(mf_path, "w") as f:
               f.write(mf)
           PYEOF
 
-          # 5. Build Release APK
+          # 5. Build Obfuscated Release APK (Scrambles Dart symbols into native ARM64 machine code)
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --obfuscate --split-debug-info=build/debug-info
 
-      - name: Downloadable Satta Pai APK
+      - name: Downloadable Satta Pai Official APK
         uses: actions/upload-artifact@v4
         with:
           name: Satta-Pai-Official-APK

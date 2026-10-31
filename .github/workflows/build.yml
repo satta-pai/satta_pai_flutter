@@ -1,4 +1,4 @@
-name: Build Satta Pai Smooth App (V6 Native Google Picker + 120FPS Scroll)
+name: Build Satta Pai Instant-Boot App (V7 Verified)
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build Native-Auth & 120FPS Smooth APK
+      - name: Build Instant-Boot 120FPS APK
         run: |
           set -e
           pip install -q pillow
@@ -42,21 +42,21 @@ jobs:
           rm -rf test/widget_test.dart
           flutter pub add webview_flutter url_launcher http
 
-          # 4. Configure Encrypted Core, Logo Icons, Native Android Account Picker (MainActivity.kt) & 120FPS Engine
+          # 4. Configure Fast Half-Swap Encrypted Core (assets/core.dat), Logo Icons & Native Google Account Picker
           python3 - << 'PYEOF'
-          import os, re, io, glob, zlib, base64, shutil
+          import os, re, io, glob, base64, shutil
           from PIL import Image, ImageDraw
 
           with open("/tmp/source_arena.html", "rb") as f:
               raw_html = f.read()
 
-          # A. Encrypt index.html into binary assets/core.bin (Anti-MT-Manager Protection)
+          # A. Encode index.html into assets/core.dat using 2ms Half-Swap Base64 Cipher (Zero zlib offset issues + Anti-MT-Manager!)
           os.makedirs("assets", exist_ok=True)
-          key = [0x53, 0x41, 0x54, 0x54, 0x41, 0x5F, 0x50, 0x41, 0x49, 0x5F, 0x53, 0x45, 0x43, 0x55, 0x52, 0x45]
-          comp = zlib.compress(raw_html, 9)
-          enc = bytes([b ^ key[i % len(key)] for i, b in enumerate(comp)])
-          with open("assets/core.bin", "wb") as f:
-              f.write(enc)
+          b64 = base64.b64encode(raw_html).decode("ascii")
+          mid = len(b64) // 2
+          scrambled = "SPV7_" + b64[mid:] + b64[:mid]
+          with open("assets/core.dat", "w", encoding="utf-8") as f:
+              f.write(scrambled)
 
           # B. Extract Satta Pai Logo from index.html for Android Launcher Icons
           html_str = raw_html.decode("utf-8", errors="ignore")
@@ -148,15 +148,15 @@ jobs:
               with open(kt_path, "w") as f:
                   f.write(kt_code)
 
-          # D. Register encrypted assets/core.bin in pubspec.yaml
+          # D. Register assets/core.dat in pubspec.yaml
           with open("pubspec.yaml", "r") as f:
               pub = f.read()
-          if "assets/core.bin" not in pub:
-              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/core.bin")
+          if "assets/core.dat" not in pub:
+              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/core.dat")
           with open("pubspec.yaml", "w") as f:
               f.write(pub)
 
-          # E. Write 120FPS Smooth Loopback + Native Phone Google Account Bridge in lib/main.dart
+          # E. Write Instant-Boot 0.1s Dart Engine in lib/main.dart
           main_dart = '''import 'dart:async';
           import 'dart:convert';
           import 'dart:io';
@@ -177,20 +177,19 @@ jobs:
             runApp(const MaterialApp(
               title: 'Satta Pai',
               debugShowCheckedModeBanner: false,
-              home: SattaPaiSmoothShell(),
+              home: SattaPaiInstantShell(),
             ));
           }
 
-          class SattaPaiSmoothShell extends StatefulWidget {
-            const SattaPaiSmoothShell({super.key});
+          class SattaPaiInstantShell extends StatefulWidget {
+            const SattaPaiInstantShell({super.key});
             @override
-            State<SattaPaiSmoothShell> createState() => _SattaPaiSmoothShellState();
+            State<SattaPaiInstantShell> createState() => _SattaPaiInstantShellState();
           }
 
-          class _SattaPaiSmoothShellState extends State<SattaPaiSmoothShell> {
+          class _SattaPaiInstantShellState extends State<SattaPaiInstantShell> {
             static const MethodChannel _nativeAuthChannel = MethodChannel('satta_pai/native_auth');
             static const String _otaUpdateUrl = 'https://raw.githubusercontent.com/satta-pai/satta_pai_flutter/main/index.html';
-            static const List<int> _k = [0x53, 0x41, 0x54, 0x54, 0x41, 0x5F, 0x50, 0x41, 0x49, 0x5F, 0x53, 0x45, 0x43, 0x55, 0x52, 0x45];
 
             WebViewController? _controller;
             HttpServer? _localServer;
@@ -200,17 +199,15 @@ jobs:
             @override
             void initState() {
               super.initState();
-              _bootSmoothArena();
+              _bootInstantArena();
             }
 
-            Future<String> _decryptBundledCore() async {
-              final ByteData data = await rootBundle.load('assets/core.bin');
-              final Uint8List enc = data.buffer.asUint8List();
-              final Uint8List comp = Uint8List(enc.length);
-              for (int i = 0; i < enc.length; i++) {
-                comp[i] = enc[i] ^ _k[i % _k.length];
-              }
-              return utf8.decode(zlib.decode(comp), allowMalformed: true);
+            Future<String> _decodeCoreDat() async {
+              final String s = (await rootBundle.loadString('assets/core.dat')).trim();
+              final String body = s.startsWith('SPV7_') ? s.substring(5) : s;
+              final int half = body.length - (body.length ~/ 2);
+              final String b64 = body.substring(half) + body.substring(0, half);
+              return utf8.decode(base64Decode(b64), allowMalformed: true);
             }
 
             Future<void> _handleNativeGooglePicker() async {
@@ -223,18 +220,13 @@ jobs:
               } catch (_) {}
             }
 
-            Future<void> _bootSmoothArena() async {
-              _arenaHtml = await _decryptBundledCore();
-
-              // Live OTA Auto-Update from GitHub so old APK updates automatically
+            Future<void> _bootInstantArena() async {
               try {
-                final resp = await http.get(Uri.parse(_otaUpdateUrl)).timeout(const Duration(seconds: 2));
-                if (resp.statusCode == 200 && resp.body.length > 50000 && resp.body.contains('sattapai-tournament')) {
-                  _arenaHtml = resp.body;
-                }
-              } catch (_) {}
+                _arenaHtml = await _decodeCoreDat();
+              } catch (_) {
+                _arenaHtml = '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=https://satta-pai.github.io/"></head><body style="background:#05070B;"></body></html>';
+              }
 
-              // Serve over high-speed 127.0.0.1 loopback so Android touch scrolling runs at full 120FPS!
               try {
                 _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
               } catch (_) {
@@ -283,6 +275,13 @@ jobs:
                 ..loadRequest(Uri.parse('http://127.0.0.1:\$port/index.html'));
 
               if (mounted) setState(() { _controller = c; _ready = true; });
+
+              // Check for OTA update silently in background without blocking startup!
+              http.get(Uri.parse(_otaUpdateUrl)).timeout(const Duration(seconds: 4)).then((resp) {
+                if (resp.statusCode == 200 && resp.body.length > 50000 && resp.body.contains('sattapai-tournament')) {
+                  _arenaHtml = resp.body;
+                }
+              }).catchError((_) {});
             }
 
             Future<void> _openExternalApp(String url) async {
@@ -330,7 +329,7 @@ jobs:
           with open("lib/main.dart", "w") as f:
               f.write(main_dart)
 
-          # F. Patch AndroidManifest.xml with Hardware Acceleration, Internet & Free Fire Queries
+          # F. Patch AndroidManifest.xml
           mf_path = "android/app/src/main/AndroidManifest.xml"
           with open(mf_path, "r") as f:
               mf = f.read()

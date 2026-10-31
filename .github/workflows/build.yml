@@ -1,4 +1,4 @@
-name: Build Satta Pai 120Hz Pro Esports App (V9 WhatsApp & Play Store Tier)
+name: Build Satta Pai Official App (V10 Direct Google & FB Auth + Zero Overlay Leak)
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build 120Hz High-Refresh-Rate Anti-Theft APK
+      - name: Build Direct-OAuth & High-Speed APK
         run: |
           set -e
           pip install -q pillow
@@ -42,7 +42,7 @@ jobs:
           rm -rf test/widget_test.dart
           flutter pub add webview_flutter url_launcher http
 
-          # 4. Configure 120Hz High-Refresh-Rate Display Mode, Encrypted Assets & Google OAuth
+          # 4. Configure 120Hz Display, Direct OAuth & Anti-Theft Assets
           python3 - << 'PYEOF'
           import os, re, io, glob, base64, shutil
           from PIL import Image, ImageDraw
@@ -83,7 +83,7 @@ jobs:
                   rd.paste(sq, (0, 0), mask=mask)
                   rd.save(f"{dst_dir}/ic_launcher_round.png", format="PNG")
 
-          # C. Upgrade MainActivity.kt with 120Hz High Refresh Rate Display Mode & Native Google Account Picker
+          # C. Upgrade MainActivity.kt with 120Hz High Refresh Rate
           kt_files = glob.glob("android/app/src/main/kotlin/**/MainActivity.kt", recursive=True)
           if kt_files:
               kt_path = kt_files[0]
@@ -91,23 +91,13 @@ jobs:
                   pkg_line = f.readline().strip()
               kt_code = f"""{pkg_line}
 
-          import android.accounts.AccountManager
-          import android.app.Activity
-          import android.content.Intent
           import android.os.Build
           import android.os.Bundle
           import io.flutter.embedding.android.FlutterActivity
-          import io.flutter.embedding.engine.FlutterEngine
-          import io.flutter.plugin.common.MethodChannel
 
           class MainActivity : FlutterActivity() {{
-              private val CHANNEL = "satta_pai/native_auth"
-              private val REQ_PICK_GOOGLE = 9001
-              private var pendingResult: MethodChannel.Result? = null
-
               override fun onCreate(savedInstanceState: Bundle?) {{
                   super.onCreate(savedInstanceState)
-                  // ⚡ Unlock 90Hz / 120Hz / 144Hz High Refresh Rate on Display Hardware (WhatsApp & Play Store Smoothness)
                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {{
                       try {{
                           val display = windowManager.defaultDisplay
@@ -124,47 +114,6 @@ jobs:
                       }} catch (e: Exception) {{}}
                   }}
               }}
-
-              override fun configureFlutterEngine(flutterEngine: FlutterEngine) {{
-                  super.configureFlutterEngine(flutterEngine)
-                  MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {{ call, result ->
-                      if (call.method == "pickGoogleAccount") {{
-                          try {{
-                              pendingResult = result
-                              val intent = AccountManager.newChooseAccountIntent(
-                                  null,
-                                  null,
-                                  arrayOf("com.google"),
-                                  false,
-                                  null,
-                                  null,
-                                  null,
-                                  null
-                              )
-                              startActivityForResult(intent, REQ_PICK_GOOGLE)
-                          }} catch (e: Exception) {{
-                              pendingResult = null
-                              result.error("ERR", e.message, null)
-                          }}
-                      }} else {{
-                          result.notImplemented()
-                      }}
-                  }}
-              }}
-
-              override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {{
-                  super.onActivityResult(requestCode, resultCode, data)
-                  if (requestCode == REQ_PICK_GOOGLE) {{
-                      val res = pendingResult
-                      pendingResult = null
-                      if (resultCode == Activity.RESULT_OK && data != null) {{
-                          val email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME) ?: ""
-                          res?.success(email)
-                      }} else {{
-                          res?.success("")
-                      }}
-                  }}
-              }}
           }}
           """
               with open(kt_path, "w") as f:
@@ -178,7 +127,7 @@ jobs:
           with open("pubspec.yaml", "w") as f:
               f.write(pub)
 
-          # E. Write Ultra-Smooth 120FPS Local Loopback Engine in lib/main.dart
+          # E. Write Pure-Chrome Direct-OAuth Dart Engine in lib/main.dart
           main_dart = '''import 'dart:async';
           import 'dart:convert';
           import 'dart:io';
@@ -199,30 +148,29 @@ jobs:
             runApp(const MaterialApp(
               title: 'Satta Pai',
               debugShowCheckedModeBanner: false,
-              home: SattaPaiInstantShell(),
+              home: SattaPaiArenaShell(),
             ));
           }
 
-          class SattaPaiInstantShell extends StatefulWidget {
-            const SattaPaiInstantShell({super.key});
+          class SattaPaiArenaShell extends StatefulWidget {
+            const SattaPaiArenaShell({super.key});
             @override
-            State<SattaPaiInstantShell> createState() => _SattaPaiInstantShellState();
+            State<SattaPaiArenaShell> createState() => _SattaPaiArenaShellState();
           }
 
-          class _SattaPaiInstantShellState extends State<SattaPaiInstantShell> {
+          class _SattaPaiArenaShellState extends State<SattaPaiArenaShell> {
             static const String _otaUpdateUrl = 'https://raw.githubusercontent.com/satta-pai/satta_pai_flutter/main/index.html';
 
             WebViewController? _controller;
             HttpServer? _localServer;
             String _arenaHtml = '';
-            String _oauthSessionId = '';
             int _port = 8765;
             bool _ready = false;
 
             @override
             void initState() {
               super.initState();
-              _bootInstantArena();
+              _bootArena();
             }
 
             Future<String> _decodeCoreDat() async {
@@ -233,7 +181,7 @@ jobs:
               return utf8.decode(base64Decode(b64), allowMalformed: true);
             }
 
-            Future<void> _bootInstantArena() async {
+            Future<void> _bootArena() async {
               try {
                 _arenaHtml = await _decodeCoreDat();
               } catch (_) {
@@ -256,34 +204,15 @@ jobs:
 
               final String initialUrl = 'http://localhost:' + _port.toString() + '/index.html';
 
+              // Standard Mobile Chrome User Agent so Google, FB, and GitHub allow direct account selection!
               final c = WebViewController()
                 ..setJavaScriptMode(JavaScriptMode.unrestricted)
                 ..setBackgroundColor(const Color(0xFF05070B))
-                ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36 SattaPaiApp/5.0')
-                ..addJavaScriptChannel(
-                  'SattaPaiNativeAuth',
-                  onMessageReceived: (JavaScriptMessage message) {
-                    final String msg = message.message;
-                    if (msg.startsWith('SAVE_SESSION:')) {
-                      _oauthSessionId = msg.substring(13).trim();
-                    }
-                  },
-                )
+                ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36')
                 ..setNavigationDelegate(NavigationDelegate(
                   onNavigationRequest: (req) {
                     final String u = req.url;
-                    // Intercept Firebase Google OAuth Callback
-                    if (u.contains('/__/auth/handler') && u.contains('code=')) {
-                      final String cbUrl = 'http://localhost:' +
-                          _port.toString() +
-                          '/index.html?sp_oauth_cb=' +
-                          Uri.encodeComponent(u) +
-                          '&sp_sess=' +
-                          Uri.encodeComponent(_oauthSessionId);
-                      _controller?.loadRequest(Uri.parse(cbUrl));
-                      return NavigationDecision.prevent;
-                    }
-                    // Intercept external apps (Free Fire India/MAX, UPI, WhatsApp, Telegram)
+                    // Intercept external game & payment schemes
                     if (u.startsWith('intent://') ||
                         u.startsWith('freefire://') ||
                         u.startsWith('freefiremax://') ||
@@ -362,7 +291,7 @@ jobs:
           with open("lib/main.dart", "w") as f:
               f.write(main_dart)
 
-          # F. Patch AndroidManifest.xml with Hardware Acceleration, Permissions & Intents
+          # F. Patch AndroidManifest.xml
           mf_path = "android/app/src/main/AndroidManifest.xml"
           with open(mf_path, "r") as f:
               mf = f.read()
@@ -387,7 +316,7 @@ jobs:
               f.write(mf)
           PYEOF
 
-          # 5. Build Obfuscated Release APK (Protected Native ARM64 Machine Code)
+          # 5. Build Obfuscated Release APK
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=build/debug-info
 

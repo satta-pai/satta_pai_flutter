@@ -28,30 +28,42 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Create Base Flutter Platform & Overwrite With Satta Pai Arena
+      - name: Clean Repo & Build Satta Pai Hybrid App + Website
         run: |
-          flutter create . --project-name satta_pai_arena
-          rm -rf android/app/src/main/res/mipmap-anydpi-v26
-          rm -rf test/widget_test.dart
-          if [ -f "satta_pai_flutter" ]; then
-            unzip -o satta_pai_flutte.zip
+          set -e
+          rm -rf /tmp/sp_bundle /tmp/sp_upload.zip
+          ZIP_PATH=""
+          for z in *.zip; do
+            if [ -f "$z" ] && unzip -l "$z" | grep -q "setup_hybrid_arena.py"; then
+              ZIP_PATH="$z"
+            fi
+          done
+          if [ -z "$ZIP_PATH" ]; then
+            for z in *.zip; do
+              if [ -f "$z" ] && unzip -l "$z" | grep -q "assets/www/index.html"; then
+                ZIP_PATH="$z"
+              fi
+            done
           fi
+          if [ -z "$ZIP_PATH" ]; then
+            ZIP_PATH=$(ls -1 *.zip 2>/dev/null | head -n 1 || true)
+          fi
+          echo "Using uploaded bundle: $ZIP_PATH"
+          cp -f "$ZIP_PATH" /tmp/sp_upload.zip
+          mkdir -p /tmp/sp_bundle
+          unzip -q -o /tmp/sp_upload.zip -d /tmp/sp_bundle
+
+          rm -rf lib android ios web linux macos windows test build pubspec.yaml pubspec.lock analysis_options.yaml .metadata
+
+          flutter create . --project-name satta_pai_arena --platforms=android,web
+          rm -rf test/widget_test.dart
+
+          flutter pub add webview_flutter url_launcher
+          python3 /tmp/sp_bundle/setup_hybrid_arena.py
           flutter pub get
 
-      - name: Build Satta Pai Android APK & Web Bundle
-        run: |
-          # 1. Web folder create pandrom
-          mkdir -p web
-          
-          # 2. Unga custom index.html (root-la irukkurathu) ah web folder kulla copy pandrom
-          if [ -f "index.html" ]; then
-            cp -f index.html web/index.html
-          else
-            echo "Warning: Root-la index.html illa!"
-          fi
-          
-          # 3. Flutter Web and APK build pandrom
-          flutter build web --release
+          mkdir -p build/web
+          cp -f assets/www/index.html build/web/index.html
           flutter build apk --release
 
       - name: Downloadable Satta Pai Android APK

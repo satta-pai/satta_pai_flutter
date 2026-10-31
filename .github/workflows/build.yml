@@ -1,4 +1,4 @@
-name: Build Satta Pai Instant-Boot App (V7 Fixed)
+name: Build Satta Pai Official App (V8 Real Google UID + Instant Open)
 
 on:
   push:
@@ -11,7 +11,6 @@ permissions:
 jobs:
   build_apk:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -19,111 +18,53 @@ jobs:
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
+          distribution: 'zulu'
           java-version: '17'
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          channel: 'stable'
 
-      - name: Build Fixed Satta Pai APK
+      - name: Build Instant-Open APK with Real Google UID Auth
         run: |
           set -e
           pip install -q pillow
 
-          # 1. Back up the original HTML
+          # 1. Backup index.html before cleaning workspace
           cp -f index.html /tmp/source_arena.html
 
-          # 2. Clean old Flutter project files
-          rm -rf lib android ios web test build pubspec.yaml pubspec.lock
-          flutter create . --project-name satta_pai_arena --platforms=android
-          rm -f test/widget_test.dart
+          # 2. Clean old files
+          rm -rf lib android ios web test build pubspec.yaml pubspec.lock .github/workflows/flutter_cloud_build.yml
 
-          # 3. Install required packages
+          # 3. Create fresh Flutter project & add packages
+          flutter create . --project-name satta_pai_arena --platforms=android
+          rm -rf test/widget_test.dart
           flutter pub add webview_flutter url_launcher http
 
-          # 4. Prepare HTML, logo, Android code and Flutter code
-          python3 - <<'PYEOF'
-          import os
-          import re
-          import io
-          import glob
-          import base64
-          import shutil
+          # 4. Configure Encrypted Core, Satta Pai Logo Icons & Real Google OAuth Interceptor
+          python3 - << 'PYEOF'
+          import os, re, io, base64, shutil
           from PIL import Image, ImageDraw
 
           with open("/tmp/source_arena.html", "rb") as f:
               raw_html = f.read()
 
-          # A. Add a watchdog for a cinematic intro that gets stuck.
-          # It hides only the cinematic intro element.
-          html_text = raw_html.decode("utf-8", errors="ignore")
-
-          watchdog = """
-          <script id="sp-cinematic-watchdog">
-          (function () {
-            function hideStuckIntro() {
-              try {
-                var intro = document.getElementById('sp-cinematic-intro');
-                if (intro) {
-                  intro.style.setProperty('display', 'none', 'important');
-                  intro.style.setProperty('visibility', 'hidden', 'important');
-                  intro.style.setProperty('pointer-events', 'none', 'important');
-                }
-              } catch (_) {}
-            }
-
-            window.addEventListener('error', function () {
-              setTimeout(hideStuckIntro, 100);
-            });
-
-            window.addEventListener('unhandledrejection', function () {
-              setTimeout(hideStuckIntro, 100);
-            });
-
-            setTimeout(hideStuckIntro, 6000);
-          })();
-          </script>
-          """
-
-          if "sp-cinematic-watchdog" not in html_text:
-              match = re.search(r"</body\\s*>", html_text, re.IGNORECASE)
-              if match:
-                  html_text = (
-                      html_text[:match.start()]
-                      + watchdog
-                      + html_text[match.start():]
-                  )
-              else:
-                  html_text += watchdog
-
-          raw_html = html_text.encode("utf-8")
-
-          # B. Store HTML in assets/core.dat using the existing
-          # reversible Base64 half-swap format.
+          # A. Encode index.html into assets/core.dat (2ms Half-Swap Base64 Cipher)
           os.makedirs("assets", exist_ok=True)
-
           b64 = base64.b64encode(raw_html).decode("ascii")
           mid = len(b64) // 2
           scrambled = "SPV7_" + b64[mid:] + b64[:mid]
-
           with open("assets/core.dat", "w", encoding="utf-8") as f:
               f.write(scrambled)
 
-          # C. Extract the launcher logo from the HTML, if available.
+          # B. Extract Satta Pai Logo from index.html for Android Launcher Icons
           html_str = raw_html.decode("utf-8", errors="ignore")
-
-          m = re.search(
-              r'window\\.DEFAULT_SATTA_PAI_LOGO_DATA_URL\\s*=\\s*'
-              r'"data:image/[^;]+;base64,([^"]+)"',
-              html_str
-          )
-
+          m = re.search(r'window\.DEFAULT_SATTA_PAI_LOGO_DATA_URL\s*=\s*"data:image/[^;]+;base64,([^"]+)"', html_str)
           if m:
-              logo_data = base64.b64decode(m.group(1))
-              logo_im = Image.open(io.BytesIO(logo_data)).convert("RGBA")
-
+              shutil.rmtree("android/app/src/main/res/mipmap-anydpi-v26", ignore_errors=True)
+              shutil.rmtree("android/app/src/main/res/mipmap-anydpi", ignore_errors=True)
+              logo_im = Image.open(io.BytesIO(base64.b64decode(m.group(1)))).convert("RGBA")
               sizes = {
                   "mipmap-mdpi": 48,
                   "mipmap-hdpi": 72,
@@ -131,138 +72,27 @@ jobs:
                   "mipmap-xxhdpi": 144,
                   "mipmap-xxxhdpi": 192,
               }
-
               for folder, px in sizes.items():
                   dst_dir = f"android/app/src/main/res/{folder}"
                   os.makedirs(dst_dir, exist_ok=True)
-
-                  sq = logo_im.resize(
-                      (px, px),
-                      Image.Resampling.LANCZOS
-                  )
-                  sq.save(
-                      f"{dst_dir}/ic_launcher.png",
-                      format="PNG"
-                  )
-
+                  sq = logo_im.resize((px, px), Image.Resampling.LANCZOS)
+                  sq.save(f"{dst_dir}/ic_launcher.png", format="PNG")
                   mask = Image.new("L", (px, px), 0)
-                  ImageDraw.Draw(mask).ellipse(
-                      (0, 0, px - 1, px - 1),
-                      fill=255
-                  )
+                  ImageDraw.Draw(mask).ellipse((0, 0, px - 1, px - 1), fill=255)
+                  rd = Image.new("RGBA", (px, px), (0, 0, 0, 0))
+                  rd.paste(sq, (0, 0), mask=mask)
+                  rd.save(f"{dst_dir}/ic_launcher_round.png", format="PNG")
 
-                  round_img = Image.new(
-                      "RGBA", (px, px), (0, 0, 0, 0)
-                  )
-                  round_img.paste(sq, (0, 0), mask=mask)
-                  round_img.save(
-                      f"{dst_dir}/ic_launcher_round.png",
-                      format="PNG"
-                  )
-
-          # D. Configure native Android Google account picker.
-          kt_files = glob.glob(
-              "android/app/src/main/kotlin/**/MainActivity.kt",
-              recursive=True
-          )
-
-          if kt_files:
-              kt_path = kt_files[0]
-
-              with open(kt_path, "r", encoding="utf-8") as f:
-                  pkg_line = f.readline().strip()
-
-              kt_code = f"""{pkg_line}
-
-          import android.accounts.AccountManager
-          import android.app.Activity
-          import android.content.Intent
-          import io.flutter.embedding.android.FlutterActivity
-          import io.flutter.embedding.engine.FlutterEngine
-          import io.flutter.plugin.common.MethodChannel
-
-          class MainActivity : FlutterActivity() {{
-              private val CHANNEL = "satta_pai/native_auth"
-              private val REQ_PICK_GOOGLE = 9001
-              private var pendingResult: MethodChannel.Result? = null
-
-              override fun configureFlutterEngine(flutterEngine: FlutterEngine) {{
-                  super.configureFlutterEngine(flutterEngine)
-
-                  MethodChannel(
-                      flutterEngine.dartExecutor.binaryMessenger,
-                      CHANNEL
-                  ).setMethodCallHandler {{ call, result ->
-                      if (call.method == "pickGoogleAccount") {{
-                          try {{
-                              pendingResult = result
-
-                              val intent = AccountManager.newChooseAccountIntent(
-                                  null,
-                                  null,
-                                  arrayOf("com.google"),
-                                  false,
-                                  null,
-                                  null,
-                                  null,
-                                  null
-                              )
-
-                              startActivityForResult(intent, REQ_PICK_GOOGLE)
-                          }} catch (e: Exception) {{
-                              pendingResult = null
-                              result.error("ERR", e.message, null)
-                          }}
-                      }} else {{
-                          result.notImplemented()
-                      }}
-                  }}
-              }}
-
-              override fun onActivityResult(
-                  requestCode: Int,
-                  resultCode: Int,
-                  data: Intent?
-              ) {{
-                  super.onActivityResult(requestCode, resultCode, data)
-
-                  if (requestCode == REQ_PICK_GOOGLE) {{
-                      val res = pendingResult
-                      pendingResult = null
-
-                      if (resultCode == Activity.RESULT_OK && data != null) {{
-                          val email = data.getStringExtra(
-                              AccountManager.KEY_ACCOUNT_NAME
-                          ) ?: ""
-                          res?.success(email)
-                      }} else {{
-                          res?.success("")
-                      }}
-                  }}
-              }}
-          }}
-          """
-
-              with open(kt_path, "w", encoding="utf-8") as f:
-                  f.write(kt_code)
-
-          # E. Register the HTML asset.
-          with open("pubspec.yaml", "r", encoding="utf-8") as f:
+          # C. Register assets/core.dat in pubspec.yaml
+          with open("pubspec.yaml", "r") as f:
               pub = f.read()
-
           if "assets/core.dat" not in pub:
-              pub = pub.replace(
-                  "uses-material-design: true",
-                  "uses-material-design: true\n  assets:\n    - assets/core.dat"
-              )
-
-          with open("pubspec.yaml", "w", encoding="utf-8") as f:
+              pub = pub.replace("uses-material-design: true", "uses-material-design: true\n  assets:\n    - assets/core.dat")
+          with open("pubspec.yaml", "w") as f:
               f.write(pub)
 
-          # F. Generate the Flutter WebView shell.
-          # IMPORTANT: These are Python triple-quoted strings, not f-strings.
-          # Dart interpolation variables must NOT be escaped with backslashes.
-          main_dart = r'''import 'dart:async';
+          # D. Write Zero-Dollar-Escape Dart Engine in lib/main.dart
+          main_dart = '''import 'dart:async';
           import 'dart:convert';
           import 'dart:io';
           import 'package:flutter/material.dart';
@@ -273,16 +103,12 @@ jobs:
 
           void main() async {
             WidgetsFlutterBinding.ensureInitialized();
-
-            SystemChrome.setSystemUIOverlayStyle(
-              const SystemUiOverlayStyle(
-                statusBarColor: Color(0xFF05070B),
-                statusBarIconBrightness: Brightness.light,
-                systemNavigationBarColor: Color(0xFF05070B),
-                systemNavigationBarIconBrightness: Brightness.light,
-              ),
-            );
-
+            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+              statusBarColor: Color(0xFF05070B),
+              statusBarIconBrightness: Brightness.light,
+              systemNavigationBarColor: Color(0xFF05070B),
+              systemNavigationBarIconBrightness: Brightness.light,
+            ));
             runApp(const MaterialApp(
               title: 'Satta Pai',
               debugShowCheckedModeBanner: false,
@@ -292,23 +118,18 @@ jobs:
 
           class SattaPaiInstantShell extends StatefulWidget {
             const SattaPaiInstantShell({super.key});
-
             @override
-            State<SattaPaiInstantShell> createState() =>
-                _SattaPaiInstantShellState();
+            State<SattaPaiInstantShell> createState() => _SattaPaiInstantShellState();
           }
 
-          class _SattaPaiInstantShellState
-              extends State<SattaPaiInstantShell> {
-            static const MethodChannel _nativeAuthChannel =
-                MethodChannel('satta_pai/native_auth');
-
-            static const String _otaUpdateUrl =
-                'https://raw.githubusercontent.com/satta-pai/satta_pai_flutter/main/index.html';
+          class _SattaPaiInstantShellState extends State<SattaPaiInstantShell> {
+            static const String _otaUpdateUrl = 'https://raw.githubusercontent.com/satta-pai/satta_pai_flutter/main/index.html';
 
             WebViewController? _controller;
             HttpServer? _localServer;
             String _arenaHtml = '';
+            String _oauthSessionId = '';
+            int _port = 8765;
             bool _ready = false;
 
             @override
@@ -318,126 +139,81 @@ jobs:
             }
 
             Future<String> _decodeCoreDat() async {
-              final String s =
-                  (await rootBundle.loadString('assets/core.dat')).trim();
-
-              final String body =
-                  s.startsWith('SPV7_') ? s.substring(5) : s;
-
+              final String s = (await rootBundle.loadString('assets/core.dat')).trim();
+              final String body = s.startsWith('SPV7_') ? s.substring(5) : s;
               final int half = body.length - (body.length ~/ 2);
-              final String b64 =
-                  body.substring(half) + body.substring(0, half);
-
-              return utf8.decode(
-                base64Decode(b64),
-                allowMalformed: true,
-              );
-            }
-
-            Future<void> _handleNativeGooglePicker() async {
-              try {
-                final String? selectedEmail =
-                    await _nativeAuthChannel.invokeMethod<String>(
-                  'pickGoogleAccount',
-                );
-
-                if (selectedEmail != null &&
-                    selectedEmail.trim().isNotEmpty) {
-                  final String clean =
-                      selectedEmail.trim().replaceAll("'", "");
-
-                  await _controller?.runJavaScript(
-                    "window.completeNativeAndroidGoogleLogin('$clean', '');",
-                  );
-                }
-              } catch (_) {}
+              final String b64 = body.substring(half) + body.substring(0, half);
+              return utf8.decode(base64Decode(b64), allowMalformed: true);
             }
 
             Future<void> _bootInstantArena() async {
               try {
                 _arenaHtml = await _decodeCoreDat();
               } catch (_) {
-                _arenaHtml =
-                    '<!DOCTYPE html><html><head>'
-                    '<meta name="viewport" content="width=device-width, initial-scale=1">'
-                    '</head><body style="background:#05070B;color:white">'
-                    '<p>Unable to load the app. Please check your connection '
-                    'and try again.</p></body></html>';
+                _arenaHtml = '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=https://satta-pai.github.io/"></head><body style="background:#05070B;"></body></html>';
               }
 
               try {
-                _localServer = await HttpServer.bind(
-                  InternetAddress.loopbackIPv4,
-                  8765,
-                  shared: true,
-                );
+                _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
               } catch (_) {
-                _localServer = await HttpServer.bind(
-                  InternetAddress.loopbackIPv4,
-                  0,
-                  shared: true,
-                );
+                _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0, shared: true);
               }
-
-              final int port = _localServer!.port;
+              _port = _localServer!.port;
 
               _localServer!.listen((HttpRequest request) async {
                 request.response.headers.contentType = ContentType.html;
-                request.response.headers.add(
-                  'Access-Control-Allow-Origin',
-                  '*',
-                );
-                request.response.headers.add(
-                  'Cache-Control',
-                  'no-store, no-cache, must-revalidate',
-                );
-
+                request.response.headers.add('Access-Control-Allow-Origin', '*');
                 request.response.write(_arenaHtml);
                 await request.response.close();
               });
 
+              final String initialUrl = 'http://localhost:' + _port.toString() + '/index.html';
+
               final c = WebViewController()
                 ..setJavaScriptMode(JavaScriptMode.unrestricted)
                 ..setBackgroundColor(const Color(0xFF05070B))
-                ..setUserAgent(
-                  'Mozilla/5.0 (Linux; Android 14; Pixel 8) '
-                  'AppleWebKit/537.36 (KHTML, like Gecko) '
-                  'Chrome/125.0.0.0 Mobile Safari/537.36 SattaPaiApp/3.0',
-                )
+                ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36 SattaPaiApp/4.0')
                 ..addJavaScriptChannel(
                   'SattaPaiNativeAuth',
                   onMessageReceived: (JavaScriptMessage message) {
-                    if (message.message == 'pick_google_account') {
-                      _handleNativeGooglePicker();
+                    final String msg = message.message;
+                    if (msg.startsWith('SAVE_SESSION:')) {
+                      _oauthSessionId = msg.substring(13).trim();
                     }
                   },
                 )
-                ..setNavigationDelegate(
-                  NavigationDelegate(
-                    onNavigationRequest: (req) {
-                      final u = req.url;
-
-                      if (u.startsWith('intent://') ||
-                          u.startsWith('freefire://') ||
-                          u.startsWith('freefiremax://') ||
-                          u.startsWith('upi://') ||
-                          u.startsWith('whatsapp://') ||
-                          u.startsWith('tg://') ||
-                          u.startsWith('mailto:') ||
-                          u.contains('whatsapp.com/channel/') ||
-                          u.contains('t.me/') ||
-                          u.contains('play.google.com/store')) {
-                        _openExternalApp(u);
-                        return NavigationDecision.prevent;
-                      }
-
-                      return NavigationDecision.navigate;
-                    },
-                  ),
-                )
-                ..loadRequest(
-                  Uri.parse('http://127.0.0.1:$port/index.html'),
-                );
+                ..setNavigationDelegate(NavigationDelegate(
+                  onNavigationRequest: (req) {
+                    final String u = req.url;
+                    // 1. Intercept Firebase Google OAuth Callback & return to localhost for signInWithCredential (Real Google Auth UID!)
+                    if (u.contains('/__/auth/handler') && u.contains('code=')) {
+                      final String cbUrl = 'http://localhost:' +
+                          _port.toString() +
+                          '/index.html?sp_oauth_cb=' +
+                          Uri.encodeComponent(u) +
+                          '&sp_sess=' +
+                          Uri.encodeComponent(_oauthSessionId);
+                      _controller?.loadRequest(Uri.parse(cbUrl));
+                      return NavigationDecision.prevent;
+                    }
+                    // 2. Intercept external apps (Free Fire India/MAX, UPI, WhatsApp, Telegram)
+                    if (u.startsWith('intent://') ||
+                        u.startsWith('freefire://') ||
+                        u.startsWith('freefiremax://') ||
+                        u.startsWith('upi://') ||
+                        u.startsWith('whatsapp://') ||
+                        u.startsWith('tg://') ||
+                        u.startsWith('mailto:') ||
+                        u.contains('whatsapp.com/channel/') ||
+                        u.contains('t.me/') ||
+                        u.contains('play.google.com/store')) {
+                      _openExternalApp(u);
+                      return NavigationDecision.prevent;
+                    }
+                    return NavigationDecision.navigate;
+                  },
+                ))
+                ..loadRequest(Uri.parse(initialUrl));
 
               if (mounted) {
                 setState(() {
@@ -446,16 +222,9 @@ jobs:
                 });
               }
 
-              // Optional background update check.
-              // This updates the in-memory HTML for subsequent requests;
-              // it does not automatically reload the currently open page.
-              http
-                  .get(Uri.parse(_otaUpdateUrl))
-                  .timeout(const Duration(seconds: 4))
-                  .then((resp) {
-                if (resp.statusCode == 200 &&
-                    resp.body.length > 50000 &&
-                    resp.body.contains('sattapai-tournament')) {
+              // Background OTA update check (non-blocking)
+              http.get(Uri.parse(_otaUpdateUrl)).timeout(const Duration(seconds: 4)).then((resp) {
+                if (resp.statusCode == 200 && resp.body.length > 50000 && resp.body.contains('sattapai-tournament')) {
                   _arenaHtml = resp.body;
                 }
               }).catchError((_) {});
@@ -464,24 +233,14 @@ jobs:
             Future<void> _openExternalApp(String url) async {
               try {
                 if (url.startsWith('intent://')) {
-                  final m =
-                      RegExp(r'package=([a-zA-Z0-9._]+)').firstMatch(url);
-
+                  final m = RegExp(r'package=([a-zA-Z0-9._]+)').firstMatch(url);
                   if (m != null) {
-                    final pkg = m.group(1)!;
-
-                    await launchUrl(
-                      Uri.parse('market://details?id=$pkg'),
-                      mode: LaunchMode.externalApplication,
-                    );
+                    final String pkg = m.group(1)!;
+                    await launchUrl(Uri.parse('market://details?id=' + pkg), mode: LaunchMode.externalApplication);
                     return;
                   }
                 }
-
-                await launchUrl(
-                  Uri.parse(url),
-                  mode: LaunchMode.externalApplication,
-                );
+                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
               } catch (_) {}
             }
 
@@ -495,8 +254,7 @@ jobs:
             Widget build(BuildContext context) {
               return WillPopScope(
                 onWillPop: () async {
-                  if (_controller != null &&
-                      await _controller!.canGoBack()) {
+                  if (_controller != null && await _controller!.canGoBack()) {
                     await _controller!.goBack();
                     return false;
                   }
@@ -507,28 +265,21 @@ jobs:
                   body: SafeArea(
                     child: _ready && _controller != null
                         ? WebViewWidget(controller: _controller!)
-                        : const Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF00FFFF),
-                            ),
-                          ),
+                        : const Center(child: CircularProgressIndicator(color: Color(0xFF00FFFF))),
                   ),
                 ),
               );
             }
           }
           '''
-
-          with open("lib/main.dart", "w", encoding="utf-8") as f:
+          with open("lib/main.dart", "w") as f:
               f.write(main_dart)
 
-          # G. Configure Android permissions and app label.
+          # E. Patch AndroidManifest.xml
           mf_path = "android/app/src/main/AndroidManifest.xml"
-
-          with open(mf_path, "r", encoding="utf-8") as f:
+          with open(mf_path, "r") as f:
               mf = f.read()
-
-          perms = """
+          perms = '''
           <uses-permission android:name="android.permission.INTERNET"/>
           <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
           <uses-permission android:name="android.permission.VIBRATE"/>
@@ -539,43 +290,22 @@ jobs:
               <package android:name="com.whatsapp" />
               <package android:name="org.telegram.messenger" />
           </queries>
-          """
-
+          '''
           if "android.permission.INTERNET" not in mf:
-              mf = mf.replace(
-                  "<application",
-                  perms + "\n    <application",
-                  1,
-              )
-
-          mf = re.sub(
-              r'android:label="[^"]*"',
-              'android:label="Satta Pai"',
-              mf,
-          )
-
+              mf = mf.replace("<application", perms + "\n    <application", 1)
+          mf = re.sub(r'android:label="[^"]*"', 'android:label="Satta Pai"', mf)
           if "usesCleartextTraffic" not in mf:
-              mf = mf.replace(
-                  "<application",
-                  '<application\n'
-                  '        android:usesCleartextTraffic="true"\n'
-                  '        android:hardwareAccelerated="true"',
-                  1,
-              )
-
-          with open(mf_path, "w", encoding="utf-8") as f:
+              mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"', 1)
+          with open(mf_path, "w") as f:
               f.write(mf)
-
-          print("Satta Pai Flutter project files generated.")
           PYEOF
 
-          # 5. Resolve packages and build release APK
+          # 5. Build Obfuscated Release APK
           flutter pub get
           flutter build apk --release --obfuscate --split-debug-info=build/debug-info
 
-      - name: Upload Satta Pai APK
+      - name: Downloadable Satta Pai Official APK
         uses: actions/upload-artifact@v4
         with:
           name: Satta-Pai-Official-APK
           path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error

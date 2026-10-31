@@ -1256,8 +1256,19 @@ html.theme-ghost-live {
             transform: scale(0.975);
         }
 
-        /* 🔒 ROCK-SOLID NON-MOVING LOGIN OVERLAY (Zero Dragging / Zero Shifting) */
-        #google-login-overlay {
+        /* 🔒 ROCK-SOLID NON-MOVING LOGIN OVERLAY WITH INSTANT ZERO-LEAK HIDING */
+        #google-login-overlay.hidden,
+        #google-login-overlay[hidden],
+        #google-login-overlay[aria-hidden="true"],
+        #google-login-overlay[style*="display: none"] {
+            display: none !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            opacity: 0 !important;
+            z-index: -9999 !important;
+        }
+        #google-login-overlay:not(.hidden):not([hidden]) {
+            display: flex !important;
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
@@ -1269,9 +1280,9 @@ html.theme-ghost-live {
             overflow: hidden !important;
             touch-action: none !important;
             overscroll-behavior: contain !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            pointer-events: auto !important;
+            align-items: center !important;
+            justify-content: center !important;
             z-index: 9999 !important;
         }
         #google-login-overlay .cyber-card {
@@ -1281,6 +1292,7 @@ html.theme-ghost-live {
             overflow-y: auto;
             position: relative;
             transform: none !important;
+            pointer-events: auto !important;
         }
 
         /* 🎨 120FPS GPU LIVE THEME PARTICLES (100% Working on Mobile & Web!) */
@@ -5054,6 +5066,8 @@ html.theme-ghost-live {
                 ov.setAttribute('hidden', '');
                 ov.setAttribute('aria-hidden', 'true');
                 ov.setAttribute('inert', '');
+                ov.style.setProperty('display', 'none', 'important');
+                ov.style.setProperty('pointer-events', 'none', 'important');
             }
             if (window._loginVideoRaf) {
                 cancelAnimationFrame(window._loginVideoRaf);
@@ -8498,12 +8512,15 @@ ${list}
         };
 
         window.openLoginScreenModal = function() {
+            if (window._oauthCallbackInProgress) return;
             const ov = document.getElementById('google-login-overlay');
             if (!ov) return;
             ov.classList.remove('hidden');
             ov.removeAttribute('hidden');
             ov.removeAttribute('aria-hidden');
             ov.removeAttribute('inert');
+            ov.style.removeProperty('display');
+            ov.style.removeProperty('pointer-events');
             window.startLoginVideoCanvas();
             if (typeof window.pushAppHistoryState === 'function') {
                 window.pushAppHistoryState({ type: 'modal', modalId: 'google-login-overlay' });
@@ -12796,6 +12813,10 @@ ${list}
                 const ghProvider = new GithubAuthProvider();
                 ghProvider.addScope('read:user');
                 ghProvider.addScope('user:email');
+                if (navigator.userAgent.includes('SattaPaiApp') || window.innerWidth < 768) {
+                    window.showToast("🔄 Opening GitHub Account Selector...");
+                    try { await signInWithRedirect(auth, ghProvider); return; } catch(e) {}
+                }
                 const r = await signInWithPopup(auth, ghProvider);
                 await window.completeUserSignInSuccess(r.user, r, 'GitHub');
             } catch(e) {
@@ -12831,6 +12852,10 @@ ${list}
                 const fbProvider = new FacebookAuthProvider();
                 fbProvider.addScope('email');
                 fbProvider.addScope('public_profile');
+                if (navigator.userAgent.includes('SattaPaiApp') || window.innerWidth < 768) {
+                    window.showToast("🔄 Opening Facebook Account Selector...");
+                    try { await signInWithRedirect(auth, fbProvider); return; } catch(e) {}
+                }
                 const r = await signInWithPopup(auth, fbProvider);
                 await window.completeUserSignInSuccess(r.user, r, 'Facebook');
             } catch(e) {
@@ -12938,32 +12963,17 @@ ${list}
             const t = document.getElementById('terms-accept-checkbox');
             if (t && !t.checked) t.checked = true;
             try {
-                // Inside Android Hybrid App: Use Direct Firebase IdentityToolkit OAuth Flow (No invalid customParameter field!)
-                if (navigator.userAgent.includes('SattaPaiApp') || window.SattaPaiNativeAuth) {
-                    window.showToast("🔄 Opening Google Sign-In...");
-                    const uriResp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=' + firebaseConfig.apiKey, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            continueUri: 'https://sattapai-tournament.firebaseapp.com/__/auth/handler',
-                            providerId: 'google.com',
-                            authFlowType: 'CODE_FLOW'
-                        })
-                    });
-                    const uriData = await uriResp.json();
-                    if (uriData && uriData.authUri && uriData.sessionId) {
-                        try { localStorage.setItem('sp_google_oauth_session_id', uriData.sessionId); } catch(e) {}
-                        if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
-                            window.SattaPaiNativeAuth.postMessage('SAVE_SESSION:' + uriData.sessionId);
-                        }
-                        const targetUrl = uriData.authUri.includes('prompt=')
-                            ? uriData.authUri
-                            : (uriData.authUri + '&prompt=select_account');
-                        window.location.href = targetUrl;
+                provider.setCustomParameters({ prompt: 'select_account' });
+                // Direct full redirect to Google Account Selector on mobile & in Android App
+                if (navigator.userAgent.includes('SattaPaiApp') || window.innerWidth < 768 || window.location.protocol.startsWith('http')) {
+                    window.showToast("🔄 Opening Google Account Selector...");
+                    try {
+                        await signInWithRedirect(auth, provider);
                         return;
+                    } catch(redErr) {
+                        console.warn("Direct signInWithRedirect fallback:", redErr);
                     }
                 }
-                provider.setCustomParameters({ prompt: 'select_account' });
                 const r = await signInWithPopup(auth, provider);
                 await window.completeUserSignInSuccess(r.user, r, 'Google');
             } catch(e) {
@@ -12999,6 +13009,8 @@ ${list}
                 sessionStorage.setItem('satta_pai_guest_session', '1');
             } catch(e) {}
             window.closeLoginOverlayPermanently();
+            document.body.style.overflow = '';
+            if (typeof window.switchTab === 'function') window.switchTab('home');
             window.isSuperAdminGlobal = false;
             window.superAdminEmail = "";
             const supportLink = document.getElementById('support-email-link');

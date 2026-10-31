@@ -28,40 +28,30 @@ jobs:
         with:
           channel: 'stable'
 
-      # Unzip if you have a zip file
-      - name: Unzip Project Files
+      - name: Create Base Flutter Platform & Overwrite With Satta Pai Arena
         run: |
-          if [ -f "satta_pai_flutter.zip" ]; then
-            unzip -o satta_pai_flutter.zip
+          flutter create . --project-name satta_pai_arena
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          rm -rf test/widget_test.dart
+          if [ -f "satta_pai_flutter" ]; then
+            unzip -o satta_pai_flutte.zip
           fi
-
-      - name: Install Dependencies
-        run: flutter pub get
-
-      # Debug step: To see what files are actually present in the runner
-      - name: List files in Root
-        run: ls -la
+          flutter pub get
 
       - name: Build Satta Pai Android APK & Web Bundle
         run: |
-          # Create web directory
+          # 1. Web folder create pandrom
           mkdir -p web
           
-          # Check where index.html is and copy it
+          # 2. Unga custom index.html (root-la irukkurathu) ah web folder kulla copy pandrom
           if [ -f "index.html" ]; then
-            echo "Found index.html in root folder. Copying..."
             cp -f index.html web/index.html
-          elif [ -f "assets/www/index.html" ]; then
-            echo "Found index.html in assets/www folder. Copying..."
-            cp -f assets/www/index.html web/index.html
           else
-            echo "Warning: Custom index.html not found! Using Flutter default."
+            echo "Warning: Root-la index.html illa!"
           fi
-
-          # Build Web
-          flutter build web --release
           
-          # Build APK
+          # 3. Flutter Web and APK build pandrom
+          flutter build web --release
           flutter build apk --release
 
       - name: Downloadable Satta Pai Android APK

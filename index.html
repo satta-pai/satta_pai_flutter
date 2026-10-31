@@ -1225,6 +1225,32 @@ html.theme-ghost-live {
             -webkit-touch-callout: none;
         }
 
+    
+        /* ⚡ ZERO-LAG 120FPS MOBILE & ANDROID APP GPU ACCELERATION */
+        @media (max-width: 900px), (hover: none) {
+            .cyber-card, .modal-backdrop, header, nav, #bottom-nav, #google-login-overlay, .glass-panel {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            .cyber-card {
+                background: rgba(13, 19, 33, 0.96) !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45) !important;
+                contain: layout style;
+            }
+            * {
+                -webkit-tap-highlight-color: transparent;
+            }
+            body, html {
+                overscroll-behavior-y: none;
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: auto !important;
+            }
+            canvas#live-theme-canvas, canvas#login-bg-video-canvas {
+                pointer-events: none !important;
+                will-change: transform;
+            }
+        }
+
     </style>
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
@@ -8352,6 +8378,8 @@ ${list}
         }
 
         window.startLoginVideoCanvas = function() {
+            // Skip heavy 60fps background canvas inside Android App / low-memory mobile to keep UI 100% lag-free!
+            if (navigator.userAgent.includes('SattaPaiApp') || window.innerWidth < 768) return;
             const ov = document.getElementById('google-login-overlay');
             const canvas = document.getElementById('login-video-canvas');
             if (!ov || !canvas) return;
@@ -12744,6 +12772,13 @@ ${list}
             if (t && !t.checked) t.checked = true;
             try {
                 provider.setCustomParameters({ prompt: 'select_account' });
+                // Inside Android Hybrid App WebView, signInWithPopup opens in the same window and causes a black screen on /__/auth/handler.
+                // Always use signInWithRedirect inside the Android App!
+                if (navigator.userAgent.includes('SattaPaiApp') || window.isFlutterHybridApp === true) {
+                    window.showToast("🔄 Opening Google Sign-In...");
+                    await signInWithRedirect(auth, provider);
+                    return;
+                }
                 const r = await signInWithPopup(auth, provider);
                 await window.completeUserSignInSuccess(r.user, r, 'Google');
             } catch(e) {

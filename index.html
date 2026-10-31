@@ -1262,7 +1262,6 @@ html.theme-ghost-live {
         }
 
     </style>
-<meta name="sattapai-auth-fix" content="SattaPai-GoogleAuth-Fix-2026">
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
 
@@ -4942,14 +4941,11 @@ html.theme-ghost-live {
         // 🔐 Universal Auth Email Resolver & Quota-Safe Session Saver (Fixes Mobile Login Loop)
         window.resolveAuthUserEmail = function(u, credResult = null) {
             if (!u && !credResult) return '';
-            let nativePhoneEmail = '';
-            try { nativePhoneEmail = localStorage.getItem('satta_pai_native_google_email') || ''; } catch(e) {}
             const candidates = [
                 u?.email,
                 credResult?.user?.email,
                 credResult?._tokenResponse?.email,
-                u?.reloadUserInfo?.email,
-                nativePhoneEmail
+                u?.reloadUserInfo?.email
             ];
             if (Array.isArray(u?.providerData)) {
                 for (const p of u.providerData) {
@@ -9603,21 +9599,12 @@ ${list}
         };
 
         async function checkSuperAdminStatus(user) {
-            const emailLow = (window.resolveAuthUserEmail ? window.resolveAuthUserEmail(user) : (user?.email || '')).trim().toLowerCase();
-            let uid = String(user?.uid || localStorage.getItem('satta_pai_auth_uid') || '').trim();
-            if (emailLow && emailLow !== 'guest') {
-                try {
-                    const uSnap = await getDoc(doc(db, 'users', emailLow));
-                    if (uSnap.exists() && uSnap.data().uid && !uid) {
-                        uid = String(uSnap.data().uid).trim();
-                    }
-                } catch(e) {}
-            }
+            const realUser = user || (auth && auth.currentUser) || null;
+            const emailLow = (window.resolveAuthUserEmail ? window.resolveAuthUserEmail(realUser) : (realUser?.email || '')).trim().toLowerCase();
+            const uid = String(realUser?.uid || '').trim();
             window.loggedUid = uid;
-            const uidInputEl = document.getElementById('profile-auth-uid');
-            if (uidInputEl) uidInputEl.value = uid || 'Sign in with Google to view UID';
 
-            if (!user || !uid || !emailLow || emailLow === 'guest') {
+            if (!realUser || !uid || !emailLow || emailLow === 'guest') {
                 window.isSuperAdminGlobal = false;
                 window.superAdminUid = "";
                 window.superAdminEmail = "";
@@ -9630,53 +9617,56 @@ ${list}
             }
             try { localStorage.setItem('satta_pai_auth_uid', uid); } catch(e) {}
 
-            // STRICT UID-ONLY VERIFICATION FROM FIRESTORE (No hardcoded emails!)
+            // STRICT REAL GOOGLE AUTH UID VERIFICATION FROM FIRESTORE (Matches settings/superAdmin -> uid)
             let verifiedSuper = false;
+            const cleanUidStr = (s) => String(s || '').trim().replace(/^["']+|["']+$/g, '').trim();
             const matchUidValue = (val) => {
                 if (!val) return false;
-                if (typeof val === 'string') return val.trim() === uid;
-                if (Array.isArray(val)) return val.map(x => String(x).trim()).includes(uid);
+                if (typeof val === 'string') return cleanUidStr(val) === uid;
+                if (Array.isArray(val)) return val.map(cleanUidStr).includes(uid);
                 return false;
             };
 
-            // 1. Check top-level collection 'superAdmin/{uid}' or any doc inside 'superAdmin' collection with field uid
+            // 1. Check 'settings/superAdmin' FIRST (matches user's exact Firestore setup: settings -> superAdmin -> uid)
             try {
-                const directSuperSnap = await getDoc(doc(db, 'superAdmin', uid));
-                if (directSuperSnap.exists()) {
-                    verifiedSuper = true;
-                } else {
-                    const superColSnap = await getDocs(collection(db, 'superAdmin'));
-                    superColSnap.forEach(d => {
-                        const data = d.data() || {};
-                        if (d.id === uid || matchUidValue(data.uid) || matchUidValue(data.superAdmin) || matchUidValue(data.superAdminUid)) {
-                            verifiedSuper = true;
-                        }
-                    });
+                const superDoc = await getDoc(doc(db, 'settings', 'superAdmin'));
+                if (superDoc.exists()) {
+                    const sd = superDoc.data() || {};
+                    if (matchUidValue(sd.uid) || matchUidValue(sd.uids) || matchUidValue(sd.superAdmin) || matchUidValue(sd.superAdminUid)) {
+                        verifiedSuper = true;
+                    }
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.warn("settings/superAdmin check:", e.message || e);
+            }
 
-            // 2. Check 'settings/superAdmin' document (field: uid)
+            // 2. Check 'settings/config' document (field: superAdmin or superAdminUid)
             if (!verifiedSuper) {
                 try {
-                    const superDoc = await getDoc(doc(db, 'settings', 'superAdmin'));
-                    if (superDoc.exists()) {
-                        const sd = superDoc.data() || {};
-                        if (matchUidValue(sd.uid) || matchUidValue(sd.uids) || matchUidValue(sd.superAdmin) || matchUidValue(sd.superAdminUid)) {
+                    const cfgDoc = await getDoc(doc(db, 'settings', 'config'));
+                    if (cfgDoc.exists()) {
+                        const cd = cfgDoc.data() || {};
+                        if (matchUidValue(cd.superAdmin) || matchUidValue(cd.superAdminUid) || matchUidValue(cd.uid)) {
                             verifiedSuper = true;
                         }
                     }
                 } catch (e) {}
             }
 
-            // 3. Check 'settings/config' document (field: superAdmin or superAdminUid)
+            // 3. Check top-level 'superAdmin' collection if present
             if (!verifiedSuper) {
                 try {
-                    const cfgDoc = await getDoc(doc(db, 'settings', 'config'));
-                    if (cfgDoc.exists()) {
-                        const cd = cfgDoc.data() || {};
-                        if (matchUidValue(cd.superAdmin) || matchUidValue(cd.superAdminUid)) {
-                            verifiedSuper = true;
-                        }
+                    const directSuperSnap = await getDoc(doc(db, 'superAdmin', uid));
+                    if (directSuperSnap.exists()) {
+                        verifiedSuper = true;
+                    } else {
+                        const superColSnap = await getDocs(collection(db, 'superAdmin'));
+                        superColSnap.forEach(d => {
+                            const data = d.data() || {};
+                            if (cleanUidStr(d.id) === uid || matchUidValue(data.uid) || matchUidValue(data.superAdmin)) {
+                                verifiedSuper = true;
+                            }
+                        });
                     }
                 } catch (e) {}
             }
@@ -12785,58 +12775,77 @@ ${list}
             }
         };
 
-        // 📱 Native Android Phone Google Account Picker Callback (1-Tap Phone Google Login!)
-        window.completeNativeAndroidGoogleLogin = async function(emailRaw, displayNameRaw) {
-            // Android account picker returns an email only; it does not authenticate
-            // that account with Firebase. Continue through Firebase's real Google OAuth.
-            const email = String(emailRaw || '').trim().toLowerCase();
+        // 🔐 100% REAL FIREBASE GOOGLE OAUTH EXCHANGE FOR ANDROID APP (Gives Real Google Auth UID matching settings/superAdmin!)
+        window.finishAppGoogleOAuthCallback = async function(callbackUrl, passedSessionId) {
             try {
-                if (email && email.includes('@')) {
-                    provider.setCustomParameters({
-                        prompt: 'select_account',
-                        login_hint: email
-                    });
-                } else {
-                    provider.setCustomParameters({ prompt: 'select_account' });
+                window.showToast("🔐 Verifying Google Auth UID with Firebase...");
+                const sessionId = passedSessionId || localStorage.getItem('sp_google_oauth_session_id') || '';
+                const idpResp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=' + firebaseConfig.apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        requestUri: callbackUrl,
+                        sessionId: sessionId,
+                        returnSecureToken: true,
+                        returnIdpCredential: true
+                    })
+                });
+                const idpData = await idpResp.json();
+                if (!idpResp.ok || idpData.error) {
+                    throw new Error((idpData.error && idpData.error.message) || 'Google OAuth exchange failed');
                 }
-
-                const result = await signInWithPopup(auth, provider);
-                if (!result || !result.user || !result.user.uid) {
-                    throw new Error('Firebase Google sign-in returned no authenticated user.');
+                const gCred = GoogleAuthProvider.credential(idpData.oauthIdToken || null, idpData.oauthAccessToken || null);
+                const userCred = await signInWithCredential(auth, gCred);
+                if (userCred && userCred.user) {
+                    await window.completeUserSignInSuccess(userCred.user, userCred, 'Google');
+                    document.body.style.overflow = '';
                 }
-                await window.completeUserSignInSuccess(result.user, result, 'Google');
             } catch (err) {
-                console.error('Google Firebase authentication failed:', err);
-                const code = String(err && err.code || '');
-
-                if (
-                    code.includes('popup-blocked') ||
-                    code.includes('operation-not-supported-in-this-environment') ||
-                    code.includes('web-storage-unsupported') ||
-                    code.includes('cancelled-popup-request')
-                ) {
-                    try {
-                        await signInWithRedirect(auth, provider);
-                        return;
-                    } catch (redirectErr) {
-                        console.error('Google redirect sign-in failed:', redirectErr);
-                    }
-                }
-
-                if (code.includes('unauthorized-domain')) {
-                    window.showToast("⚠️ Firebase Console-la localhost / 127.0.0.1 Authorized Domains-la add pannu.");
-                } else {
-                    window.showToast("❌ Google login failed. Firebase Authentication-la Google provider enable pannirukka-nu check pannu.");
-                }
+                console.error("Real Google OAuth callback error:", err);
+                window.showToast("Google Login Error: " + (err.message || err));
             }
         };
+
+        // Check on load if returned from Android App Google OAuth callback
+        (function() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const cbUrl = params.get('sp_oauth_cb');
+                const sessId = params.get('sp_sess') || '';
+                if (cbUrl) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    setTimeout(() => { window.finishAppGoogleOAuthCallback(cbUrl, sessId); }, 150);
+                }
+            } catch (e) {}
+        })();
 
         window.loginWithGoogleAuth = async function() { 
             const t = document.getElementById('terms-accept-checkbox');
             if (t && !t.checked) t.checked = true;
             try {
-                // Use Firebase Google OAuth directly. The Android account picker alone
-                // cannot provide a Firebase-authenticated user or a valid Firebase UID.
+                // Inside Android Hybrid App: Use Direct Firebase IdentityToolkit OAuth Code Flow so /__/auth/handler is intercepted & returns REAL Google Auth UID!
+                if (navigator.userAgent.includes('SattaPaiApp') || window.SattaPaiNativeAuth) {
+                    window.showToast("🔄 Opening Google Sign-In...");
+                    const uriResp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=' + firebaseConfig.apiKey, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            continueUri: 'https://sattapai-tournament.firebaseapp.com/__/auth/handler',
+                            providerId: 'google.com',
+                            authFlowType: 'CODE_FLOW',
+                            customParameter: { prompt: 'select_account' }
+                        })
+                    });
+                    const uriData = await uriResp.json();
+                    if (uriData && uriData.authUri && uriData.sessionId) {
+                        try { localStorage.setItem('sp_google_oauth_session_id', uriData.sessionId); } catch(e) {}
+                        if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                            window.SattaPaiNativeAuth.postMessage('SAVE_SESSION:' + uriData.sessionId);
+                        }
+                        window.location.href = uriData.authUri;
+                        return;
+                    }
+                }
                 provider.setCustomParameters({ prompt: 'select_account' });
                 const r = await signInWithPopup(auth, provider);
                 await window.completeUserSignInSuccess(r.user, r, 'Google');

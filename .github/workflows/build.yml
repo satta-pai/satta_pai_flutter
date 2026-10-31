@@ -1,4 +1,4 @@
-name: Auto Unzip & Build Satta Pai Hybrid App + Web
+name: Build Satta Pai Official App + Web (V4 Verified)
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 jobs:
-  unzip_and_build:
+  build_satta_pai:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -28,40 +28,270 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Clean Repo & Build Satta Pai Hybrid App + Website
+      - name: Build Official Satta Pai App & Website
         run: |
           set -e
-          rm -rf /tmp/sp_bundle /tmp/sp_upload.zip
-          ZIP_PATH=""
-          for z in *.zip; do
-            if [ -f "$z" ] && unzip -l "$z" | grep -q "setup_hybrid_arena.py"; then
-              ZIP_PATH="$z"
+          rm -rf /tmp/sp_bundle
+          mkdir -p /tmp/sp_bundle
+
+          # 1. Extract satta_pai_hybrid_v4.zip (or newest zip containing index.html)
+          for z in satta_pai_hybrid_v4*.zip *.zip; do
+            if [ -f "$z" ] && unzip -l "$z" | grep -q "index.html"; then
+              echo "Extracting bundle: $z"
+              unzip -q -o "$z" -d /tmp/sp_bundle
+              break
             fi
           done
-          if [ -z "$ZIP_PATH" ]; then
-            for z in *.zip; do
-              if [ -f "$z" ] && unzip -l "$z" | grep -q "assets/www/index.html"; then
-                ZIP_PATH="$z"
-              fi
-            done
-          fi
-          if [ -z "$ZIP_PATH" ]; then
-            ZIP_PATH=$(ls -1 *.zip 2>/dev/null | head -n 1 || true)
-          fi
-          echo "Using uploaded bundle: $ZIP_PATH"
-          cp -f "$ZIP_PATH" /tmp/sp_upload.zip
-          mkdir -p /tmp/sp_bundle
-          unzip -q -o /tmp/sp_upload.zip -d /tmp/sp_bundle
 
-          rm -rf lib android ios web linux macos windows test build pubspec.yaml pubspec.lock analysis_options.yaml .metadata
+          # 2. Remove old conflicting folders & old demo workflow
+          rm -rf lib android ios web linux macos windows test build pubspec.yaml pubspec.lock analysis_options.yaml .metadata .github/workflows/flutter_cloud_build.yml
 
+          # 3. Create fresh Flutter project & add packages
           flutter create . --project-name satta_pai_arena --platforms=android,web
           rm -rf test/widget_test.dart
-
           flutter pub add webview_flutter url_launcher
-          python3 /tmp/sp_bundle/setup_hybrid_arena.py
-          flutter pub get
 
+          # 4. Self-contained inline Python setup (Zero external script dependency!)
+          python3 - << 'PYEOF'
+          import os, re, shutil
+
+          os.makedirs("assets/www", exist_ok=True)
+          if os.path.exists("/tmp/sp_bundle/index.html"):
+              shutil.copy2("/tmp/sp_bundle/index.html", "assets/www/index.html")
+          elif os.path.exists("/tmp/sp_bundle/assets/www/index.html"):
+              shutil.copy2("/tmp/sp_bundle/assets/www/index.html", "assets/www/index.html")
+          else:
+              with open("assets/www/index.html", "w", encoding="utf-8") as f:
+                  f.write('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=https://satta-pai.github.io/"></head><body style="background:#05070B;color:#00FFFF;font-family:sans-serif;text-align:center;padding-top:40vh;">Loading Satta Pai Arena...</body></html>')
+
+          for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
+              src_f = f"/tmp/sp_bundle/{folder}"
+              if not os.path.exists(src_f):
+                  src_f = f"/tmp/sp_bundle/android/app/src/main/res/{folder}"
+              if os.path.exists(src_f):
+                  shutil.rmtree("android/app/src/main/res/mipmap-anydpi-v26", ignore_errors=True)
+                  shutil.rmtree("android/app/src/main/res/mipmap-anydpi", ignore_errors=True)
+                  dst_f = f"android/app/src/main/res/{folder}"
+                  os.makedirs(dst_f, exist_ok=True)
+                  for fn in os.listdir(src_f):
+                      shutil.copy2(os.path.join(src_f, fn), os.path.join(dst_f, fn))
+
+          main_dart = '''import 'dart:async';
+          import 'dart:io';
+          import 'package:flutter/material.dart';
+          import 'package:flutter/services.dart';
+          import 'package:webview_flutter/webview_flutter.dart';
+          import 'package:url_launcher/url_launcher.dart';
+
+          void main() async {
+            WidgetsFlutterBinding.ensureInitialized();
+            SystemChrome.setSystemUIOverlayStyle(
+              const SystemUiOverlayStyle(
+                statusBarColor: Color(0xFF05070B),
+                statusBarIconBrightness: Brightness.light,
+                systemNavigationBarColor: Color(0xFF05070B),
+                systemNavigationBarIconBrightness: Brightness.light,
+              ),
+            );
+            runApp(const SattaPaiHybridApp());
+          }
+
+          class SattaPaiHybridApp extends StatelessWidget {
+            const SattaPaiHybridApp({super.key});
+
+            @override
+            Widget build(BuildContext context) {
+              return MaterialApp(
+                title: 'Satta Pai',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData.dark().copyWith(
+                  scaffoldBackgroundColor: const Color(0xFF05070B),
+                  primaryColor: const Color(0xFF00FFFF),
+                ),
+                home: const SattaPaiArenaShell(),
+              );
+            }
+          }
+
+          class SattaPaiArenaShell extends StatefulWidget {
+            const SattaPaiArenaShell({super.key});
+
+            @override
+            State<SattaPaiArenaShell> createState() => _SattaPaiArenaShellState();
+          }
+
+          class _SattaPaiArenaShellState extends State<SattaPaiArenaShell> {
+            WebViewController? _controller;
+            HttpServer? _localServer;
+            bool _isReady = false;
+
+            @override
+            void initState() {
+              super.initState();
+              _startLocalArenaEngine();
+            }
+
+            Future<void> _startLocalArenaEngine() async {
+              try {
+                final String htmlContent = await rootBundle.loadString('assets/www/index.html');
+                try {
+                  _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 8765, shared: true);
+                } catch (_) {
+                  _localServer = await HttpServer.bind(InternetAddress.loopbackIPv4, 0, shared: true);
+                }
+                final int port = _localServer!.port;
+
+                _localServer!.listen((HttpRequest request) async {
+                  request.response.headers.contentType = ContentType.html;
+                  request.response.headers.add('Access-Control-Allow-Origin', '*');
+                  request.response.write(htmlContent);
+                  await request.response.close();
+                });
+
+                final controller = WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setBackgroundColor(const Color(0xFF05070B))
+                  ..setUserAgent(
+                    'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
+                  )
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onNavigationRequest: (NavigationRequest request) {
+                        final String url = request.url;
+                        if (url.startsWith('intent://') ||
+                            url.startsWith('freefire://') ||
+                            url.startsWith('freefiremax://') ||
+                            url.startsWith('upi://') ||
+                            url.startsWith('whatsapp://') ||
+                            url.startsWith('tg://') ||
+                            url.startsWith('mailto:') ||
+                            url.contains('whatsapp.com/channel/') ||
+                            url.contains('t.me/') ||
+                            url.contains('play.google.com/store')) {
+                          _launchExternalAppUrl(url);
+                          return NavigationDecision.prevent;
+                        }
+                        return NavigationDecision.navigate;
+                      },
+                    ),
+                  )
+                  ..loadRequest(Uri.parse('http://localhost:\$port/index.html'));
+
+                if (mounted) {
+                  setState(() {
+                    _controller = controller;
+                    _isReady = true;
+                  });
+                }
+              } catch (e) {
+                final controller = WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setBackgroundColor(const Color(0xFF05070B))
+                  ..loadRequest(Uri.parse('https://satta-pai.github.io/'));
+                if (mounted) {
+                  setState(() {
+                    _controller = controller;
+                    _isReady = true;
+                  });
+                }
+              }
+            }
+
+            Future<void> _launchExternalAppUrl(String url) async {
+              try {
+                if (url.startsWith('intent://')) {
+                  final pkgMatch = RegExp(r'package=([a-zA-Z0-9._]+)').firstMatch(url);
+                  if (pkgMatch != null) {
+                    final pkg = pkgMatch.group(1)!;
+                    final marketUri = Uri.parse('market://details?id=\$pkg');
+                    if (await canLaunchUrl(marketUri)) {
+                      await launchUrl(marketUri, mode: LaunchMode.externalApplication);
+                      return;
+                    }
+                  }
+                  return;
+                }
+                final uri = Uri.parse(url);
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } catch (_) {}
+            }
+
+            @override
+            void dispose() {
+              _localServer?.close(force: true);
+              super.dispose();
+            }
+
+            @override
+            Widget build(BuildContext context) {
+              return WillPopScope(
+                onWillPop: () async {
+                  if (_controller != null && await _controller!.canGoBack()) {
+                    await _controller!.goBack();
+                    return false;
+                  }
+                  return true;
+                },
+                child: Scaffold(
+                  backgroundColor: const Color(0xFF05070B),
+                  body: SafeArea(
+                    child: _isReady && _controller != null
+                        ? WebViewWidget(controller: _controller!)
+                        : const Center(
+                            child: CircularProgressIndicator(color: Color(0xFF00FFFF)),
+                          ),
+                  ),
+                ),
+              );
+            }
+          }
+          '''
+          with open("lib/main.dart", "w", encoding="utf-8") as f:
+              f.write(main_dart)
+
+          with open("pubspec.yaml", "r", encoding="utf-8") as f:
+              pub = f.read()
+          if "assets/www/index.html" not in pub:
+              pub = pub.replace(
+                  "  uses-material-design: true",
+                  "  uses-material-design: true\n  assets:\n    - assets/www/index.html"
+              )
+          with open("pubspec.yaml", "w", encoding="utf-8") as f:
+              f.write(pub)
+
+          mf_path = "android/app/src/main/AndroidManifest.xml"
+          with open(mf_path, "r", encoding="utf-8") as f:
+              mf = f.read()
+          perms = '''
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+              <uses-permission android:name="android.permission.VIBRATE"/>
+              <queries>
+                  <package android:name="com.dts.freefiremax" />
+                  <package android:name="com.dts.freefireth" />
+                  <package android:name="com.garena.game.ffi" />
+                  <package android:name="com.whatsapp" />
+                  <package android:name="org.telegram.messenger" />
+                  <intent>
+                      <action android:name="android.intent.action.VIEW" />
+                      <data android:scheme="https" />
+                  </intent>
+                  <intent>
+                      <action android:name="android.intent.action.VIEW" />
+                      <data android:scheme="upi" />
+                  </intent>
+              </queries>
+          '''
+          if "android.permission.INTERNET" not in mf:
+              mf = mf.replace("<application", perms + "\n    <application", 1)
+          mf = re.sub(r'android:label="[^"]*"', 'android:label="Satta Pai"', mf)
+          if "usesCleartextTraffic" not in mf:
+              mf = mf.replace("<application", '<application\n        android:usesCleartextTraffic="true"', 1)
+          with open(mf_path, "w", encoding="utf-8") as f:
+              f.write(mf)
+          PYEOF
+
+          flutter pub get
           mkdir -p build/web
           cp -f assets/www/index.html build/web/index.html
           flutter build apk --release

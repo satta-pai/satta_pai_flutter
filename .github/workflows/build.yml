@@ -40,8 +40,9 @@ jobs:
 
       - name: Build Satta Pai Android APK & Web Bundle
         run: |
-          mkdir -p build/web
-          cp -f assets/www/index.html build/web/index.html
+          mkdir -p web
+          cp -f index.html web/index.html
+          flutter build web --release
           flutter build apk --release
 
       - name: Downloadable Satta Pai Android APK

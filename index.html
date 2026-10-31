@@ -1226,38 +1226,98 @@ html.theme-ghost-live {
         }
 
     
-        /* ⚡ APTOIDE-GRADE 120FPS SMOOTH TOUCH SCROLLING & GPU ACCELERATION */
+        /* ⚡ WHATSAPP & PLAY STORE TIER 120HZ BUTTERY SMOOTH TOUCH & GPU ACCELERATION */
         html {
             overflow-x: hidden !important;
             overflow-y: auto !important;
             height: auto !important;
             -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-y pinch-zoom !important;
+            touch-action: pan-y !important;
+            scroll-behavior: smooth;
         }
         body {
             overflow-x: hidden !important;
             overflow-y: auto !important;
             height: auto !important;
             min-height: 100vh;
+            min-height: 100dvh;
             -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-y pinch-zoom !important;
+            touch-action: pan-y !important;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
+        /* Instant Responsive Micro-Touch Reactions */
         button, a, input, select, textarea, [onclick] {
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            transition: transform 0.08s ease, opacity 0.08s ease;
         }
+        button:active, [onclick]:active {
+            transform: scale(0.975);
+        }
+
+        /* 🔒 ROCK-SOLID NON-MOVING LOGIN OVERLAY (Zero Dragging / Zero Shifting) */
+        #google-login-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            overflow: hidden !important;
+            touch-action: none !important;
+            overscroll-behavior: contain !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999 !important;
+        }
+        #google-login-overlay .cyber-card {
+            touch-action: pan-y !important;
+            overscroll-behavior: contain !important;
+            max-height: 92dvh;
+            overflow-y: auto;
+            position: relative;
+            transform: none !important;
+        }
+
+        /* 🎨 120FPS GPU LIVE THEME PARTICLES (100% Working on Mobile & Web!) */
+        #live-theme-layer {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+            overflow: hidden !important;
+            display: none;
+        }
+        #live-theme-layer.active {
+            display: block !important;
+        }
+        #live-theme-canvas {
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            display: block !important;
+            pointer-events: none !important;
+            will-change: transform;
+        }
+
         @media (max-width: 900px), (hover: none) {
-            .cyber-card, .modal-backdrop, header, nav, #bottom-nav, #google-login-overlay, .glass-panel {
+            .cyber-card, .modal-backdrop, header, nav, #bottom-nav, .glass-panel {
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
             }
             .cyber-card {
                 background: rgba(13, 19, 33, 0.96) !important;
                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
-            }
-            canvas#live-theme-canvas, canvas#login-bg-video-canvas {
-                display: none !important;
-                pointer-events: none !important;
             }
         }
 
@@ -2288,7 +2348,7 @@ html.theme-ghost-live {
     </div>
 
     <!-- 🎮 UNIQUE ESPORTS LOGIN PAGE WITH LIVE VIDEO ANIMATION BACKDROP -->
-    <div id="google-login-overlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 overflow-y-auto" style="background: radial-gradient(circle at 50% 35%, #0d231a 0%, #060911 65%, #020305 100%);">
+    <div id="google-login-overlay" class="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 overflow-hidden" style="background: radial-gradient(circle at 50% 35%, #0d231a 0%, #060911 65%, #020305 100%);">
         <div class="sp-intro-grid"></div>
         <canvas id="login-video-canvas" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
 
@@ -4317,7 +4377,7 @@ html.theme-ghost-live {
             const canvas = document.getElementById('live-theme-canvas');
             if (!layer || !canvas) return;
             if (window._liveThemeRaf) { cancelAnimationFrame(window._liveThemeRaf); window._liveThemeRaf = null; }
-            if (!themeName || !LIVE_THEMES.includes(themeName) || (!force && !window.isCurrentUserVip())) {
+            if (!themeName || !LIVE_THEMES.includes(themeName) || (!force && !window.isCurrentUserVip() && !window.isSuperAdminGlobal)) {
                 layer.classList.remove('active');
                 window._liveThemeState.theme = '';
                 const ctx = canvas.getContext('2d');
@@ -4761,7 +4821,7 @@ html.theme-ghost-live {
                 const isPremium = PREMIUM_THEMES.includes(savedTheme);
                 
                 // Only revert if user data is fully loaded AND confirmed not-VIP
-                if (isPremium && window.userDataLoaded && !window.isCurrentUserVip()) {
+                if (isPremium && window.userDataLoaded && !window.isCurrentUserVip() && !window.isSuperAdminGlobal) {
                     localStorage.setItem('satta_pai_theme', 'whatsapp');
                     root.classList.remove(...ALL_THEME_CLASSES);
                     window.applyLiveThemeAnimation('');
@@ -5250,7 +5310,7 @@ html.theme-ghost-live {
                 'hacker-live': '🟢 Hacker Live', 'teddy-live': '🧸 Teddy Live', 'ghost-live': '👻 Ghost Horror Live',
                 'cat-live': '🐱 Cat Neko Cyber Live', whatsapp: 'WhatsApp', instagram: 'Instagram', gold: 'Gold', blue: 'Blue'
             };
-            if (PREMIUM_THEMES.includes(themeName) && !window.isCurrentUserVip()) {
+            if (PREMIUM_THEMES.includes(themeName) && !window.isCurrentUserVip() && !window.isSuperAdminGlobal) {
                 window.closeMenuDropdown();
                 window.openVipPassModal(themeName);
                 return;
@@ -8853,6 +8913,15 @@ ${list}
             window.addEventListener('DOMContentLoaded', () => window.playCinematicIntro(false));
         } else {
             window.playCinematicIntro(false);
+
+        // 📳 WhatsApp-Style Tactile Haptic Feedback
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('button, .theme-swatch, .vip-plan-btn, nav button, [role="button"]');
+            if (btn && navigator.vibrate) {
+                try { navigator.vibrate(8); } catch(_) {}
+            }
+        }, { passive: true });
+
         }
 
         // =========================================================================
@@ -12619,6 +12688,7 @@ ${list}
                     logoLabel.style.display = 'none';
                 }
             }
+            if(window._oauthCallbackInProgress) { if(ov) { ov.classList.add('hidden'); ov.setAttribute('hidden', ''); } return; }
             if(!window.loggedEmail){
                 if(ov) { ov.classList.remove('hidden'); ov.removeAttribute('hidden'); ov.removeAttribute('aria-hidden'); ov.removeAttribute('inert'); }
                 if(hdrLoginBtn) { hdrLoginBtn.classList.remove('hidden'); hdrLoginBtn.classList.add('flex'); }
@@ -12776,45 +12846,90 @@ ${list}
         };
 
         // 🔐 100% REAL FIREBASE GOOGLE OAUTH EXCHANGE FOR ANDROID APP (Gives Real Google Auth UID matching settings/superAdmin!)
+        window._oauthCallbackInProgress = false;
+
         window.finishAppGoogleOAuthCallback = async function(callbackUrl, passedSessionId) {
+            window._oauthCallbackInProgress = true;
             try {
-                window.showToast("🔐 Verifying Google Auth UID with Firebase...");
+                window.closeLoginOverlayPermanently();
+                window.showToast("🔐 Signing in to Satta Pai Arena...");
                 const sessionId = passedSessionId || localStorage.getItem('sp_google_oauth_session_id') || '';
+                const reqBody = {
+                    requestUri: callbackUrl,
+                    returnSecureToken: true,
+                    returnIdpCredential: true
+                };
+                if (sessionId) reqBody.sessionId = sessionId;
+
                 const idpResp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=' + firebaseConfig.apiKey, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        requestUri: callbackUrl,
-                        sessionId: sessionId,
-                        returnSecureToken: true,
-                        returnIdpCredential: true
-                    })
+                    body: JSON.stringify(reqBody)
                 });
                 const idpData = await idpResp.json();
                 if (!idpResp.ok || idpData.error) {
                     throw new Error((idpData.error && idpData.error.message) || 'Google OAuth exchange failed');
                 }
-                const gCred = GoogleAuthProvider.credential(idpData.oauthIdToken || null, idpData.oauthAccessToken || null);
-                const userCred = await signInWithCredential(auth, gCred);
-                if (userCred && userCred.user) {
-                    await window.completeUserSignInSuccess(userCred.user, userCred, 'Google');
+
+                // 1. Save real Firebase Google Auth UID (localId) and Email immediately so login state never resets to login screen!
+                const realUid = String(idpData.localId || '').trim();
+                const realEmail = String(idpData.email || '').trim().toLowerCase();
+                if (realEmail) {
+                    window.saveVerifiedAuthEmail(realEmail);
+                }
+                if (realUid) {
+                    window.loggedUid = realUid;
+                    try { localStorage.setItem('satta_pai_auth_uid', realUid); } catch(e) {}
+                }
+
+                // 2. Also sign into Firebase Auth JS SDK via GoogleAuthProvider.credential so Firestore rules (request.auth.uid) work 100%!
+                let finalUserObj = null;
+                if (idpData.oauthIdToken || idpData.oauthAccessToken) {
+                    try {
+                        const gCred = GoogleAuthProvider.credential(idpData.oauthIdToken || null, idpData.oauthAccessToken || null);
+                        const userCred = await signInWithCredential(auth, gCred);
+                        if (userCred && userCred.user) {
+                            finalUserObj = userCred.user;
+                        }
+                    } catch (credErr) {
+                        console.warn("signInWithCredential fallback to verified idpData:", credErr);
+                    }
+                }
+
+                if (!finalUserObj && realEmail && realUid) {
+                    finalUserObj = {
+                        uid: realUid,
+                        email: realEmail,
+                        displayName: idpData.displayName || idpData.fullName || realEmail.split('@')[0],
+                        photoURL: idpData.photoUrl || ''
+                    };
+                }
+
+                window._oauthCallbackInProgress = false;
+                if (finalUserObj) {
+                    await window.completeUserSignInSuccess(finalUserObj, null, 'Google');
+                    window.closeLoginOverlayPermanently();
+                    if (typeof window.switchTab === 'function') window.switchTab('home');
                     document.body.style.overflow = '';
                 }
             } catch (err) {
+                window._oauthCallbackInProgress = false;
                 console.error("Real Google OAuth callback error:", err);
                 window.showToast("Google Login Error: " + (err.message || err));
             }
         };
 
-        // Check on load if returned from Android App Google OAuth callback
+        // Check immediately on load if returning from Android App Google OAuth callback
         (function() {
             try {
                 const params = new URLSearchParams(window.location.search);
                 const cbUrl = params.get('sp_oauth_cb');
                 const sessId = params.get('sp_sess') || '';
                 if (cbUrl) {
+                    window._oauthCallbackInProgress = true;
+                    window.closeLoginOverlayPermanently();
                     window.history.replaceState({}, document.title, window.location.pathname);
-                    setTimeout(() => { window.finishAppGoogleOAuthCallback(cbUrl, sessId); }, 150);
+                    setTimeout(() => { window.finishAppGoogleOAuthCallback(cbUrl, sessId); }, 50);
                 }
             } catch (e) {}
         })();
@@ -12823,7 +12938,7 @@ ${list}
             const t = document.getElementById('terms-accept-checkbox');
             if (t && !t.checked) t.checked = true;
             try {
-                // Inside Android Hybrid App: Use Direct Firebase IdentityToolkit OAuth Code Flow so /__/auth/handler is intercepted & returns REAL Google Auth UID!
+                // Inside Android Hybrid App: Use Direct Firebase IdentityToolkit OAuth Flow (No invalid customParameter field!)
                 if (navigator.userAgent.includes('SattaPaiApp') || window.SattaPaiNativeAuth) {
                     window.showToast("🔄 Opening Google Sign-In...");
                     const uriResp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key=' + firebaseConfig.apiKey, {
@@ -12832,8 +12947,7 @@ ${list}
                         body: JSON.stringify({
                             continueUri: 'https://sattapai-tournament.firebaseapp.com/__/auth/handler',
                             providerId: 'google.com',
-                            authFlowType: 'CODE_FLOW',
-                            customParameter: { prompt: 'select_account' }
+                            authFlowType: 'CODE_FLOW'
                         })
                     });
                     const uriData = await uriResp.json();
@@ -12842,7 +12956,10 @@ ${list}
                         if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
                             window.SattaPaiNativeAuth.postMessage('SAVE_SESSION:' + uriData.sessionId);
                         }
-                        window.location.href = uriData.authUri;
+                        const targetUrl = uriData.authUri.includes('prompt=')
+                            ? uriData.authUri
+                            : (uriData.authUri + '&prompt=select_account');
+                        window.location.href = targetUrl;
                         return;
                     }
                 }

@@ -5,6 +5,12 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+env:
+  # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
+  # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
+  APP_VERSION_NAME: "1.0.1"
+  APP_VERSION_CODE: "101"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -109,6 +115,7 @@ jobs:
               <uses-permission android:name="android.permission.INTERNET"/>
               <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
               <uses-permission android:name="android.permission.VIBRATE"/>
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
               <queries>
                   <package android:name="com.dts.freefiremax"/>
                   <package android:name="com.dts.freefireth"/>
@@ -119,7 +126,7 @@ jobs:
               manifest = manifest.replace("<application", perms + "\n    <application", 1)
 
           if 'android:usesCleartextTraffic="true"' not in manifest:
-              manifest = manifest.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"', 1)
+              manifest = manifest.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"\n        android:allowBackup="true"\n        android:fullBackupContent="true"', 1)
 
           manifest = manifest.replace('android:label="satta_pai"', 'android:label="Satta Pai"')
 
@@ -177,26 +184,38 @@ jobs:
 
           kt_code = r'''package com.sattapai.satta_pai
 
+          import android.Manifest
           import android.accounts.AccountManager
           import android.app.Activity
+          import android.app.NotificationChannel
+          import android.app.NotificationManager
+          import android.app.PendingIntent
           import android.content.ComponentName
+          import android.content.Context
           import android.content.Intent
           import android.content.pm.PackageManager
           import android.net.Uri
           import android.os.Build
           import android.os.Bundle
           import android.view.WindowManager
+          import androidx.core.app.ActivityCompat
+          import androidx.core.app.NotificationCompat
+          import androidx.core.content.ContextCompat
           import io.flutter.embedding.android.FlutterActivity
           import io.flutter.embedding.engine.FlutterEngine
           import io.flutter.plugin.common.MethodChannel
 
           class MainActivity: FlutterActivity() {
               private val CHANNEL = "satta_pai/native_auth"
+              private val NOTIF_CHANNEL_ID = "satta_pai_esports_alerts"
               private var pendingResult: MethodChannel.Result? = null
               private val PICK_ACCOUNT_REQ = 9001
+              private val REQ_POST_NOTIF = 9002
 
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
+                  createNotificationChannelIfNeeded()
+                  requestNotificationPermissionIfNeeded()
                   try {
                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                           window.attributes.layoutInDisplayCutoutMode =
@@ -218,6 +237,62 @@ jobs:
                   } catch (e: Exception) {
                       // Ignore display mode errors
                   }
+              }
+
+              private fun requestNotificationPermissionIfNeeded() {
+                  try {
+                      if (Build.VERSION.SDK_INT >= 33) {
+                          if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                              != PackageManager.PERMISSION_GRANTED) {
+                              ActivityCompat.requestPermissions(
+                                  this,
+                                  arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                  REQ_POST_NOTIF
+                              )
+                          }
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun createNotificationChannelIfNeeded() {
+                  try {
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                          val chan = NotificationChannel(
+                              NOTIF_CHANNEL_ID,
+                              "Satta Pai Arena Alerts & DMs",
+                              NotificationManager.IMPORTANCE_HIGH
+                          )
+                          chan.description = "Private DM messages, Match Room Keys & App Update alerts"
+                          chan.enableVibration(true)
+                          nm.createNotificationChannel(chan)
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun showNativeNotification(title: String, body: String, notifId: Int) {
+                  try {
+                      createNotificationChannelIfNeeded()
+                      val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val intent = Intent(this, MainActivity::class.java).apply {
+                          flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                      }
+                      val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                      } else {
+                          PendingIntent.FLAG_UPDATE_CURRENT
+                      }
+                      val pendingIntent = PendingIntent.getActivity(this, notifId, intent, piFlags)
+                      val builder = NotificationCompat.Builder(this, NOTIF_CHANNEL_ID)
+                          .setSmallIcon(applicationInfo.icon)
+                          .setContentTitle(title)
+                          .setContentText(body)
+                          .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                          .setPriority(NotificationCompat.PRIORITY_HIGH)
+                          .setAutoCancel(true)
+                          .setContentIntent(pendingIntent)
+                      nm.notify(notifId, builder.build())
+                  } catch (e: Exception) {}
               }
 
               private fun switchLauncherIcon(iconKey: String) {
@@ -298,6 +373,13 @@ jobs:
                               switchLauncherIcon(iconKey)
                               result.success(true)
                           }
+                          "showNotification" -> {
+                              val title = call.argument<String>("title") ?: "Satta Pai Esports"
+                              val body = call.argument<String>("body") ?: ""
+                              val id = call.argument<Int>("id") ?: (System.currentTimeMillis() % 100000).toInt()
+                              showNativeNotification(title, body, id)
+                              result.success(true)
+                          }
                           else -> result.notImplemented()
                       }
                   }
@@ -323,6 +405,9 @@ jobs:
           PYEOF
 
           python3 - << 'PYEOF'
+          import os
+          ver_name = os.environ.get("APP_VERSION_NAME", "1.0.0").strip() or "1.0.0"
+
           dart_code = r'''import 'dart:async';
           import 'dart:convert';
           import 'dart:io';
@@ -333,7 +418,7 @@ jobs:
           import 'package:webview_flutter_android/webview_flutter_android.dart';
           import 'package:url_launcher/url_launcher.dart';
 
-          const String kCurrentNativeAppVersion = 'v13.0';
+          const String kCurrentNativeAppVersion = '__APP_VERSION_NAME__';
           const int kFixedLocalServerPort = 18765;
 
           void main() async {
@@ -441,6 +526,8 @@ jobs:
               String savedUid = _prefs?.getString('sp_saved_uid') ?? '';
               String savedGuest = _prefs?.getString('sp_saved_guest') ?? '0';
               String savedVer = _prefs?.getString('sp_saved_app_version') ?? '';
+              String savedMusicMuted = _prefs?.getString('sp_music_muted') ?? '';
+              String savedMusicVol = _prefs?.getString('sp_music_volume') ?? '';
 
               if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
                 savedEmail = '';
@@ -459,12 +546,17 @@ jobs:
                 'guest': savedGuest,
                 'appVersion': savedVer.isEmpty ? kCurrentNativeAppVersion : savedVer,
                 'nativeBuildVersion': kCurrentNativeAppVersion,
+                'musicMuted': savedMusicMuted,
+                'musicVolume': savedMusicVol,
               };
 
               final String bootScript = '<script id="sp-native-boot-bridge">'
                   'window.__SP_NATIVE_STORAGE__ = ' + jsonEncode(bootPayload) + ';'
+                  'window.CURRENT_APP_APK_VERSION = "' + kCurrentNativeAppVersion + '";'
                   'try {'
                   '  var _spN = window.__SP_NATIVE_STORAGE__;'
+                  '  if (_spN && _spN.musicMuted) localStorage.setItem("satta_pai_music_muted", _spN.musicMuted);'
+                  '  if (_spN && _spN.musicVolume) localStorage.setItem("satta_pai_music_volume", _spN.musicVolume);'
                   '  if (_spN && _spN.email && _spN.email.indexOf("@") !== -1) {'
                   '    localStorage.setItem("satta_pai_auth_email", _spN.email);'
                   '    localStorage.setItem("satta_pai_native_google_email", _spN.email);'
@@ -515,7 +607,7 @@ jobs:
                 final controller = WebViewController()
                   ..setJavaScriptMode(JavaScriptMode.unrestricted)
                   ..setBackgroundColor(const Color(0xFF0A0E17))
-                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/13.0')
+                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/' + kCurrentNativeAppVersion)
                   ..addJavaScriptChannel(
                     'SattaPaiNativeAuth',
                     onMessageReceived: (JavaScriptMessage message) async {
@@ -523,6 +615,35 @@ jobs:
                       if (msg.startsWith('pick_account:')) {
                         final provider = msg.substring('pick_account:'.length);
                         await _triggerNativePicker(provider.isEmpty ? 'Google' : provider);
+                      } else if (msg.startsWith('open_browser:')) {
+                        final targetUrl = msg.substring('open_browser:'.length).trim();
+                        if (targetUrl.isNotEmpty) {
+                          await launchUrl(Uri.parse(targetUrl), mode: LaunchMode.externalApplication);
+                        }
+                      } else if (msg.startsWith('notify:')) {
+                        try {
+                          final payloadStr = msg.substring('notify:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          await _authChannel.invokeMethod('showNotification', {
+                            'title': (data['title'] ?? 'Satta Pai Esports').toString(),
+                            'body': (data['body'] ?? '').toString(),
+                            'id': data['id'] is int ? data['id'] : (DateTime.now().millisecondsSinceEpoch % 100000),
+                          });
+                        } catch (e) {
+                          debugPrint('notify error: ' + e.toString());
+                        }
+                      } else if (msg.startsWith('save_audio_prefs:')) {
+                        try {
+                          final payloadStr = msg.substring('save_audio_prefs:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          final prefs = _prefs ?? await SharedPreferences.getInstance();
+                          if (data.containsKey('muted')) {
+                            await prefs.setString('sp_music_muted', (data['muted'] ?? '0').toString());
+                          }
+                          if (data.containsKey('volume')) {
+                            await prefs.setString('sp_music_volume', (data['volume'] ?? '0.8').toString());
+                          }
+                        } catch (e) {}
                       } else if (msg.startsWith('save_auth:')) {
                         try {
                           final payloadStr = msg.substring('save_auth:'.length);
@@ -560,7 +681,15 @@ jobs:
                             url.startsWith('freefiremax://') ||
                             url.startsWith('market://') ||
                             url.startsWith('mailto:') ||
-                            url.startsWith('tel:')) {
+                            url.startsWith('tel:') ||
+                            url.endsWith('.apk') ||
+                            url.contains('github.com/login/oauth') ||
+                            url.contains('facebook.com/v') ||
+                            url.contains('facebook.com/dialog/oauth') ||
+                            url.contains('drive.google.com') ||
+                            url.contains('mediafire.com') ||
+                            url.contains('mega.nz') ||
+                            url.contains('t.me/')) {
                           launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
                           return NavigationDecision.prevent;
                         }
@@ -618,12 +747,20 @@ jobs:
               );
             }
           }
-          '''
+          '''.replace('__APP_VERSION_NAME__', ver_name)
           with open("lib/main.dart", "w") as f:
               f.write(dart_code)
           PYEOF
 
-          flutter build apk --release
+          # 🔐 Generate Deterministic Signing Keystore so APK Updates NEVER conflict or delete existing App Data!
+          keytool -genkeypair -v \
+            -keystore android/app/satta_pai_release.jks \
+            -alias satta_pai_key \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass sattapai2026 -keypass sattapai2026 \
+            -dname "CN=Satta Pai Esports, OU=Arena, O=SattaPai, L=Chennai, ST=TN, C=IN" || true
+
+          flutter build apk --release --build-name="${APP_VERSION_NAME}" --build-number="${APP_VERSION_CODE}"
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4

@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.3"
-  APP_VERSION_CODE: "103"
+  APP_VERSION_NAME: "1.0.4"
+  APP_VERSION_CODE: "104"
 
 jobs:
   build:
@@ -116,6 +116,11 @@ jobs:
               <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
               <uses-permission android:name="android.permission.VIBRATE"/>
               <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
               <queries>
                   <package android:name="com.dts.freefiremax"/>
                   <package android:name="com.dts.freefireth"/>
@@ -197,6 +202,11 @@ jobs:
           import android.net.Uri
           import android.os.Build
           import android.os.Bundle
+          import android.graphics.Bitmap
+          import android.graphics.BitmapFactory
+          import android.provider.OpenableColumns
+          import android.util.Base64
+          import java.io.ByteArrayOutputStream
           import android.view.KeyEvent
           import android.view.WindowManager
           import android.widget.Toast
@@ -206,13 +216,19 @@ jobs:
           import io.flutter.embedding.android.FlutterActivity
           import io.flutter.embedding.engine.FlutterEngine
           import io.flutter.plugin.common.MethodChannel
+          import org.json.JSONObject
+          import java.io.File
+          import java.io.FileOutputStream
 
           class MainActivity: FlutterActivity() {
               private val CHANNEL = "satta_pai/native_auth"
               private val NOTIF_CHANNEL_ID = "satta_pai_esports_alerts"
               private var pendingResult: MethodChannel.Result? = null
+              private var pendingFileResult: MethodChannel.Result? = null
               private val PICK_ACCOUNT_REQ = 9001
               private val REQ_POST_NOTIF = 9002
+              private val PICK_FILE_REQ = 9003
+              private val REQ_RECORD_AUDIO = 9004
               private var isVipDmSecureShieldActive = false
 
               override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,22 +240,8 @@ jobs:
                           window.attributes.layoutInDisplayCutoutMode =
                               WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
                       }
-                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                          val display = windowManager.defaultDisplay
-                          val modes = display.supportedModes
-                          var bestMode = display.mode
-                          for (m in modes) {
-                              if (m.refreshRate > bestMode.refreshRate) {
-                                  bestMode = m
-                              }
-                          }
-                          val params = window.attributes
-                          params.preferredDisplayModeId = bestMode.modeId
-                          window.attributes = params
-                      }
-                  } catch (e: Exception) {
-                      // Ignore display mode errors
-                  }
+                      // Adaptive Refresh Rate: Let Android OS dynamically scale refresh rate (saves battery & prevents heating!)
+                  } catch (e: Exception) {}
               }
 
               private fun requestNotificationPermissionIfNeeded() {
@@ -255,6 +257,24 @@ jobs:
                           }
                       }
                   } catch (e: Exception) {}
+              }
+
+              private fun ensureMicrophonePermission(): Boolean {
+                  return try {
+                      if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                          != PackageManager.PERMISSION_GRANTED) {
+                          ActivityCompat.requestPermissions(
+                              this,
+                              arrayOf(Manifest.permission.RECORD_AUDIO),
+                              REQ_RECORD_AUDIO
+                          )
+                          false
+                      } else {
+                          true
+                      }
+                  } catch (e: Exception) {
+                      false
+                  }
               }
 
               private fun createNotificationChannelIfNeeded() {
@@ -366,6 +386,33 @@ jobs:
                                   result.success("")
                               }
                           }
+                          "pickFile" -> {
+                              if (pendingFileResult != null) {
+                                  pendingFileResult?.success("")
+                                  pendingFileResult = null
+                              }
+                              pendingFileResult = result
+                              try {
+                                  val mime = call.argument<String>("mime") ?: "*/*"
+                                  val cleanMime = when {
+                                      mime.contains("audio") -> "audio/*"
+                                      mime.contains("image") -> "image/*"
+                                      else -> "*/*"
+                                  }
+                                  val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                                      type = cleanMime
+                                      addCategory(Intent.CATEGORY_OPENABLE)
+                                  }
+                                  startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_FILE_REQ)
+                              } catch (e: Exception) {
+                                  pendingFileResult = null
+                                  result.success("")
+                              }
+                          }
+                          "requestMicPermission" -> {
+                              val granted = ensureMicrophonePermission()
+                              result.success(granted)
+                          }
                           "launchFreeFire" -> {
                               val pkg = call.argument<String>("pkg") ?: "com.dts.freefiremax"
                               val ok = launchInstalledFreeFire(pkg)
@@ -411,7 +458,7 @@ jobs:
 
               override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
                   if (isVipDmSecureShieldActive && (keyCode == KeyEvent.KEYCODE_SYSRQ || keyCode == KeyEvent.KEYCODE_CAPTIONS)) {
-                      Toast.makeText(this, "🚫 Cannot take screenshot! PRO / PRO+ Privacy Shield Active.", Toast.LENGTH_SHORT).show()
+                      Toast.makeText(this, "Cannot take screenshot! PRO / PRO+ Privacy Shield Active.", Toast.LENGTH_SHORT).show()
                       return true
                   }
                   return super.onKeyDown(keyCode, event)
@@ -425,6 +472,66 @@ jobs:
                       if (resultCode == Activity.RESULT_OK && data != null) {
                           val email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME) ?: ""
                           res?.success(email)
+                      } else {
+                          res?.success("")
+                      }
+                  } else if (requestCode == PICK_FILE_REQ) {
+                      val res = pendingFileResult
+                      pendingFileResult = null
+                      if (resultCode == Activity.RESULT_OK && data?.data != null) {
+                          try {
+                              val uri = data.data!!
+                              val mime = contentResolver.getType(uri) ?: "application/octet-stream"
+                              var fileName = "picked_file_" + System.currentTimeMillis()
+                              contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                                  val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                  if (nameIndex >= 0 && cursor.moveToFirst()) {
+                                      fileName = cursor.getString(nameIndex) ?: fileName
+                                  }
+                              }
+                              val safeName = fileName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
+                              val tempFile = File(cacheDir, "sp_upload_" + safeName)
+                              var rawBytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: ByteArray(0)
+                              var finalMime = mime
+
+                              // If it's an image, compress natively in Kotlin to <= 640px JPEG so it's < 80KB and never exceeds Android 1MB Binder IPC limit!
+                              if (mime.startsWith("image/") && rawBytes.isNotEmpty()) {
+                                  try {
+                                      val bmp = BitmapFactory.decodeByteArray(rawBytes, 0, rawBytes.size)
+                                      if (bmp != null) {
+                                          val maxDim = 640
+                                          val w = bmp.width
+                                          val h = bmp.height
+                                          val scaled = if (w > maxDim || h > maxDim) {
+                                              val ratio = minOf(maxDim.toFloat() / w.toFloat(), maxDim.toFloat() / h.toFloat())
+                                              Bitmap.createScaledBitmap(bmp, (w * ratio).toInt().coerceAtLeast(1), (h * ratio).toInt().coerceAtLeast(1), true)
+                                          } else {
+                                              bmp
+                                          }
+                                          val baos = ByteArrayOutputStream()
+                                          scaled.compress(Bitmap.CompressFormat.JPEG, 82, baos)
+                                          rawBytes = baos.toByteArray()
+                                          finalMime = "image/jpeg"
+                                      }
+                                  } catch (e: Exception) {}
+                              }
+
+                              FileOutputStream(tempFile).use { it.write(rawBytes) }
+                              val fileUriStr = Uri.fromFile(tempFile).toString()
+                              // Only inline Base64 in JSON if <= 350KB; larger files (like MP3 songs) stream via local HttpServer /__picked_file!
+                              val b64 = if (rawBytes.size <= 350 * 1024) {
+                                  Base64.encodeToString(rawBytes, Base64.NO_WRAP)
+                              } else ""
+                              val json = JSONObject()
+                              json.put("uri", fileUriStr)
+                              json.put("path", tempFile.absolutePath)
+                              json.put("name", safeName)
+                              json.put("mime", finalMime)
+                              json.put("dataUrl", if (b64.isNotEmpty()) "data:$finalMime;base64,$b64" else "")
+                              res?.success(json.toString())
+                          } catch (e: Exception) {
+                              res?.success("")
+                          }
                       } else {
                           res?.success("")
                       }
@@ -492,6 +599,8 @@ jobs:
             HttpServer? _server;
             SharedPreferences? _prefs;
             bool _isReady = false;
+            String _lastPickedFilePath = '';
+            String _lastPickedFileMime = 'application/octet-stream';
             static const MethodChannel _authChannel = MethodChannel('satta_pai/native_auth');
 
             @override
@@ -635,6 +744,20 @@ jobs:
                 _server!.listen((HttpRequest req) async {
                   req.response.headers.set('Access-Control-Allow-Origin', '*');
                   req.response.headers.set('Cache-Control', 'no-store');
+                  if (req.uri.path == '/__picked_file' && _lastPickedFilePath.isNotEmpty) {
+                    try {
+                      final f = File(_lastPickedFilePath);
+                      if (await f.exists()) {
+                        req.response.headers.set('Content-Type', _lastPickedFileMime);
+                        await req.response.addStream(f.openRead());
+                        await req.response.close();
+                        return;
+                      }
+                    } catch (_) {}
+                    req.response.statusCode = 404;
+                    await req.response.close();
+                    return;
+                  }
                   req.response.headers.contentType = ContentType.html;
                   req.response.write(_buildHydratedHtml(indexHtml));
                   await req.response.close();
@@ -707,6 +830,38 @@ jobs:
                         final flag = msg.substring('set_screenshot_block:'.length).trim();
                         final enable = (flag == '1' || flag == 'true');
                         await _authChannel.invokeMethod('setScreenshotBlock', {'enable': enable});
+                      } else if (msg == 'request_mic_perm') {
+                        await _authChannel.invokeMethod('requestMicPermission');
+                      } else if (msg.startsWith('pick_file:')) {
+                        try {
+                          final rest = msg.substring('pick_file:'.length);
+                          final parts = rest.split('|');
+                          final inputId = parts.isNotEmpty ? parts[0] : '';
+                          final mime = parts.length > 1 ? parts[1] : '*/*';
+                          final String? resJson = await _authChannel.invokeMethod<String>('pickFile', {'mime': mime});
+                          if (resJson != null && resJson.isNotEmpty && _controller != null) {
+                            final Map<String, dynamic> fObj = jsonDecode(resJson);
+                            final String dUrl = (fObj['dataUrl'] ?? '').toString();
+                            final String fPath = (fObj['path'] ?? '').toString();
+                            final String fName = (fObj['name'] ?? 'file').toString();
+                            final String fMime = (fObj['mime'] ?? 'application/octet-stream').toString();
+                            if (fPath.isNotEmpty) {
+                              _lastPickedFilePath = fPath;
+                              _lastPickedFileMime = fMime;
+                            }
+                            final String httpUrl = 'http://127.0.0.1:' + port.toString() + '/__picked_file?t=' + DateTime.now().millisecondsSinceEpoch.toString();
+                            await _controller!.runJavaScript(
+                              'if(window.onNativeFilePicked){window.onNativeFilePicked(' +
+                                  jsonEncode(inputId) + ',' +
+                                  jsonEncode(fName) + ',' +
+                                  jsonEncode(fMime) + ',' +
+                                  jsonEncode(dUrl) + ',' +
+                                  jsonEncode(httpUrl) + ');}'
+                            );
+                          }
+                        } catch (e) {
+                          debugPrint('pick_file error: ' + e.toString());
+                        }
                       } else {
                         await _triggerNativePicker('Google');
                       }
@@ -742,8 +897,38 @@ jobs:
 
                 if (controller.platform is AndroidWebViewController) {
                   AndroidWebViewController.enableDebugging(false);
-                  (controller.platform as AndroidWebViewController)
-                      .setMediaPlaybackRequiresUserGesture(false);
+                  final androidCtrl = controller.platform as AndroidWebViewController;
+                  androidCtrl.setMediaPlaybackRequiresUserGesture(false);
+                  androidCtrl.setOnPlatformPermissionRequest((PlatformWebViewPermissionRequest request) {
+                    request.grant();
+                  });
+                  androidCtrl.setOnShowFileSelector((FileSelectorParams params) async {
+                    try {
+                      final accept = params.acceptTypes.isNotEmpty ? params.acceptTypes.join(',') : '*/*';
+                      final String? resJson = await _authChannel.invokeMethod<String>('pickFile', {'mime': accept});
+                      if (resJson != null && resJson.isNotEmpty) {
+                        final Map<String, dynamic> fObj = jsonDecode(resJson);
+                        final String uriStr = (fObj['uri'] ?? '').toString();
+                        final String dUrl = (fObj['dataUrl'] ?? '').toString();
+                        final String fName = (fObj['name'] ?? 'file').toString();
+                        final String fMime = (fObj['mime'] ?? 'application/octet-stream').toString();
+                        if (dUrl.isNotEmpty && _controller != null) {
+                          await _controller!.runJavaScript(
+                            'if(window.onNativeFilePicked){window.onNativeFilePicked(window._lastClickedFileInputId||"",' +
+                                jsonEncode(fName) + ',' +
+                                jsonEncode(fMime) + ',' +
+                                jsonEncode(dUrl) + ');}'
+                          );
+                        }
+                        if (uriStr.isNotEmpty) {
+                          return <String>[uriStr];
+                        }
+                      }
+                    } catch (e) {
+                      debugPrint('FileSelector error: ' + e.toString());
+                    }
+                    return <String>[];
+                  });
                 }
 
                 final String localUrl = 'http://127.0.0.1:' + port.toString() + '/index.html';
@@ -794,15 +979,18 @@ jobs:
               f.write(dart_code)
           PYEOF
 
-          # 🔐 Generate Deterministic Signing Keystore so APK Updates NEVER conflict or delete existing App Data!
-          keytool -genkeypair -v \
-            -keystore android/app/satta_pai_release.jks \
-            -alias satta_pai_key \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass sattapai2026 -keypass sattapai2026 \
-            -dname "CN=Satta Pai Esports, OU=Arena, O=SattaPai, L=Chennai, ST=TN, C=IN" || true
+                    # 🔐 PERMANENT STATIC SIGNING KEYSTORE (Prevents "App not installed as package conflicts with an existing package"!)
+          # By writing the exact same binary keystore to ~/.android/debug.keystore on every GitHub Actions run,
+          # every APK ever built has the 100% identical RSA SHA-256 certificate signature forever!
+          mkdir -p ~/.android
+          echo "/u3+7QAAAAIAAAABAAAAAQAPYW5kcm9pZGRlYnVna2V5AAABoZdxV8sAAAUCMIIE/jAOBgorBgEEASoCEQEBBQAEggTqlKDx33XYHzb+SDGbsaABCEVGxfDR82OSyn8at3P1nWqP/Nf9xpE/aLnznFH5qFaSJL8Bsk1huejaC6B12AO82gKg2ggMT5jiPt6kXy0b6p6KQfILiTJmVzuVUY3vOZcNVcg4y+frObrtXTF1cdR4pBuTfRxIEql04JZD4ZX7ARMkdcZw2fZLBf2TywdQx8t6MQEEre5Ns0Bj56YEszLbaqui4DrwpIZzdFK43qnTHuvwrFsHi0+288j0+yWobFXRhuw7+CpZz9TzgoDSV6I4Q+Ve6htRMm6e7pWpJKzvMqqicjYBKNjCtgfRY+aRtYMb8NJva8NBUo4meUutFXULg3Aj+WYUxSfGfNT+LyjtZyYK0AClhvtBT/ZevzkolAAi2ZVzrn8z5KlIiLJnZEBlnTMVRwyZR9QtNEuhdGEGOcurG//4LcHUMyAs3TnIOkF685v5Gmg/X3CBGUE3s1uRzVg704jDUWVnXQydsut0h6Dbwpm5LRtYW4yrYcZ0hWkyjQZMQPHDzzTfucgqtHTqe9cQ4qiVqW95Y+gQlh0ER6VXTFIQqIklIcGAZXtliPgoqG0E+GCbuvbrfF+jvTwuXQgBcMGkWYIsKH8r5TZ3dO5KgDyFghI2iMFmoHqj4VmyknxfGhr+48QBf6HtJJmfTb85DCWrmOD/WLFjx2T9lx20BXR3+mdXgv0zEKej3PiJPLXqhJ9s3SPJG94cYWpsRUFlSkru3PN2yL+nAOqw+Fdst3ZGqbGb+HF6mWbrIyFU4LWXzZXpzvFNCFm2ejtHFFAHE2dGJ6ZfCyFYgCf5/8M5FYngbdJC5L2TwBbtSAiqMSEt9rD/AeWdGyu7wS8L3xfLNq+8SWrODDFSCsLbvjbRT3lSMxWZl2GHCaXvzyupGFgn5lNv5jJNfX+uNSgLf1E1J3b1oUhd0dQtX5LwbCE4SB6yfpHeNPYGp4IBvQXalL4WPmCPOGAtKEiHisSujXt68CrqkIiGmGZG7uwoHFIGc8fIjKTphGX5W5CqOpjzPrkaV6vJBjMczISDZPt/3HGhbazdOVr0g/AJQnuylaLmZXEDq0SeE2tnUFIxiCo3g9t8MHW3mrTKylw9OuE5q0NnijBifyZRm6z9z5LBVRZ3/HtLdJn/ZGzS0RgHnIpBh0ZWruKP9/AScfVM/9673XDDQNcy7hiVSZOjhaud1dn3QBF7sMA50eRvuBYJArBttE1un0uKjZFoh7vdRw6iL77SQymWd2es4q5zp4lauahPj2ZA03ZGkbNxfaKN556rbRHHts8VwintxSogIHNbHNi++zAUsP0X8+Nq5SiFZPvZwAhm7Y7vRXb9Q9iRfQmFK2zci2YK0vZu6bL/pG2bg+yKXik9iw2MLYb4prFWoooyQTALMqUkoM2IiPLA6vDnySIhj7qOeT5N+MxQfVJiFGdYbbeF7aOJPeZOd+/2ijgtsqnsWAIxcxe6/0CbRD66pIrIjugEhj85DiMa2MqSTh9anwdhoQVyj3HlUpzA0B8O3eIgp9lrNR4qd+mTzWTd4mCQJnMPgwAvm/Fwumm0cf6Y3rk8UKPjbI7k5plKiExL3YuJKCopFHVvCTe5ckXA8ycTPRo7D/NdMwk+jE+l48UUZf2zqGUR9Uap5Vrm4dDIoN7ZVP3B+RXxk9z/rngo0WWyP2NKiNNPmQAAAAEABVguNTA5AAADGDCCAxQwggH8oAMCAQICCQD+ry+OgoyMRzANBgkqhkiG9w0BAQsFADA3MQswCQYDVQQGEwJVUzEQMA4GA1UEChMHQW5kcm9pZDEWMBQGA1UEAxMNQW5kcm9pZCBEZWJ1ZzAgFw0yNjExMDExNDA5MTBaGA8yMDU2MTAyNDE0MDkxMFowNzELMAkGA1UEBhMCVVMxEDAOBgNVBAoTB0FuZHJvaWQxFjAUBgNVBAMTDUFuZHJvaWQgRGVidWcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDJ3l927ZOKVhXWAEUI7gYLle0NH0rai51B7OXKHYUYYv6FnkMXO/LZ/JBchEs2cN5jp6zVa5KQ3ovtCnZaNqB1uRzuRsczOqbzDC4cdB69y7EqhZdrUF3yHtJ+pjcWW8t5MEQHAwg3TWBDUBPtXQ1H7dAdHgYjDcELsWjMXcTT0i8dwTpREsUtOs9U/+OuBXQbduocBP/99QBxGI0Si/n+FptnUHrA7I9E0APl74N2I9phAL2dQMCNEL4els5l/mCzmw5+Vsle8W7yTdmSa5WG3j0wgfbjBX3uetTxbUWpxaBZAMHw1GfJ8uHh+sYQcKp22EDtyLZa1MmEFbqOwbMFAgMBAAGjITAfMB0GA1UdDgQWBBRiklv2EKJCc69iIq4kPPvfWdlhQjANBgkqhkiG9w0BAQsFAAOCAQEAeq2sj8HW2ylAcEvPUziN4AgOSvcaSCO7xIPc9ATxXGePt5U/szgySbQNDu8vVwD0yY5UDajSzwf3fZUSkE34XiE9S69QAZfiONlBymEV35kzRiPLwkWhCX3NRSSh9P2dyav7+OyQv2zIB9OHBkmaUBgcU7S/2lkKo3Vx+5jD+e8yVChvHyA+pQCAKEo1nao8OrgNXdw2dlygRxLWiv29kUdOPvPoZiWbuBRa//GZ/nwZIN+X4N6pgLa1W0A/IoUXaqvrGo6hyD20eM/uFObQvP+agfwTpq3OxqvWTD0+lYOBP/XZRx2RB2uB2IDtNhhsBBg+Rte1lklB/bkfHRg/4h7+L4usA1bxeXJDpLul9EWQCBkF" | base64 -d > ~/.android/debug.keystore
+          cp ~/.android/debug.keystore android/app/debug.keystore
 
-          flutter build apk --release --build-name="${APP_VERSION_NAME}" --build-number="${APP_VERSION_CODE}"
+          # Auto-increment build number on every GitHub Actions run so Android always allows in-place APK Update!
+          AUTO_BUILD_NUMBER=$((1000 + ${GITHUB_RUN_NUMBER:-1}))
+          echo "Building APK v${APP_VERSION_NAME} (versionCode: ${AUTO_BUILD_NUMBER})..."
+
+          flutter build apk --release --build-name="${APP_VERSION_NAME}" --build-number="${AUTO_BUILD_NUMBER}"
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4

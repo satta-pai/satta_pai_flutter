@@ -328,9 +328,13 @@ jobs:
           import 'dart:io';
           import 'package:flutter/material.dart';
           import 'package:flutter/services.dart';
+          import 'package:shared_preferences/shared_preferences.dart';
           import 'package:webview_flutter/webview_flutter.dart';
           import 'package:webview_flutter_android/webview_flutter_android.dart';
           import 'package:url_launcher/url_launcher.dart';
+
+          const String kCurrentNativeAppVersion = 'v13.0';
+          const int kFixedLocalServerPort = 18765;
 
           void main() async {
             WidgetsFlutterBinding.ensureInitialized();
@@ -369,6 +373,7 @@ jobs:
           class _ArenaWebViewScreenState extends State<ArenaWebViewScreen> {
             WebViewController? _controller;
             HttpServer? _server;
+            SharedPreferences? _prefs;
             bool _isReady = false;
             static const MethodChannel _authChannel = MethodChannel('satta_pai/native_auth');
 
@@ -378,11 +383,49 @@ jobs:
               _startLocalServerAndWebView();
             }
 
+            Future<void> _saveNativeAuthSession({
+              required String email,
+              String uid = '',
+              String guest = '0',
+              String appVersion = kCurrentNativeAppVersion,
+            }) async {
+              try {
+                final prefs = _prefs ?? await SharedPreferences.getInstance();
+                _prefs = prefs;
+                await prefs.setString('sp_saved_email', email.trim().toLowerCase());
+                if (uid.isNotEmpty) {
+                  await prefs.setString('sp_saved_uid', uid.trim());
+                }
+                await prefs.setString('sp_saved_guest', guest);
+                await prefs.setString('sp_saved_app_version', appVersion);
+              } catch (e) {
+                debugPrint('Error saving native auth prefs: ' + e.toString());
+              }
+            }
+
+            Future<void> _clearNativeAuthSession() async {
+              try {
+                final prefs = _prefs ?? await SharedPreferences.getInstance();
+                _prefs = prefs;
+                await prefs.remove('sp_saved_email');
+                await prefs.remove('sp_saved_uid');
+                await prefs.remove('sp_saved_guest');
+              } catch (e) {
+                debugPrint('Error clearing native auth prefs: ' + e.toString());
+              }
+            }
+
             Future<void> _triggerNativePicker(String provider) async {
               try {
                 final String? email = await _authChannel.invokeMethod<String>('pickAccount');
                 if (email != null && email.trim().isNotEmpty && _controller != null) {
-                  final String safeEmail = jsonEncode(email.trim());
+                  final String cleanEmail = email.trim().toLowerCase();
+                  await _saveNativeAuthSession(
+                    email: cleanEmail,
+                    guest: '0',
+                    appVersion: kCurrentNativeAppVersion,
+                  );
+                  final String safeEmail = jsonEncode(cleanEmail);
                   final String safeProv = jsonEncode(provider);
                   await _controller!.runJavaScript(
                     'if(window.onNativeAccountPicked){window.onNativeAccountPicked(' + safeEmail + ',' + safeProv + ');}'
@@ -393,18 +436,84 @@ jobs:
               }
             }
 
+            String _buildHydratedHtml(String rawHtml) {
+              String savedEmail = _prefs?.getString('sp_saved_email') ?? '';
+              String savedUid = _prefs?.getString('sp_saved_uid') ?? '';
+              String savedGuest = _prefs?.getString('sp_saved_guest') ?? '0';
+              String savedVer = _prefs?.getString('sp_saved_app_version') ?? '';
+
+              // Enforce 1-Time Login Per Version:
+              // If the user updated the APK to a newer version, clear the old version session once
+              // so they log in freshly on the new update, then stay logged in forever on this version!
+              if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
+                savedEmail = '';
+                savedUid = '';
+                savedGuest = '0';
+                _clearNativeAuthSession();
+                _prefs?.setString('sp_saved_app_version', kCurrentNativeAppVersion);
+              } else if (savedVer.isEmpty && (savedEmail.isNotEmpty || savedGuest == '1')) {
+                savedVer = kCurrentNativeAppVersion;
+                _prefs?.setString('sp_saved_app_version', kCurrentNativeAppVersion);
+              }
+
+              final Map<String, String> bootPayload = {
+                'email': savedEmail,
+                'uid': savedUid,
+                'guest': savedGuest,
+                'appVersion': savedVer.isEmpty ? kCurrentNativeAppVersion : savedVer,
+                'nativeBuildVersion': kCurrentNativeAppVersion,
+              };
+
+              final String bootScript = '<script id="sp-native-boot-bridge">'
+                  'window.__SP_NATIVE_STORAGE__ = ' + jsonEncode(bootPayload) + ';'
+                  'try {'
+                  '  var _spN = window.__SP_NATIVE_STORAGE__;'
+                  '  if (_spN && _spN.email && _spN.email.indexOf("@") !== -1) {'
+                  '    localStorage.setItem("satta_pai_auth_email", _spN.email);'
+                  '    localStorage.setItem("satta_pai_native_google_email", _spN.email);'
+                  '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
+                  '    sessionStorage.setItem("satta_pai_auth_email", _spN.email);'
+                  '    if (_spN.uid) localStorage.setItem("satta_pai_auth_uid", _spN.uid);'
+                  '    window.loggedEmail = _spN.email;'
+                  '    window._hasVerifiedAuthSession = true;'
+                  '  } else if (_spN && _spN.guest === "1") {'
+                  '    localStorage.setItem("satta_pai_guest_session", "1");'
+                  '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
+                  '    sessionStorage.setItem("satta_pai_guest_session", "1");'
+                  '    window.loggedEmail = "guest";'
+                  '  }'
+                  '} catch(e) {}'
+                  '</script>';
+
+              if (rawHtml.contains('<head>')) {
+                return rawHtml.replaceFirst('<head>', '<head>\n' + bootScript);
+              }
+              return bootScript + rawHtml;
+            }
+
             Future<void> _startLocalServerAndWebView() async {
               try {
+                _prefs = await SharedPreferences.getInstance();
                 final indexHtml = await rootBundle.loadString('assets/www/index.html');
 
-                _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+                // Bind to fixed port 18765 so WebView origin (http://127.0.0.1:18765) NEVER changes
+                // across app restarts, preserving localStorage, cookies, and IndexedDB 100%!
+                try {
+                  _server = await HttpServer.bind(
+                    InternetAddress.loopbackIPv4,
+                    kFixedLocalServerPort,
+                    shared: true,
+                  );
+                } catch (_) {
+                  _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+                }
                 final int port = _server!.port;
 
                 _server!.listen((HttpRequest req) async {
                   req.response.headers.set('Access-Control-Allow-Origin', '*');
                   req.response.headers.set('Cache-Control', 'no-store');
                   req.response.headers.contentType = ContentType.html;
-                  req.response.write(indexHtml);
+                  req.response.write(_buildHydratedHtml(indexHtml));
                   await req.response.close();
                 });
 
@@ -419,6 +528,21 @@ jobs:
                       if (msg.startsWith('pick_account:')) {
                         final provider = msg.substring('pick_account:'.length);
                         await _triggerNativePicker(provider.isEmpty ? 'Google' : provider);
+                      } else if (msg.startsWith('save_auth:')) {
+                        try {
+                          final payloadStr = msg.substring('save_auth:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          await _saveNativeAuthSession(
+                            email: (data['email'] ?? '').toString(),
+                            uid: (data['uid'] ?? '').toString(),
+                            guest: (data['guest'] ?? '0').toString(),
+                            appVersion: (data['appVersion'] ?? kCurrentNativeAppVersion).toString(),
+                          );
+                        } catch (e) {
+                          debugPrint('save_auth parse error: ' + e.toString());
+                        }
+                      } else if (msg == 'clear_auth') {
+                        await _clearNativeAuthSession();
                       } else if (msg.startsWith('launch_pkg:')) {
                         final pkg = msg.substring('launch_pkg:'.length).trim();
                         await _authChannel.invokeMethod('launchFreeFire', {'pkg': pkg});

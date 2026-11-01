@@ -69,11 +69,9 @@ jobs:
                   if file.startswith("ic_launcher"):
                       os.remove(os.path.join(root, file))
 
-          # Extract main logo
           m = re.search(r'id="custom-app-logo-img"\s+src="data:image/[^;]+;base64,([^"]+)"', html)
           default_bytes = base64.b64decode(m.group(1)) if m else b""
 
-          # Extract the 4 VIP Custom App Icons embedded in window.VIP_CUSTOM_APP_ICONS
           vip_icons = {}
           vm = re.search(r'window\.VIP_CUSTOM_APP_ICONS\s*=\s*(\{.*?\});', html)
           if vm:

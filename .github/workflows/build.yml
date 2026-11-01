@@ -25,10 +25,14 @@ jobs:
           flutter-version: '3.24.3'
           channel: 'stable'
 
-      - name: Create Flutter Project & Configure Native Account Picker
+      - name: Create Flutter Project & Configure Production Native App
         run: |
           mkdir -p /tmp/web_backup
-          cp index.html /tmp/web_backup/index.html
+          if [ -f "app.html" ]; then
+            cp app.html /tmp/web_backup/index.html
+          else
+            cp index.html /tmp/web_backup/index.html
+          fi
 
           flutter create --org com.sattapai --project-name satta_pai app_build
           cd app_build
@@ -54,28 +58,48 @@ jobs:
           PYEOF
 
           python3 - << 'PYEOF'
-          import re, base64, os, shutil
+          import re, base64, os, shutil, json
 
           with open("assets/www/index.html", "r", encoding="utf-8") as f:
               html = f.read()
 
+          res_dir = "android/app/src/main/res"
+          for root, dirs, files in os.walk(res_dir):
+              for file in files:
+                  if file.startswith("ic_launcher"):
+                      os.remove(os.path.join(root, file))
+
+          # Extract main logo
           m = re.search(r'id="custom-app-logo-img"\s+src="data:image/[^;]+;base64,([^"]+)"', html)
-          if m:
-              img_bytes = base64.b64decode(m.group(1))
-              with open("/tmp/app_logo.webp", "wb") as out:
-                  out.write(img_bytes)
+          default_bytes = base64.b64decode(m.group(1)) if m else b""
 
-              res_dir = "android/app/src/main/res"
-              for root, dirs, files in os.walk(res_dir):
-                  for file in files:
-                      if file.startswith("ic_launcher"):
-                          os.remove(os.path.join(root, file))
+          # Extract the 4 VIP Custom App Icons embedded in window.VIP_CUSTOM_APP_ICONS
+          vip_icons = {}
+          vm = re.search(r'window\.VIP_CUSTOM_APP_ICONS\s*=\s*(\{.*?\});', html)
+          if vm:
+              try:
+                  parsed = json.loads(vm.group(1))
+                  for k, v in parsed.items():
+                      durl = v.get("dataUrl", "")
+                      if "base64," in durl:
+                          vip_icons[k] = base64.b64decode(durl.split("base64,", 1)[1])
+              except Exception:
+                  pass
 
-              for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
-                  target_dir = os.path.join(res_dir, folder)
-                  os.makedirs(target_dir, exist_ok=True)
-                  shutil.copy("/tmp/app_logo.webp", os.path.join(target_dir, "ic_launcher.webp"))
-                  shutil.copy("/tmp/app_logo.webp", os.path.join(target_dir, "ic_launcher_round.webp"))
+          for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
+              target_dir = os.path.join(res_dir, folder)
+              os.makedirs(target_dir, exist_ok=True)
+              main_icon = vip_icons.get("icon_cyan") or default_bytes
+              if main_icon:
+                  with open(os.path.join(target_dir, "ic_launcher.webp"), "wb") as out:
+                      out.write(main_icon)
+                  with open(os.path.join(target_dir, "ic_launcher_round.webp"), "wb") as out:
+                      out.write(main_icon)
+              for key in ["icon_cyan", "icon_gold", "icon_purple", "icon_fire"]:
+                  ibytes = vip_icons.get(key) or main_icon
+                  if ibytes:
+                      with open(os.path.join(target_dir, f"ic_{key}.webp"), "wb") as out:
+                          out.write(ibytes)
           PYEOF
 
           python3 - << 'PYEOF'
@@ -87,14 +111,61 @@ jobs:
               <uses-permission android:name="android.permission.INTERNET"/>
               <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
               <uses-permission android:name="android.permission.VIBRATE"/>
+              <queries>
+                  <package android:name="com.dts.freefiremax"/>
+                  <package android:name="com.dts.freefireth"/>
+                  <package android:name="com.garena.game.ffi"/>
+              </queries>
           """
           if "android.permission.INTERNET" not in manifest:
               manifest = manifest.replace("<application", perms + "\n    <application", 1)
 
           if 'android:usesCleartextTraffic="true"' not in manifest:
-              manifest = manifest.replace("<application", '<application\n        android:usesCleartextTraffic="true"', 1)
+              manifest = manifest.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"', 1)
 
           manifest = manifest.replace('android:label="satta_pai"', 'android:label="Satta Pai"')
+
+          aliases = """
+              <activity-alias
+                  android:name=".IconGoldAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_gold"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+              <activity-alias
+                  android:name=".IconPurpleAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_purple"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+              <activity-alias
+                  android:name=".IconFireAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_fire"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+          """
+          if "IconGoldAlias" not in manifest:
+              manifest = manifest.replace("</application>", aliases + "\n    </application>", 1)
+
           with open(manifest_path, "w") as f:
               f.write(manifest)
           PYEOF
@@ -110,7 +181,10 @@ jobs:
 
           import android.accounts.AccountManager
           import android.app.Activity
+          import android.content.ComponentName
           import android.content.Intent
+          import android.content.pm.PackageManager
+          import android.net.Uri
           import android.os.Build
           import android.os.Bundle
           import android.view.WindowManager
@@ -126,7 +200,7 @@ jobs:
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
                   try {
-                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                           window.attributes.layoutInDisplayCutoutMode =
                               WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
                       }
@@ -148,33 +222,85 @@ jobs:
                   }
               }
 
+              private fun switchLauncherIcon(iconKey: String) {
+                  try {
+                      val pm = applicationContext.packageManager
+                      val pkg = applicationContext.packageName
+                      val components = mapOf(
+                          "icon_cyan" to ComponentName(pkg, "$pkg.MainActivity"),
+                          "icon_gold" to ComponentName(pkg, "$pkg.IconGoldAlias"),
+                          "icon_purple" to ComponentName(pkg, "$pkg.IconPurpleAlias"),
+                          "icon_fire" to ComponentName(pkg, "$pkg.IconFireAlias")
+                      )
+                      for ((k, comp) in components) {
+                          val state = if (k == iconKey)
+                              PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                          else
+                              PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                          pm.setComponentEnabledSetting(comp, state, PackageManager.DONT_KILL_APP)
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun launchInstalledFreeFire(targetPkg: String): Boolean {
+                  try {
+                      val pm = applicationContext.packageManager
+                      val candidates = listOf(targetPkg, "com.dts.freefiremax", "com.dts.freefireth", "com.garena.game.ffi")
+                      for (pkg in candidates) {
+                          val launchIntent = pm.getLaunchIntentForPackage(pkg)
+                          if (launchIntent != null) {
+                              launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                              startActivity(launchIntent)
+                              return true
+                          }
+                      }
+                      val marketIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + targetPkg))
+                      marketIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                      startActivity(marketIntent)
+                      return true
+                  } catch (e: Exception) {
+                      return false
+                  }
+              }
+
               override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
                   super.configureFlutterEngine(flutterEngine)
                   MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
-                      if (call.method == "pickAccount") {
-                          if (pendingResult != null) {
-                              pendingResult?.success("")
-                              pendingResult = null
-                          }
-                          pendingResult = result
-                          try {
-                              val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                  AccountManager.newChooseAccountIntent(
-                                      null, null, arrayOf("com.google"), null, null, null, null
-                                  )
-                              } else {
-                                  @Suppress("DEPRECATION")
-                                  AccountManager.newChooseAccountIntent(
-                                      null, null, arrayOf("com.google"), false, null, null, null, null
-                                  )
+                      when (call.method) {
+                          "pickAccount" -> {
+                              if (pendingResult != null) {
+                                  pendingResult?.success("")
+                                  pendingResult = null
                               }
-                              startActivityForResult(intent, PICK_ACCOUNT_REQ)
-                          } catch (e: Exception) {
-                              pendingResult = null
-                              result.success("")
+                              pendingResult = result
+                              try {
+                                  val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                      AccountManager.newChooseAccountIntent(
+                                          null, null, arrayOf("com.google"), null, null, null, null
+                                      )
+                                  } else {
+                                      @Suppress("DEPRECATION")
+                                      AccountManager.newChooseAccountIntent(
+                                          null, null, arrayOf("com.google"), false, null, null, null, null
+                                      )
+                                  }
+                                  startActivityForResult(intent, PICK_ACCOUNT_REQ)
+                              } catch (e: Exception) {
+                                  pendingResult = null
+                                  result.success("")
+                              }
                           }
-                      } else {
-                          result.notImplemented()
+                          "launchFreeFire" -> {
+                              val pkg = call.argument<String>("pkg") ?: "com.dts.freefiremax"
+                              val ok = launchInstalledFreeFire(pkg)
+                              result.success(ok)
+                          }
+                          "setAppIcon" -> {
+                              val iconKey = call.argument<String>("icon") ?: "icon_cyan"
+                              switchLauncherIcon(iconKey)
+                              result.success(true)
+                          }
+                          else -> result.notImplemented()
                       }
                   }
               }
@@ -287,16 +413,22 @@ jobs:
                 final controller = WebViewController()
                   ..setJavaScriptMode(JavaScriptMode.unrestricted)
                   ..setBackgroundColor(const Color(0xFF0A0E17))
-                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/12.2')
+                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/13.0')
                   ..addJavaScriptChannel(
                     'SattaPaiNativeAuth',
-                    onMessageReceived: (JavaScriptMessage message) {
+                    onMessageReceived: (JavaScriptMessage message) async {
                       final msg = message.message;
                       if (msg.startsWith('pick_account:')) {
                         final provider = msg.substring('pick_account:'.length);
-                        _triggerNativePicker(provider.isEmpty ? 'Google' : provider);
+                        await _triggerNativePicker(provider.isEmpty ? 'Google' : provider);
+                      } else if (msg.startsWith('launch_pkg:')) {
+                        final pkg = msg.substring('launch_pkg:'.length).trim();
+                        await _authChannel.invokeMethod('launchFreeFire', {'pkg': pkg});
+                      } else if (msg.startsWith('set_app_icon:')) {
+                        final iconKey = msg.substring('set_app_icon:'.length).trim();
+                        await _authChannel.invokeMethod('setAppIcon', {'icon': iconKey});
                       } else {
-                        _triggerNativePicker('Google');
+                        await _triggerNativePicker('Google');
                       }
                     },
                   )
@@ -307,6 +439,9 @@ jobs:
                         if (url.startsWith('upi://') ||
                             url.startsWith('whatsapp://') ||
                             url.startsWith('intent://') ||
+                            url.startsWith('freefire://') ||
+                            url.startsWith('freefiremax://') ||
+                            url.startsWith('market://') ||
                             url.startsWith('mailto:') ||
                             url.startsWith('tel:')) {
                           launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

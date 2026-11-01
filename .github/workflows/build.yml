@@ -175,7 +175,7 @@ jobs:
           kt_path = kt_files[0] if kt_files else "android/app/src/main/kotlin/com/sattapai/satta_pai/MainActivity.kt"
           os.makedirs(os.path.dirname(kt_path), exist_ok=True)
 
-          kt_code = '''package com.sattapai.satta_pai
+          kt_code = r'''package com.sattapai.satta_pai
 
           import android.accounts.AccountManager
           import android.app.Activity
@@ -323,7 +323,7 @@ jobs:
           PYEOF
 
           python3 - << 'PYEOF'
-          dart_code = '''import 'dart:async';
+          dart_code = r'''import 'dart:async';
           import 'dart:convert';
           import 'dart:io';
           import 'package:flutter/material.dart';
@@ -442,9 +442,6 @@ jobs:
               String savedGuest = _prefs?.getString('sp_saved_guest') ?? '0';
               String savedVer = _prefs?.getString('sp_saved_app_version') ?? '';
 
-              // Enforce 1-Time Login Per Version:
-              // If the user updated the APK to a newer version, clear the old version session once
-              // so they log in freshly on the new update, then stay logged in forever on this version!
               if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
                 savedEmail = '';
                 savedUid = '';
@@ -486,7 +483,7 @@ jobs:
                   '</script>';
 
               if (rawHtml.contains('<head>')) {
-                return rawHtml.replaceFirst('<head>', '<head>\n' + bootScript);
+                return rawHtml.replaceFirst('<head>', '<head>' + bootScript);
               }
               return bootScript + rawHtml;
             }
@@ -496,8 +493,6 @@ jobs:
                 _prefs = await SharedPreferences.getInstance();
                 final indexHtml = await rootBundle.loadString('assets/www/index.html');
 
-                // Bind to fixed port 18765 so WebView origin (http://127.0.0.1:18765) NEVER changes
-                // across app restarts, preserving localStorage, cookies, and IndexedDB 100%!
                 try {
                   _server = await HttpServer.bind(
                     InternetAddress.loopbackIPv4,

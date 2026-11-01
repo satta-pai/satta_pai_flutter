@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.2"
-  APP_VERSION_CODE: "102"
+  APP_VERSION_NAME: "1.0.3"
+  APP_VERSION_CODE: "103"
 
 jobs:
   build:
@@ -383,6 +383,13 @@ jobs:
                               showNativeNotification(title, body, id)
                               result.success(true)
                           }
+                          "clearNotifications" -> {
+                              try {
+                                  val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                                  nm.cancelAll()
+                              } catch (e: Exception) {}
+                              result.success(true)
+                          }
                           "setScreenshotBlock" -> {
                               val enable = call.argument<Boolean>("enable") ?: false
                               isVipDmSecureShieldActive = enable
@@ -579,10 +586,13 @@ jobs:
                   'window.__SP_NATIVE_STORAGE__ = ' + jsonEncode(bootPayload) + ';'
                   'window.CURRENT_APP_APK_VERSION = "' + kCurrentNativeAppVersion + '";'
                   'try {'
+                  '  sessionStorage.setItem("sp_intro_shown_session", "1");'
+                  '  sessionStorage.setItem("sp_intro_seen_session", "1");'
                   '  var _spN = window.__SP_NATIVE_STORAGE__;'
                   '  if (_spN && _spN.musicMuted) localStorage.setItem("satta_pai_music_muted", _spN.musicMuted);'
                   '  if (_spN && _spN.musicVolume) localStorage.setItem("satta_pai_music_volume", _spN.musicVolume);'
                   '  if (_spN && _spN.email && _spN.email.indexOf("@") !== -1) {'
+                  '    localStorage.setItem("satta_pai_intro_completed", "1");'
                   '    localStorage.setItem("satta_pai_auth_email", _spN.email);'
                   '    localStorage.setItem("satta_pai_native_google_email", _spN.email);'
                   '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
@@ -591,6 +601,7 @@ jobs:
                   '    window.loggedEmail = _spN.email;'
                   '    window._hasVerifiedAuthSession = true;'
                   '  } else if (_spN && _spN.guest === "1") {'
+                  '    localStorage.setItem("satta_pai_intro_completed", "1");'
                   '    localStorage.setItem("satta_pai_guest_session", "1");'
                   '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
                   '    sessionStorage.setItem("satta_pai_guest_session", "1");'
@@ -684,6 +695,8 @@ jobs:
                         }
                       } else if (msg == 'clear_auth') {
                         await _clearNativeAuthSession();
+                      } else if (msg == 'clear_notifications') {
+                        await _authChannel.invokeMethod('clearNotifications');
                       } else if (msg.startsWith('launch_pkg:')) {
                         final pkg = msg.substring('launch_pkg:'.length).trim();
                         await _authChannel.invokeMethod('launchFreeFire', {'pkg': pkg});

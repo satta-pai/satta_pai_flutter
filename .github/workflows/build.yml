@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.1"
-  APP_VERSION_CODE: "101"
+  APP_VERSION_NAME: "1.0.2"
+  APP_VERSION_CODE: "102"
 
 jobs:
   build:
@@ -197,7 +197,9 @@ jobs:
           import android.net.Uri
           import android.os.Build
           import android.os.Bundle
+          import android.view.KeyEvent
           import android.view.WindowManager
+          import android.widget.Toast
           import androidx.core.app.ActivityCompat
           import androidx.core.app.NotificationCompat
           import androidx.core.content.ContextCompat
@@ -211,6 +213,7 @@ jobs:
               private var pendingResult: MethodChannel.Result? = null
               private val PICK_ACCOUNT_REQ = 9001
               private val REQ_POST_NOTIF = 9002
+              private var isVipDmSecureShieldActive = false
 
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
@@ -380,9 +383,31 @@ jobs:
                               showNativeNotification(title, body, id)
                               result.success(true)
                           }
+                          "setScreenshotBlock" -> {
+                              val enable = call.argument<Boolean>("enable") ?: false
+                              isVipDmSecureShieldActive = enable
+                              runOnUiThread {
+                                  try {
+                                      if (enable) {
+                                          window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                                      } else {
+                                          window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                                      }
+                                  } catch (e: Exception) {}
+                              }
+                              result.success(true)
+                          }
                           else -> result.notImplemented()
                       }
                   }
+              }
+
+              override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+                  if (isVipDmSecureShieldActive && (keyCode == KeyEvent.KEYCODE_SYSRQ || keyCode == KeyEvent.KEYCODE_CAPTIONS)) {
+                      Toast.makeText(this, "🚫 Cannot take screenshot! PRO / PRO+ Privacy Shield Active.", Toast.LENGTH_SHORT).show()
+                      return true
+                  }
+                  return super.onKeyDown(keyCode, event)
               }
 
               override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -665,6 +690,10 @@ jobs:
                       } else if (msg.startsWith('set_app_icon:')) {
                         final iconKey = msg.substring('set_app_icon:'.length).trim();
                         await _authChannel.invokeMethod('setAppIcon', {'icon': iconKey});
+                      } else if (msg.startsWith('set_screenshot_block:')) {
+                        final flag = msg.substring('set_screenshot_block:'.length).trim();
+                        final enable = (flag == '1' || flag == 'true');
+                        await _authChannel.invokeMethod('setScreenshotBlock', {'enable': enable});
                       } else {
                         await _triggerNativePicker('Google');
                       }

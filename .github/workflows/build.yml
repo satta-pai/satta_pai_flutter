@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.5"
-  APP_VERSION_CODE: "105"
+  APP_VERSION_NAME: "1.0.6"
+  APP_VERSION_CODE: "106"
 
 jobs:
   build:
@@ -119,6 +119,9 @@ jobs:
               <uses-permission android:name="android.permission.RECORD_AUDIO"/>
               <uses-permission android:name="android.permission.CAMERA"/>
               <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+              <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+              <uses-permission android:name="android.permission.WAKE_LOCK"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
               <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
               <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
@@ -224,6 +227,7 @@ jobs:
           class MainActivity: FlutterActivity() {
               private val CHANNEL = "satta_pai/native_auth"
               private val NOTIF_CHANNEL_ID = "satta_pai_esports_alerts"
+              private val CALL_CHANNEL_ID = "satta_pai_incoming_calls"
               private var pendingResult: MethodChannel.Result? = null
               private var pendingFileResult: MethodChannel.Result? = null
               private val PICK_ACCOUNT_REQ = 9001
@@ -231,11 +235,23 @@ jobs:
               private val PICK_FILE_REQ = 9003
               private val REQ_RECORD_AUDIO = 9004
               private var isVipDmSecureShieldActive = false
+              private var pendingOpenDmEmail: String = "" 
 
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
+                  intent?.getStringExtra("open_dm_email")?.let {
+                      if (it.isNotEmpty()) pendingOpenDmEmail = it
+                  }
                   createNotificationChannelIfNeeded()
                   requestNotificationPermissionIfNeeded()
+              }
+
+              override fun onNewIntent(intent: Intent) {
+                  super.onNewIntent(intent)
+                  setIntent(intent)
+                  intent.getStringExtra("open_dm_email")?.let {
+                      if (it.isNotEmpty()) pendingOpenDmEmail = it
+                  }
                   try {
                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                           window.attributes.layoutInDisplayCutoutMode =
@@ -290,16 +306,30 @@ jobs:
                           chan.description = "Private DM messages, Match Room Keys & App Update alerts"
                           chan.enableVibration(true)
                           nm.createNotificationChannel(chan)
+
+                          val callChan = NotificationChannel(
+                              CALL_CHANNEL_ID,
+                              "Satta Pai Voice Calls",
+                              NotificationManager.IMPORTANCE_HIGH
+                          )
+                          callChan.description = "Incoming 1-to-1 Private Chat Voice Calls (Heads-Up Alert)"
+                          callChan.enableVibration(true)
+                          callChan.vibrationPattern = longArrayOf(0, 600, 300, 600, 300, 600, 300, 600)
+                          nm.createNotificationChannel(callChan)
                       }
                   } catch (e: Exception) {}
               }
 
-              private fun showNativeNotification(title: String, body: String, notifId: Int) {
+              private fun showNativeNotification(title: String, body: String, notifId: Int, dmEmail: String = "") {
                   try {
                       createNotificationChannelIfNeeded()
                       val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val isCallAlert = title.contains("Call", ignoreCase = true) || dmEmail.startsWith("call:")
                       val intent = Intent(this, MainActivity::class.java).apply {
-                          flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                          flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                          if (dmEmail.isNotEmpty()) {
+                              putExtra("open_dm_email", dmEmail)
+                          }
                       }
                       val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                           PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -307,14 +337,23 @@ jobs:
                           PendingIntent.FLAG_UPDATE_CURRENT
                       }
                       val pendingIntent = PendingIntent.getActivity(this, notifId, intent, piFlags)
-                      val builder = NotificationCompat.Builder(this, NOTIF_CHANNEL_ID)
+                      val channelToUse = if (isCallAlert) CALL_CHANNEL_ID else NOTIF_CHANNEL_ID
+                      val builder = NotificationCompat.Builder(this, channelToUse)
                           .setSmallIcon(applicationInfo.icon)
                           .setContentTitle(title)
                           .setContentText(body)
                           .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-                          .setPriority(NotificationCompat.PRIORITY_HIGH)
+                          .setPriority(if (isCallAlert) NotificationCompat.PRIORITY_MAX else NotificationCompat.PRIORITY_HIGH)
+                          .setCategory(if (isCallAlert) NotificationCompat.CATEGORY_CALL else NotificationCompat.CATEGORY_MESSAGE)
+                          .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                           .setAutoCancel(true)
                           .setContentIntent(pendingIntent)
+
+                      if (isCallAlert) {
+                          builder.setFullScreenIntent(pendingIntent, true)
+                          builder.setVibrate(longArrayOf(0, 600, 300, 600, 300, 600, 300, 600))
+                          builder.addAction(android.R.drawable.sym_action_call, "Answer / Open Call", pendingIntent)
+                      }
                       nm.notify(notifId, builder.build())
                   } catch (e: Exception) {}
               }
@@ -428,8 +467,14 @@ jobs:
                               val title = call.argument<String>("title") ?: "Satta Pai Esports"
                               val body = call.argument<String>("body") ?: ""
                               val id = call.argument<Int>("id") ?: (System.currentTimeMillis() % 100000).toInt()
-                              showNativeNotification(title, body, id)
+                              val dmEmail = call.argument<String>("dmEmail") ?: ""
+                              showNativeNotification(title, body, id, dmEmail)
                               result.success(true)
+                          }
+                          "consumePendingOpenDm" -> {
+                              val target = pendingOpenDmEmail
+                              pendingOpenDmEmail = ""
+                              result.success(target)
                           }
                           "clearNotifications" -> {
                               try {
@@ -595,7 +640,7 @@ jobs:
             State<ArenaWebViewScreen> createState() => _ArenaWebViewScreenState();
           }
 
-          class _ArenaWebViewScreenState extends State<ArenaWebViewScreen> {
+          class _ArenaWebViewScreenState extends State<ArenaWebViewScreen> with WidgetsBindingObserver {
             WebViewController? _controller;
             HttpServer? _server;
             SharedPreferences? _prefs;
@@ -607,7 +652,27 @@ jobs:
             @override
             void initState() {
               super.initState();
+              WidgetsBinding.instance.addObserver(this);
               _startLocalServerAndWebView();
+            }
+
+            @override
+            void didChangeAppLifecycleState(AppLifecycleState state) {
+              if (state == AppLifecycleState.resumed) {
+                _checkPendingNotificationDeepLink();
+              }
+            }
+
+            Future<void> _checkPendingNotificationDeepLink() async {
+              try {
+                if (_controller == null) return;
+                final String? dmEmail = await _authChannel.invokeMethod<String>('consumePendingOpenDm');
+                if (dmEmail != null && dmEmail.trim().isNotEmpty) {
+                  await _controller!.runJavaScript(
+                    'if(window.openDirectDmFromNotification){window.openDirectDmFromNotification(' + jsonEncode(dmEmail.trim().toLowerCase()) + ');}'
+                  );
+                }
+              } catch (_) {}
             }
 
             Future<void> _saveNativeAuthSession({
@@ -670,6 +735,8 @@ jobs:
               String savedVer = _prefs?.getString('sp_saved_app_version') ?? '';
               String savedMusicMuted = _prefs?.getString('sp_music_muted') ?? '';
               String savedMusicVol = _prefs?.getString('sp_music_volume') ?? '';
+              String savedInstalledVer = _prefs?.getString('sp_installed_apk_ver') ?? '';
+              String savedInstalledTs = _prefs?.getString('sp_installed_apk_ts') ?? '0';
 
               if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
                 savedEmail = '';
@@ -690,6 +757,8 @@ jobs:
                 'nativeBuildVersion': kCurrentNativeAppVersion,
                 'musicMuted': savedMusicMuted,
                 'musicVolume': savedMusicVol,
+                'installedApkVer': savedInstalledVer,
+                'installedApkTs': savedInstalledTs,
               };
 
               final String bootScript = '<script id="sp-native-boot-bridge">'
@@ -788,6 +857,7 @@ jobs:
                             'title': (data['title'] ?? 'Satta Pai Esports').toString(),
                             'body': (data['body'] ?? '').toString(),
                             'id': data['id'] is int ? data['id'] : (DateTime.now().millisecondsSinceEpoch % 100000),
+                            'dmEmail': (data['dmEmail'] ?? '').toString(),
                           });
                         } catch (e) {
                           debugPrint('notify error: ' + e.toString());
@@ -821,6 +891,16 @@ jobs:
                         await _clearNativeAuthSession();
                       } else if (msg == 'clear_notifications') {
                         await _authChannel.invokeMethod('clearNotifications');
+                      } else if (msg.startsWith('save_installed_ver:')) {
+                        try {
+                          final rest = msg.substring('save_installed_ver:'.length);
+                          final parts = rest.split('|');
+                          final ver = parts.isNotEmpty ? parts[0].trim() : '';
+                          final ts = parts.length > 1 ? parts[1].trim() : '0';
+                          final prefs = _prefs ?? await SharedPreferences.getInstance();
+                          if (ver.isNotEmpty) await prefs.setString('sp_installed_apk_ver', ver);
+                          await prefs.setString('sp_installed_apk_ts', ts);
+                        } catch (_) {}
                       } else if (msg.startsWith('launch_pkg:')) {
                         final pkg = msg.substring('launch_pkg:'.length).trim();
                         await _authChannel.invokeMethod('launchFreeFire', {'pkg': pkg});
@@ -934,6 +1014,7 @@ jobs:
 
                 final String localUrl = 'http://127.0.0.1:' + port.toString() + '/index.html';
                 await controller.loadRequest(Uri.parse(localUrl));
+                Future.delayed(const Duration(milliseconds: 900), () => _checkPendingNotificationDeepLink());
 
                 if (mounted) {
                   setState(() {
@@ -948,6 +1029,7 @@ jobs:
 
             @override
             void dispose() {
+              WidgetsBinding.instance.removeObserver(this);
               _server?.close(force: true);
               super.dispose();
             }

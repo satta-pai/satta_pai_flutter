@@ -1446,8 +1446,8 @@ html.theme-ghost-live {
             transform: none !important;
         }
         #spin-wheel-modal, [id$="-modal"] {
-            overscroll-behavior: none !important;
-            touch-action: none !important;
+            overscroll-behavior: contain !important;
+            touch-action: pan-y !important;
         }
         #spin-wheel-modal > .cyber-card, [id$="-modal"] > .cyber-card {
             overflow-x: hidden !important;
@@ -1720,6 +1720,140 @@ html.theme-ghost-live {
             touch-action: none !important;
             user-select: none !important;
             transition: box-shadow 0.15s ease !important;
+        }
+    </style>
+
+
+    <style id="satta-pai-v17-ios-flagship-css">
+        /* 🍎 1. APPLE iOS 18 / iPHONE PRO MAX FLAGSHIP SMOOTHNESS & UNLOCKED SCROLLING */
+        html {
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-x: clip !important;
+            overflow-y: scroll !important;
+            overscroll-behavior-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scroll-behavior: smooth;
+        }
+        body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow: visible !important;
+            overflow-x: clip !important;
+            overscroll-behavior-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y pinch-zoom !important;
+            padding-bottom: calc(185px + env(safe-area-inset-bottom, 24px)) !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', sans-serif !important;
+            letter-spacing: -0.01em;
+        }
+        main {
+            height: auto !important;
+            min-height: calc(100vh - 60px) !important;
+            overflow: visible !important;
+            padding-bottom: calc(175px + env(safe-area-inset-bottom, 24px)) !important;
+        }
+        main > section {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding-bottom: 110px !important;
+        }
+        #admin-secured-portal {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            max-width: 520px !important;
+            margin: 0 auto !important;
+            padding: 10px 12px calc(210px + env(safe-area-inset-bottom, 30px)) 12px !important;
+        }
+        #section-teams,
+        #console-super-admin,
+        #console-admin-host,
+        #section-profile,
+        #prof-subpanel-locker,
+        #prof-subpanel-account,
+        #prof-subpanel-squad,
+        #prof-subpanel-more {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding-bottom: 120px !important;
+        }
+        #profile-app-icon-switcher-card {
+            max-width: 100% !important;
+            margin-bottom: 60px !important;
+        }
+
+        /* Ensure all Modals scroll smoothly from top to bottom without cutting off */
+        [id$="-modal"]:not(#dm-audio-call-modal) {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+        }
+        [id$="-modal"]:not(#dm-audio-call-modal) > .cyber-card {
+            max-height: 87vh !important;
+            max-height: 87dvh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            padding-bottom: calc(28px + env(safe-area-inset-bottom, 12px)) !important;
+        }
+
+        /* 🍎 2. APPLE iOS SQUIRCLE CARDS & DYNAMIC ISLAND CALL PILL */
+        .cyber-card {
+            border-radius: 22px !important;
+            transition: border-color 0.2s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
+        }
+        #dm-floating-call-pip {
+            background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%) !important;
+            border: 1.5px solid #34d399 !important;
+            border-radius: 999px !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 18px rgba(16, 185, 129, 0.45) !important;
+        }
+
+        /* 💬 3. WHATSAPP / INSTAGRAM / TELEGRAM CHAT BUBBLE & SWIPE-REPLY ANIMATIONS */
+        @keyframes spChatBubblePopIn {
+            0% { opacity: 0; transform: translateY(10px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        html:not(.sp-no-animations) .sp-chat-bubble-anim,
+        html:not(.sp-no-animations) .chat-bubble {
+            animation: spChatBubblePopIn 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+            transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1) !important;
+        }
+        /* Swipe-to-Reply Floating Badge */
+        .sp-swipe-reply-indicator {
+            position: fixed;
+            left: 16px;
+            z-index: 999999;
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            background: var(--btn-bg);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.4);
+            transition: opacity 0.12s ease, transform 0.12s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .sp-swipe-reply-indicator.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ⚙️ 4. SETTINGS "ANIMATIONS: OFF" MODE (Instant 0ms Mode) */
+        html.sp-no-animations *,
+        html.sp-no-animations *::before,
+        html.sp-no-animations *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
         }
     </style>
 
@@ -5060,24 +5194,17 @@ html.theme-ghost-live {
                         <button type="button" onclick="window.finishDmVoiceRecording()" class="px-3 py-1 rounded-lg bg-emerald-500 text-black font-black text-[10px] cursor-pointer shadow">Send Voice ▲</button>
                     </div>
                 </div>
-                <!-- 😊 Quick Emoji Picker Drawer for Private DM -->
-                <div id="dm-emoji-picker-bar" class="hidden px-3 py-1.5 border-t bg-zinc-950/95 flex items-center gap-2 overflow-x-auto text-lg shrink-0" style="border-color: var(--border-color);">
-                    <button type="button" onclick="window.insertChatEmoji('dm','😂')" class="cursor-pointer shrink-0">😂</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🔥')" class="cursor-pointer shrink-0">🔥</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','❤️')" class="cursor-pointer shrink-0">❤️</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','👑')" class="cursor-pointer shrink-0">👑</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','💀')" class="cursor-pointer shrink-0">💀</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','⚡')" class="cursor-pointer shrink-0">⚡</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🏆')" class="cursor-pointer shrink-0">🏆</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','😍')" class="cursor-pointer shrink-0">😍</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','😭')" class="cursor-pointer shrink-0">😭</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','😎')" class="cursor-pointer shrink-0">😎</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🤝')" class="cursor-pointer shrink-0">🤝</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🎯')" class="cursor-pointer shrink-0">🎯</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','💯')" class="cursor-pointer shrink-0">💯</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🙏')" class="cursor-pointer shrink-0">🙏</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🥳')" class="cursor-pointer shrink-0">🥳</button>
-                    <button type="button" onclick="window.insertChatEmoji('dm','🫡')" class="cursor-pointer shrink-0">🫡</button>
+                <!-- 😊 Full WhatsApp / Instagram / Telegram Emoji Keyboard Drawer (Private DM) -->
+                <div id="dm-typing-indicator-bar" class="hidden px-3.5 py-1 bg-zinc-950/90 border-t border-emerald-500/20 text-[10.5px] font-bold text-emerald-400 flex items-center gap-1.5 shrink-0">
+                    <span class="inline-flex gap-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style="animation-delay:0.15s"></span><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style="animation-delay:0.3s"></span></span>
+                    <span id="dm-typing-indicator-txt">typing...</span>
+                </div>
+                <div id="dm-emoji-picker-bar" class="hidden px-3 py-2.5 border-t bg-zinc-950/98 shrink-0 space-y-2" style="border-color: var(--border-color); max-height: 210px; overflow-y: auto;">
+                    <div class="flex items-center justify-between text-[10px] font-extrabold text-slate-400 uppercase px-1">
+                        <span>😊 All Emojis & Reactions (Tap to Insert)</span>
+                        <button type="button" onclick="window.toggleChatEmojiBar('dm')" class="text-rose-400 font-bold cursor-pointer">Close ✖</button>
+                    </div>
+                    <div class="grid grid-cols-8 gap-1"><button type="button" onclick="window.insertChatEmoji('dm','😂')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😂</button><button type="button" onclick="window.insertChatEmoji('dm','🤣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤣</button><button type="button" onclick="window.insertChatEmoji('dm','😍')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😍</button><button type="button" onclick="window.insertChatEmoji('dm','🔥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🔥</button><button type="button" onclick="window.insertChatEmoji('dm','❤️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❤️</button><button type="button" onclick="window.insertChatEmoji('dm','👑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👑</button><button type="button" onclick="window.insertChatEmoji('dm','💀')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💀</button><button type="button" onclick="window.insertChatEmoji('dm','⚡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">⚡</button><button type="button" onclick="window.insertChatEmoji('dm','🏆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏆</button><button type="button" onclick="window.insertChatEmoji('dm','😭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😭</button><button type="button" onclick="window.insertChatEmoji('dm','😎')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😎</button><button type="button" onclick="window.insertChatEmoji('dm','🤝')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤝</button><button type="button" onclick="window.insertChatEmoji('dm','🎯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎯</button><button type="button" onclick="window.insertChatEmoji('dm','💯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💯</button><button type="button" onclick="window.insertChatEmoji('dm','🙏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙏</button><button type="button" onclick="window.insertChatEmoji('dm','🥳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥳</button><button type="button" onclick="window.insertChatEmoji('dm','🫡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🫡</button><button type="button" onclick="window.insertChatEmoji('dm','🥰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥰</button><button type="button" onclick="window.insertChatEmoji('dm','😘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😘</button><button type="button" onclick="window.insertChatEmoji('dm','😁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😁</button><button type="button" onclick="window.insertChatEmoji('dm','😆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😆</button><button type="button" onclick="window.insertChatEmoji('dm','😅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😅</button><button type="button" onclick="window.insertChatEmoji('dm','😊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😊</button><button type="button" onclick="window.insertChatEmoji('dm','😉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😉</button><button type="button" onclick="window.insertChatEmoji('dm','🤩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤩</button><button type="button" onclick="window.insertChatEmoji('dm','😜')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😜</button><button type="button" onclick="window.insertChatEmoji('dm','🤪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤪</button><button type="button" onclick="window.insertChatEmoji('dm','🤨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤨</button><button type="button" onclick="window.insertChatEmoji('dm','🧐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🧐</button><button type="button" onclick="window.insertChatEmoji('dm','🤓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤓</button><button type="button" onclick="window.insertChatEmoji('dm','😏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😏</button><button type="button" onclick="window.insertChatEmoji('dm','😒')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😒</button><button type="button" onclick="window.insertChatEmoji('dm','😞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😞</button><button type="button" onclick="window.insertChatEmoji('dm','😔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😔</button><button type="button" onclick="window.insertChatEmoji('dm','😟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😟</button><button type="button" onclick="window.insertChatEmoji('dm','😕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😕</button><button type="button" onclick="window.insertChatEmoji('dm','🙁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙁</button><button type="button" onclick="window.insertChatEmoji('dm','😣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😣</button><button type="button" onclick="window.insertChatEmoji('dm','😖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😖</button><button type="button" onclick="window.insertChatEmoji('dm','😫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😫</button><button type="button" onclick="window.insertChatEmoji('dm','😩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😩</button><button type="button" onclick="window.insertChatEmoji('dm','🥺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥺</button><button type="button" onclick="window.insertChatEmoji('dm','😢')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😢</button><button type="button" onclick="window.insertChatEmoji('dm','😤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😤</button><button type="button" onclick="window.insertChatEmoji('dm','😠')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😠</button><button type="button" onclick="window.insertChatEmoji('dm','😡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😡</button><button type="button" onclick="window.insertChatEmoji('dm','🤬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤬</button><button type="button" onclick="window.insertChatEmoji('dm','🤯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤯</button><button type="button" onclick="window.insertChatEmoji('dm','😳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😳</button><button type="button" onclick="window.insertChatEmoji('dm','🥵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥵</button><button type="button" onclick="window.insertChatEmoji('dm','🥶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥶</button><button type="button" onclick="window.insertChatEmoji('dm','😱')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😱</button><button type="button" onclick="window.insertChatEmoji('dm','😨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😨</button><button type="button" onclick="window.insertChatEmoji('dm','😰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😰</button><button type="button" onclick="window.insertChatEmoji('dm','😥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😥</button><button type="button" onclick="window.insertChatEmoji('dm','😓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😓</button><button type="button" onclick="window.insertChatEmoji('dm','🤗')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤗</button><button type="button" onclick="window.insertChatEmoji('dm','🤔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤔</button><button type="button" onclick="window.insertChatEmoji('dm','🤭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤭</button><button type="button" onclick="window.insertChatEmoji('dm','🤫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤫</button><button type="button" onclick="window.insertChatEmoji('dm','🤥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤥</button><button type="button" onclick="window.insertChatEmoji('dm','😶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😶</button><button type="button" onclick="window.insertChatEmoji('dm','😐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😐</button><button type="button" onclick="window.insertChatEmoji('dm','😑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😑</button><button type="button" onclick="window.insertChatEmoji('dm','😬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😬</button><button type="button" onclick="window.insertChatEmoji('dm','🙄')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙄</button><button type="button" onclick="window.insertChatEmoji('dm','😯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😯</button><button type="button" onclick="window.insertChatEmoji('dm','😦')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😦</button><button type="button" onclick="window.insertChatEmoji('dm','😧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😧</button><button type="button" onclick="window.insertChatEmoji('dm','😮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😮</button><button type="button" onclick="window.insertChatEmoji('dm','😲')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😲</button><button type="button" onclick="window.insertChatEmoji('dm','🥱')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥱</button><button type="button" onclick="window.insertChatEmoji('dm','😴')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😴</button><button type="button" onclick="window.insertChatEmoji('dm','🤤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤤</button><button type="button" onclick="window.insertChatEmoji('dm','😪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😪</button><button type="button" onclick="window.insertChatEmoji('dm','😵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😵</button><button type="button" onclick="window.insertChatEmoji('dm','🤐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤐</button><button type="button" onclick="window.insertChatEmoji('dm','🥴')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥴</button><button type="button" onclick="window.insertChatEmoji('dm','🤢')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤢</button><button type="button" onclick="window.insertChatEmoji('dm','🤮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤮</button><button type="button" onclick="window.insertChatEmoji('dm','🤧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤧</button><button type="button" onclick="window.insertChatEmoji('dm','😷')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😷</button><button type="button" onclick="window.insertChatEmoji('dm','🤒')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤒</button><button type="button" onclick="window.insertChatEmoji('dm','🤕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤕</button><button type="button" onclick="window.insertChatEmoji('dm','🤑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤑</button><button type="button" onclick="window.insertChatEmoji('dm','🤠')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤠</button><button type="button" onclick="window.insertChatEmoji('dm','😈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😈</button><button type="button" onclick="window.insertChatEmoji('dm','👿')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👿</button><button type="button" onclick="window.insertChatEmoji('dm','👹')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👹</button><button type="button" onclick="window.insertChatEmoji('dm','👺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👺</button><button type="button" onclick="window.insertChatEmoji('dm','🤡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤡</button><button type="button" onclick="window.insertChatEmoji('dm','💩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💩</button><button type="button" onclick="window.insertChatEmoji('dm','👻')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👻</button><button type="button" onclick="window.insertChatEmoji('dm','👽')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👽</button><button type="button" onclick="window.insertChatEmoji('dm','👾')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👾</button><button type="button" onclick="window.insertChatEmoji('dm','🤖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤖</button><button type="button" onclick="window.insertChatEmoji('dm','👍')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👍</button><button type="button" onclick="window.insertChatEmoji('dm','👎')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👎</button><button type="button" onclick="window.insertChatEmoji('dm','👊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👊</button><button type="button" onclick="window.insertChatEmoji('dm','✊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✊</button><button type="button" onclick="window.insertChatEmoji('dm','🤛')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤛</button><button type="button" onclick="window.insertChatEmoji('dm','🤜')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤜</button><button type="button" onclick="window.insertChatEmoji('dm','🤞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤞</button><button type="button" onclick="window.insertChatEmoji('dm','✌️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✌️</button><button type="button" onclick="window.insertChatEmoji('dm','🤟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤟</button><button type="button" onclick="window.insertChatEmoji('dm','🤘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤘</button><button type="button" onclick="window.insertChatEmoji('dm','👌')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👌</button><button type="button" onclick="window.insertChatEmoji('dm','🤌')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤌</button><button type="button" onclick="window.insertChatEmoji('dm','🤏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤏</button><button type="button" onclick="window.insertChatEmoji('dm','👈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👈</button><button type="button" onclick="window.insertChatEmoji('dm','👉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👉</button><button type="button" onclick="window.insertChatEmoji('dm','👆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👆</button><button type="button" onclick="window.insertChatEmoji('dm','👇')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👇</button><button type="button" onclick="window.insertChatEmoji('dm','☝️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">☝️</button><button type="button" onclick="window.insertChatEmoji('dm','✋')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✋</button><button type="button" onclick="window.insertChatEmoji('dm','🤚')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤚</button><button type="button" onclick="window.insertChatEmoji('dm','🖐️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖐️</button><button type="button" onclick="window.insertChatEmoji('dm','🖖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖖</button><button type="button" onclick="window.insertChatEmoji('dm','👋')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👋</button><button type="button" onclick="window.insertChatEmoji('dm','🤙')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤙</button><button type="button" onclick="window.insertChatEmoji('dm','💪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💪</button><button type="button" onclick="window.insertChatEmoji('dm','🖕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖕</button><button type="button" onclick="window.insertChatEmoji('dm','✍️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✍️</button><button type="button" onclick="window.insertChatEmoji('dm','🤳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤳</button><button type="button" onclick="window.insertChatEmoji('dm','💅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💅</button><button type="button" onclick="window.insertChatEmoji('dm','🦵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🦵</button><button type="button" onclick="window.insertChatEmoji('dm','🦶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🦶</button><button type="button" onclick="window.insertChatEmoji('dm','👂')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👂</button><button type="button" onclick="window.insertChatEmoji('dm','❤️‍🔥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❤️‍🔥</button><button type="button" onclick="window.insertChatEmoji('dm','💔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💔</button><button type="button" onclick="window.insertChatEmoji('dm','❣️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❣️</button><button type="button" onclick="window.insertChatEmoji('dm','💕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💕</button><button type="button" onclick="window.insertChatEmoji('dm','💞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💞</button><button type="button" onclick="window.insertChatEmoji('dm','💓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💓</button><button type="button" onclick="window.insertChatEmoji('dm','💗')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💗</button><button type="button" onclick="window.insertChatEmoji('dm','💖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💖</button><button type="button" onclick="window.insertChatEmoji('dm','💘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💘</button><button type="button" onclick="window.insertChatEmoji('dm','💝')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💝</button><button type="button" onclick="window.insertChatEmoji('dm','💟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💟</button><button type="button" onclick="window.insertChatEmoji('dm','💥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💥</button><button type="button" onclick="window.insertChatEmoji('dm','💫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💫</button><button type="button" onclick="window.insertChatEmoji('dm','💦')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💦</button><button type="button" onclick="window.insertChatEmoji('dm','💨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💨</button><button type="button" onclick="window.insertChatEmoji('dm','💣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💣</button><button type="button" onclick="window.insertChatEmoji('dm','💬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💬</button><button type="button" onclick="window.insertChatEmoji('dm','👁️‍🗨️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👁️‍🗨️</button><button type="button" onclick="window.insertChatEmoji('dm','🗨️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🗨️</button><button type="button" onclick="window.insertChatEmoji('dm','🗯️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🗯️</button><button type="button" onclick="window.insertChatEmoji('dm','💭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💭</button><button type="button" onclick="window.insertChatEmoji('dm','💤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💤</button><button type="button" onclick="window.insertChatEmoji('dm','🎮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎮</button><button type="button" onclick="window.insertChatEmoji('dm','🕹️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🕹️</button><button type="button" onclick="window.insertChatEmoji('dm','🎰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎰</button><button type="button" onclick="window.insertChatEmoji('dm','🎲')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎲</button><button type="button" onclick="window.insertChatEmoji('dm','🎯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎯</button><button type="button" onclick="window.insertChatEmoji('dm','🎳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎳</button><button type="button" onclick="window.insertChatEmoji('dm','🎸')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎸</button><button type="button" onclick="window.insertChatEmoji('dm','🎺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎺</button><button type="button" onclick="window.insertChatEmoji('dm','🎻')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎻</button><button type="button" onclick="window.insertChatEmoji('dm','🥁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥁</button><button type="button" onclick="window.insertChatEmoji('dm','🥇')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥇</button><button type="button" onclick="window.insertChatEmoji('dm','🥈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥈</button><button type="button" onclick="window.insertChatEmoji('dm','🥉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥉</button><button type="button" onclick="window.insertChatEmoji('dm','🏅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏅</button><button type="button" onclick="window.insertChatEmoji('dm','🎖️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎖️</button><button type="button" onclick="window.insertChatEmoji('dm','🏵️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏵️</button><button type="button" onclick="window.insertChatEmoji('dm','🎗️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎗️</button><button type="button" onclick="window.insertChatEmoji('dm','🎫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎫</button><button type="button" onclick="window.insertChatEmoji('dm','🎟️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎟️</button><button type="button" onclick="window.insertChatEmoji('dm','🎪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎪</button><button type="button" onclick="window.insertChatEmoji('dm','🎭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎭</button><button type="button" onclick="window.insertChatEmoji('dm','🎨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎨</button><button type="button" onclick="window.insertChatEmoji('dm','🎬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎬</button><button type="button" onclick="window.insertChatEmoji('dm','🎤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎤</button><button type="button" onclick="window.insertChatEmoji('dm','🎧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎧</button><button type="button" onclick="window.insertChatEmoji('dm','🎼')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎼</button></div>
                 </div>
                 <!-- 1-to-1 DM Input Area -->
                 <div class="p-2 border-t bg-zinc-900/95 flex items-center gap-1.5 shrink-0" style="border-color: var(--border-color);">
@@ -5102,24 +5229,17 @@ html.theme-ghost-live {
             <button type="button" onclick="sendVoiceShoutoutChat('🎙️ [VOICE]: Rush Pannunga Squad! 🔥', 'Rush pannunga squad! Booyah namakku thaan!')" class="px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-bold shrink-0 cursor-pointer hover:bg-cyan-500/25">🎙️ Rush Voice</button>
             <button type="button" onclick="sendVoiceShoutoutChat('🎙️ [VOICE]: Room ID & Password Ready! Join Fast! ⚡', 'Attention squads! Room ID ready, join fast within five minutes!')" class="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold shrink-0 cursor-pointer hover:bg-amber-500/25">🎙️ Room Ready</button>
         </div>
-        <!-- 😊 Quick Emoji Picker Drawer for Global Chat -->
-        <div id="global-emoji-picker-bar" class="hidden px-3 py-2 border-t bg-zinc-950/95 flex items-center gap-2 overflow-x-auto text-lg shrink-0" style="border-color: var(--border-color);">
-            <button type="button" onclick="window.insertChatEmoji('global','😂')" class="cursor-pointer shrink-0">😂</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🔥')" class="cursor-pointer shrink-0">🔥</button>
-            <button type="button" onclick="window.insertChatEmoji('global','❤️')" class="cursor-pointer shrink-0">❤️</button>
-            <button type="button" onclick="window.insertChatEmoji('global','👑')" class="cursor-pointer shrink-0">👑</button>
-            <button type="button" onclick="window.insertChatEmoji('global','💀')" class="cursor-pointer shrink-0">💀</button>
-            <button type="button" onclick="window.insertChatEmoji('global','⚡')" class="cursor-pointer shrink-0">⚡</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🏆')" class="cursor-pointer shrink-0">🏆</button>
-            <button type="button" onclick="window.insertChatEmoji('global','😍')" class="cursor-pointer shrink-0">😍</button>
-            <button type="button" onclick="window.insertChatEmoji('global','😭')" class="cursor-pointer shrink-0">😭</button>
-            <button type="button" onclick="window.insertChatEmoji('global','😎')" class="cursor-pointer shrink-0">😎</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🤝')" class="cursor-pointer shrink-0">🤝</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🎯')" class="cursor-pointer shrink-0">🎯</button>
-            <button type="button" onclick="window.insertChatEmoji('global','💯')" class="cursor-pointer shrink-0">💯</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🙏')" class="cursor-pointer shrink-0">🙏</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🥳')" class="cursor-pointer shrink-0">🥳</button>
-            <button type="button" onclick="window.insertChatEmoji('global','🫡')" class="cursor-pointer shrink-0">🫡</button>
+        <!-- 😊 Full WhatsApp / Instagram / Telegram Emoji Keyboard Drawer (Global Chat) -->
+        <div id="global-typing-indicator-bar" class="hidden px-3.5 py-1 bg-zinc-950/90 border-t border-emerald-500/20 text-[10.5px] font-bold text-emerald-400 flex items-center gap-1.5 shrink-0">
+            <span class="inline-flex gap-0.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce"></span><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style="animation-delay:0.15s"></span><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-bounce" style="animation-delay:0.3s"></span></span>
+            <span id="global-typing-indicator-txt">Player is typing...</span>
+        </div>
+        <div id="global-emoji-picker-bar" class="hidden px-3 py-2.5 border-t bg-zinc-950/98 shrink-0 space-y-2" style="border-color: var(--border-color); max-height: 215px; overflow-y: auto;">
+            <div class="flex items-center justify-between text-[10px] font-extrabold text-slate-400 uppercase px-1">
+                <span>😊 All Emojis & Reactions (Tap to Insert)</span>
+                <button type="button" onclick="window.toggleChatEmojiBar('global')" class="text-rose-400 font-bold cursor-pointer">Close ✖</button>
+            </div>
+            <div class="grid grid-cols-8 gap-1"><button type="button" onclick="window.insertChatEmoji('global','😂')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😂</button><button type="button" onclick="window.insertChatEmoji('global','🤣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤣</button><button type="button" onclick="window.insertChatEmoji('global','😍')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😍</button><button type="button" onclick="window.insertChatEmoji('global','🔥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🔥</button><button type="button" onclick="window.insertChatEmoji('global','❤️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❤️</button><button type="button" onclick="window.insertChatEmoji('global','👑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👑</button><button type="button" onclick="window.insertChatEmoji('global','💀')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💀</button><button type="button" onclick="window.insertChatEmoji('global','⚡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">⚡</button><button type="button" onclick="window.insertChatEmoji('global','🏆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏆</button><button type="button" onclick="window.insertChatEmoji('global','😭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😭</button><button type="button" onclick="window.insertChatEmoji('global','😎')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😎</button><button type="button" onclick="window.insertChatEmoji('global','🤝')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤝</button><button type="button" onclick="window.insertChatEmoji('global','🎯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎯</button><button type="button" onclick="window.insertChatEmoji('global','💯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💯</button><button type="button" onclick="window.insertChatEmoji('global','🙏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙏</button><button type="button" onclick="window.insertChatEmoji('global','🥳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥳</button><button type="button" onclick="window.insertChatEmoji('global','🫡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🫡</button><button type="button" onclick="window.insertChatEmoji('global','🥰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥰</button><button type="button" onclick="window.insertChatEmoji('global','😘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😘</button><button type="button" onclick="window.insertChatEmoji('global','😁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😁</button><button type="button" onclick="window.insertChatEmoji('global','😆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😆</button><button type="button" onclick="window.insertChatEmoji('global','😅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😅</button><button type="button" onclick="window.insertChatEmoji('global','😊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😊</button><button type="button" onclick="window.insertChatEmoji('global','😉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😉</button><button type="button" onclick="window.insertChatEmoji('global','🤩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤩</button><button type="button" onclick="window.insertChatEmoji('global','😜')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😜</button><button type="button" onclick="window.insertChatEmoji('global','🤪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤪</button><button type="button" onclick="window.insertChatEmoji('global','🤨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤨</button><button type="button" onclick="window.insertChatEmoji('global','🧐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🧐</button><button type="button" onclick="window.insertChatEmoji('global','🤓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤓</button><button type="button" onclick="window.insertChatEmoji('global','😏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😏</button><button type="button" onclick="window.insertChatEmoji('global','😒')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😒</button><button type="button" onclick="window.insertChatEmoji('global','😞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😞</button><button type="button" onclick="window.insertChatEmoji('global','😔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😔</button><button type="button" onclick="window.insertChatEmoji('global','😟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😟</button><button type="button" onclick="window.insertChatEmoji('global','😕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😕</button><button type="button" onclick="window.insertChatEmoji('global','🙁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙁</button><button type="button" onclick="window.insertChatEmoji('global','😣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😣</button><button type="button" onclick="window.insertChatEmoji('global','😖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😖</button><button type="button" onclick="window.insertChatEmoji('global','😫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😫</button><button type="button" onclick="window.insertChatEmoji('global','😩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😩</button><button type="button" onclick="window.insertChatEmoji('global','🥺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥺</button><button type="button" onclick="window.insertChatEmoji('global','😢')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😢</button><button type="button" onclick="window.insertChatEmoji('global','😤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😤</button><button type="button" onclick="window.insertChatEmoji('global','😠')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😠</button><button type="button" onclick="window.insertChatEmoji('global','😡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😡</button><button type="button" onclick="window.insertChatEmoji('global','🤬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤬</button><button type="button" onclick="window.insertChatEmoji('global','🤯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤯</button><button type="button" onclick="window.insertChatEmoji('global','😳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😳</button><button type="button" onclick="window.insertChatEmoji('global','🥵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥵</button><button type="button" onclick="window.insertChatEmoji('global','🥶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥶</button><button type="button" onclick="window.insertChatEmoji('global','😱')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😱</button><button type="button" onclick="window.insertChatEmoji('global','😨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😨</button><button type="button" onclick="window.insertChatEmoji('global','😰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😰</button><button type="button" onclick="window.insertChatEmoji('global','😥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😥</button><button type="button" onclick="window.insertChatEmoji('global','😓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😓</button><button type="button" onclick="window.insertChatEmoji('global','🤗')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤗</button><button type="button" onclick="window.insertChatEmoji('global','🤔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤔</button><button type="button" onclick="window.insertChatEmoji('global','🤭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤭</button><button type="button" onclick="window.insertChatEmoji('global','🤫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤫</button><button type="button" onclick="window.insertChatEmoji('global','🤥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤥</button><button type="button" onclick="window.insertChatEmoji('global','😶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😶</button><button type="button" onclick="window.insertChatEmoji('global','😐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😐</button><button type="button" onclick="window.insertChatEmoji('global','😑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😑</button><button type="button" onclick="window.insertChatEmoji('global','😬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😬</button><button type="button" onclick="window.insertChatEmoji('global','🙄')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🙄</button><button type="button" onclick="window.insertChatEmoji('global','😯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😯</button><button type="button" onclick="window.insertChatEmoji('global','😦')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😦</button><button type="button" onclick="window.insertChatEmoji('global','😧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😧</button><button type="button" onclick="window.insertChatEmoji('global','😮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😮</button><button type="button" onclick="window.insertChatEmoji('global','😲')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😲</button><button type="button" onclick="window.insertChatEmoji('global','🥱')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥱</button><button type="button" onclick="window.insertChatEmoji('global','😴')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😴</button><button type="button" onclick="window.insertChatEmoji('global','🤤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤤</button><button type="button" onclick="window.insertChatEmoji('global','😪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😪</button><button type="button" onclick="window.insertChatEmoji('global','😵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😵</button><button type="button" onclick="window.insertChatEmoji('global','🤐')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤐</button><button type="button" onclick="window.insertChatEmoji('global','🥴')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥴</button><button type="button" onclick="window.insertChatEmoji('global','🤢')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤢</button><button type="button" onclick="window.insertChatEmoji('global','🤮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤮</button><button type="button" onclick="window.insertChatEmoji('global','🤧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤧</button><button type="button" onclick="window.insertChatEmoji('global','😷')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😷</button><button type="button" onclick="window.insertChatEmoji('global','🤒')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤒</button><button type="button" onclick="window.insertChatEmoji('global','🤕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤕</button><button type="button" onclick="window.insertChatEmoji('global','🤑')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤑</button><button type="button" onclick="window.insertChatEmoji('global','🤠')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤠</button><button type="button" onclick="window.insertChatEmoji('global','😈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">😈</button><button type="button" onclick="window.insertChatEmoji('global','👿')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👿</button><button type="button" onclick="window.insertChatEmoji('global','👹')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👹</button><button type="button" onclick="window.insertChatEmoji('global','👺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👺</button><button type="button" onclick="window.insertChatEmoji('global','🤡')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤡</button><button type="button" onclick="window.insertChatEmoji('global','💩')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💩</button><button type="button" onclick="window.insertChatEmoji('global','👻')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👻</button><button type="button" onclick="window.insertChatEmoji('global','👽')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👽</button><button type="button" onclick="window.insertChatEmoji('global','👾')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👾</button><button type="button" onclick="window.insertChatEmoji('global','🤖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤖</button><button type="button" onclick="window.insertChatEmoji('global','👍')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👍</button><button type="button" onclick="window.insertChatEmoji('global','👎')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👎</button><button type="button" onclick="window.insertChatEmoji('global','👊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👊</button><button type="button" onclick="window.insertChatEmoji('global','✊')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✊</button><button type="button" onclick="window.insertChatEmoji('global','🤛')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤛</button><button type="button" onclick="window.insertChatEmoji('global','🤜')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤜</button><button type="button" onclick="window.insertChatEmoji('global','🤞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤞</button><button type="button" onclick="window.insertChatEmoji('global','✌️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✌️</button><button type="button" onclick="window.insertChatEmoji('global','🤟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤟</button><button type="button" onclick="window.insertChatEmoji('global','🤘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤘</button><button type="button" onclick="window.insertChatEmoji('global','👌')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👌</button><button type="button" onclick="window.insertChatEmoji('global','🤌')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤌</button><button type="button" onclick="window.insertChatEmoji('global','🤏')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤏</button><button type="button" onclick="window.insertChatEmoji('global','👈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👈</button><button type="button" onclick="window.insertChatEmoji('global','👉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👉</button><button type="button" onclick="window.insertChatEmoji('global','👆')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👆</button><button type="button" onclick="window.insertChatEmoji('global','👇')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👇</button><button type="button" onclick="window.insertChatEmoji('global','☝️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">☝️</button><button type="button" onclick="window.insertChatEmoji('global','✋')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✋</button><button type="button" onclick="window.insertChatEmoji('global','🤚')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤚</button><button type="button" onclick="window.insertChatEmoji('global','🖐️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖐️</button><button type="button" onclick="window.insertChatEmoji('global','🖖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖖</button><button type="button" onclick="window.insertChatEmoji('global','👋')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👋</button><button type="button" onclick="window.insertChatEmoji('global','🤙')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤙</button><button type="button" onclick="window.insertChatEmoji('global','💪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💪</button><button type="button" onclick="window.insertChatEmoji('global','🖕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🖕</button><button type="button" onclick="window.insertChatEmoji('global','✍️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">✍️</button><button type="button" onclick="window.insertChatEmoji('global','🤳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🤳</button><button type="button" onclick="window.insertChatEmoji('global','💅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💅</button><button type="button" onclick="window.insertChatEmoji('global','🦵')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🦵</button><button type="button" onclick="window.insertChatEmoji('global','🦶')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🦶</button><button type="button" onclick="window.insertChatEmoji('global','👂')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👂</button><button type="button" onclick="window.insertChatEmoji('global','❤️‍🔥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❤️‍🔥</button><button type="button" onclick="window.insertChatEmoji('global','💔')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💔</button><button type="button" onclick="window.insertChatEmoji('global','❣️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">❣️</button><button type="button" onclick="window.insertChatEmoji('global','💕')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💕</button><button type="button" onclick="window.insertChatEmoji('global','💞')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💞</button><button type="button" onclick="window.insertChatEmoji('global','💓')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💓</button><button type="button" onclick="window.insertChatEmoji('global','💗')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💗</button><button type="button" onclick="window.insertChatEmoji('global','💖')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💖</button><button type="button" onclick="window.insertChatEmoji('global','💘')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💘</button><button type="button" onclick="window.insertChatEmoji('global','💝')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💝</button><button type="button" onclick="window.insertChatEmoji('global','💟')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💟</button><button type="button" onclick="window.insertChatEmoji('global','💥')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💥</button><button type="button" onclick="window.insertChatEmoji('global','💫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💫</button><button type="button" onclick="window.insertChatEmoji('global','💦')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💦</button><button type="button" onclick="window.insertChatEmoji('global','💨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💨</button><button type="button" onclick="window.insertChatEmoji('global','💣')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💣</button><button type="button" onclick="window.insertChatEmoji('global','💬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💬</button><button type="button" onclick="window.insertChatEmoji('global','👁️‍🗨️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">👁️‍🗨️</button><button type="button" onclick="window.insertChatEmoji('global','🗨️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🗨️</button><button type="button" onclick="window.insertChatEmoji('global','🗯️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🗯️</button><button type="button" onclick="window.insertChatEmoji('global','💭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💭</button><button type="button" onclick="window.insertChatEmoji('global','💤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">💤</button><button type="button" onclick="window.insertChatEmoji('global','🎮')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎮</button><button type="button" onclick="window.insertChatEmoji('global','🕹️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🕹️</button><button type="button" onclick="window.insertChatEmoji('global','🎰')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎰</button><button type="button" onclick="window.insertChatEmoji('global','🎲')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎲</button><button type="button" onclick="window.insertChatEmoji('global','🎯')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎯</button><button type="button" onclick="window.insertChatEmoji('global','🎳')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎳</button><button type="button" onclick="window.insertChatEmoji('global','🎸')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎸</button><button type="button" onclick="window.insertChatEmoji('global','🎺')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎺</button><button type="button" onclick="window.insertChatEmoji('global','🎻')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎻</button><button type="button" onclick="window.insertChatEmoji('global','🥁')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥁</button><button type="button" onclick="window.insertChatEmoji('global','🥇')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥇</button><button type="button" onclick="window.insertChatEmoji('global','🥈')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥈</button><button type="button" onclick="window.insertChatEmoji('global','🥉')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🥉</button><button type="button" onclick="window.insertChatEmoji('global','🏅')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏅</button><button type="button" onclick="window.insertChatEmoji('global','🎖️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎖️</button><button type="button" onclick="window.insertChatEmoji('global','🏵️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🏵️</button><button type="button" onclick="window.insertChatEmoji('global','🎗️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎗️</button><button type="button" onclick="window.insertChatEmoji('global','🎫')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎫</button><button type="button" onclick="window.insertChatEmoji('global','🎟️')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎟️</button><button type="button" onclick="window.insertChatEmoji('global','🎪')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎪</button><button type="button" onclick="window.insertChatEmoji('global','🎭')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎭</button><button type="button" onclick="window.insertChatEmoji('global','🎨')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎨</button><button type="button" onclick="window.insertChatEmoji('global','🎬')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎬</button><button type="button" onclick="window.insertChatEmoji('global','🎤')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎤</button><button type="button" onclick="window.insertChatEmoji('global','🎧')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎧</button><button type="button" onclick="window.insertChatEmoji('global','🎼')" class="p-1.5 rounded-xl hover:bg-white/10 active:scale-125 transition-transform text-xl cursor-pointer flex items-center justify-center">🎼</button></div>
         </div>
         <!-- 💬 Reply Quote Preview Bar in Global Chat -->
         <div id="global-reply-quote-bar" class="hidden px-3 py-1.5 border-t bg-zinc-900/95 border-emerald-500/40 flex items-center justify-between gap-2 text-[10.5px] shrink-0">
@@ -10919,6 +11039,11 @@ CRITICAL RULES:
         let allTeams = [];
         let allMatches = [];
         let allChatMessages = [];
+        try {
+            Object.defineProperty(window, 'allChatMessages', { get: () => allChatMessages, set: (v) => { allChatMessages = Array.isArray(v) ? v : []; }, configurable: true });
+            Object.defineProperty(window, 'allMatches', { get: () => allMatches, set: (v) => { allMatches = Array.isArray(v) ? v : []; }, configurable: true });
+            Object.defineProperty(window, 'allTeams', { get: () => allTeams, set: (v) => { allTeams = Array.isArray(v) ? v : []; }, configurable: true });
+        } catch(e) {}
         let currentChatMode = 'all';
         let myChatBannedUntil = 0;
         let privUnsubscribe = null;
@@ -12412,7 +12537,7 @@ CRITICAL RULES:
                 const skinClass = resolvedSkin ? (' vip-skin-' + resolvedSkin) : '';
                 const proPlusBubbleExtra = (isMsgUserProPlus && !resolvedSkin) ? " pro-plus-bubble" : "";
                 const proPlusAvatarExtra = isMsgUserProPlus ? " ring-2 ring-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.65)]" : "";
-                return `<div class="${rowClass}"><img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(resolvedName)}')" class="chat-avatar${proPlusAvatarExtra} w-8 h-8 rounded-full object-cover shrink-0 border border-emerald-400/50 cursor-pointer hover:scale-105 transition-transform" alt="Avatar" onclick="openChatProfileByMsgId(event, '${msg.id}')"><div class="chat-content"><span class="chat-meta cursor-pointer hover:underline" onclick="openChatProfileByMsgId(event, '${msg.id}')">${badgesHtml}${nameDisplay} • ${time}${editedText}</span><div class="${bubbleClass}${proPlusBubbleExtra}${skinClass}" onclick="openChatProfileByMsgId(event, '${msg.id}')">${msg.replyToText ? `<div class="mb-1 px-2 py-0.5 rounded bg-black/35 border-l-2 border-amber-400 text-[9px] leading-tight"><div class="font-extrabold text-amber-300 truncate">${window.escapeHTML(msg.replyToName || 'Player')}</div><div class="text-slate-300 truncate">${window.escapeHTML(msg.replyToText)}</div></div>` : ''}${window.escapeHTML(window.aiMaskBadWords ? window.aiMaskBadWords(msg.message) : msg.message)}${window.renderMessageReactionsPillHtml ? window.renderMessageReactionsPillHtml(msg) : ''}</div></div></div>`;
+                return `<div class="${rowClass}"><img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(resolvedName)}')" class="chat-avatar${proPlusAvatarExtra} w-8 h-8 rounded-full object-cover shrink-0 border border-emerald-400/50 cursor-pointer hover:scale-105 transition-transform" alt="Avatar" onclick="openChatProfileByMsgId(event, '${msg.id}')"><div class="chat-content"><span class="chat-meta cursor-pointer hover:underline" onclick="openChatProfileByMsgId(event, '${msg.id}')">${badgesHtml}${nameDisplay} • ${time}${editedText}</span><div data-msg-id="${window.escapeHTML(msg.id || msg.clientMsgId || '')}" data-msg-sender="${window.escapeHTML(resolvedName)}" data-msg-text="${window.escapeHTML(msg.message || '')}" class="sp-chat-bubble-anim ${bubbleClass}${proPlusBubbleExtra}${skinClass}" onclick="openChatProfileByMsgId(event, '${msg.id}')">${msg.replyToText ? `<div class="mb-1 px-2 py-0.5 rounded bg-black/35 border-l-2 border-amber-400 text-[9px] leading-tight"><div class="font-extrabold text-amber-300 truncate">${window.escapeHTML(msg.replyToName || 'Player')}</div><div class="text-slate-300 truncate">${window.escapeHTML(msg.replyToText)}</div></div>` : ''}${window.escapeHTML(window.aiMaskBadWords ? window.aiMaskBadWords(msg.message) : msg.message)}${window.renderMessageReactionsPillHtml ? window.renderMessageReactionsPillHtml(msg) : ''}</div></div></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         };
@@ -20161,7 +20286,7 @@ CRITICAL RULES:
                     ? `<div style="background:#000000 !important;" class="w-48 h-28 rounded-xl bg-black border border-rose-500/50 flex flex-col items-center justify-center p-2 text-center select-none"><span class="text-base">⬛</span><span class="text-[9.5px] font-extrabold text-rose-400 uppercase mt-1">Cannot View Screenshot</span><span class="text-[8px] text-slate-500">PRO / PRO+ Blackout Shield</span></div>`
                     : `<div class="break-words leading-relaxed select-none">${window.escapeHTML(censoredMsg)}</div>`;
 
-                const msgKey = m.clientMsgId || m.id || '';
+                const msgKey = m.clientMsgId || m.id || ('dm_' + (m.timestamp || Date.now())); m.id = m.id || msgKey; m.clientMsgId = m.clientMsgId || msgKey;
                 const isSenderProPlus = Boolean(m.isProPlus || m.vipTier === 'pro_plus' || (window.isEmailProPlus && window.isEmailProPlus(sEm)));
                 const resolvedDmSkin = (isMe ? (localStorage.getItem('satta_pai_vip_bubble_skin') || u.vipSkin || m.vipSkin || '') : (u.vipSkin || m.vipSkin || ''));
                 const dmSkinClass = resolvedDmSkin ? (' vip-skin-' + resolvedDmSkin) : '';
@@ -20186,7 +20311,7 @@ CRITICAL RULES:
                 return `
                     <div class="flex items-end gap-2 select-none ${isMe ? 'flex-row-reverse' : 'flex-row'}">
                         <img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(name)}')" class="w-7 h-7 rounded-full object-cover border border-white/20 shrink-0 pointer-events-none${proPlusAvatarRing}" alt="DP">
-                        <div onclick="window.openDmMessageActionsModal('${window.escapeJsStr(msgKey)}')" class="max-w-[78%] px-3 py-2 rounded-2xl text-xs select-none cursor-pointer transition-transform active:scale-[0.99] ${isMe ? 'bg-emerald-700/95 text-white rounded-br-sm border border-emerald-400/30' : 'cyber-card text-slate-100 rounded-bl-sm'}${proPlusDmClass}${dmSkinClass}">
+                        <div data-msg-id="${window.escapeHTML(msgKey)}" data-msg-sender="${window.escapeHTML(name)}" data-msg-text="${window.escapeHTML(m.audioData ? '🎤 Voice Message (' + (m.audioDuration || 1) + 's)' : (m.message || ''))}" onclick="window.openDmMessageActionsModal('${window.escapeJsStr(msgKey)}')" class="sp-chat-bubble-anim dm-swipe-bubble relative max-w-[78%] px-3.5 py-2.5 rounded-2xl text-xs select-none cursor-pointer ${isMe ? 'dm-own-theme-bubble text-white rounded-br-sm' : 'cyber-card text-slate-100 rounded-bl-sm'}${proPlusDmClass}${dmSkinClass}">
                             ${fwdTag}
                             ${replyBoxHtml}
                             ${voicePlayerHtml}
@@ -23351,10 +23476,11 @@ CRITICAL RULES:
                     <span class="font-bold text-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Arena Server Ping</span></span>
                     <span id="settings-live-ping-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-black">⚡ 24 ms (Ultra)</span>
                 </div>
-                <div class="grid grid-cols-3 gap-1.5">
-                    <button type="button" onclick="window.runArena120FpsRamBooster()" class="py-1.5 px-2 rounded-lg bg-gradient-to-r from-cyan-600/30 to-emerald-600/30 border border-cyan-400/50 text-cyan-300 font-extrabold text-[9.5px] cursor-pointer">🚀 120FPS</button>
-                    <button type="button" onclick="window.toggleMyForwardLock()" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">🔒 Fwd Lock</button>
-                    <button type="button" id="settings-call-lock-btn" onclick="window.toggleMyIncomingCallsLock()" class="py-1.5 px-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[9.5px] cursor-pointer">📞 Calls: ON</button>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <button type="button" id="settings-anim-toggle-btn" onclick="window.toggleAppAnimationsSetting()" class="py-2 px-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-extrabold text-[10px] cursor-pointer flex items-center justify-center gap-1">✨ Animations: ON</button>
+                    <button type="button" id="settings-call-lock-btn" onclick="window.toggleMyIncomingCallsLock()" class="py-2 px-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[10px] cursor-pointer flex items-center justify-center gap-1">📞 Calls: ON</button>
+                    <button type="button" onclick="window.runArena120FpsRamBooster()" class="py-1.5 px-2 rounded-xl bg-gradient-to-r from-cyan-600/30 to-emerald-600/30 border border-cyan-400/50 text-cyan-300 font-extrabold text-[9.5px] cursor-pointer">🚀 Boost 120FPS</button>
+                    <button type="button" onclick="window.toggleMyForwardLock()" class="py-1.5 px-2 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">🔒 Forward Lock</button>
                 </div>
                 <div class="pt-2 border-t border-white/10 space-y-2">
                     <div class="flex items-center justify-between">
@@ -23434,7 +23560,7 @@ CRITICAL RULES:
         </div>
     </div>
 
-    <script>
+    <script type="module">
         (function() {
             window.checkInternetConnectionGuard = function(manualTap = false) {
                 const modal = document.getElementById('no-internet-guard-modal');
@@ -23732,7 +23858,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         </div>
     </div>
 
-    <script>
+    <script type="module">
         (function() {
             // =========================================================================
             // 1. UID-FIRST DISPLAY NAME ENGINE (Hides Gmail prefix when Profile Name not set!)
@@ -27851,6 +27977,569 @@ GHOST SQUAD, 0, 11, 39</textarea>
                     origOpenDmReport();
                 };
             }
+        })();
+
+    
+
+        // 🍎 V17.0 APPLE iOS FLAGSHIP & COMPLETE FIX ENGINE
+        // (Runs inside <script type="module"> AFTER Firebase & core functions!)
+        (function() {
+            // ------------------------------------------------------------------
+            // 1. SETTINGS: ANIMATIONS ON / OFF TOGGLE
+            // ------------------------------------------------------------------
+            window.isAppAnimationsEnabled = function() {
+                return localStorage.getItem('satta_pai_animations_off') !== '1';
+            };
+
+            window.applyAppAnimationsSettingUI = function() {
+                const enabled = window.isAppAnimationsEnabled();
+                if (enabled) {
+                    document.documentElement.classList.remove('sp-no-animations');
+                } else {
+                    document.documentElement.classList.add('sp-no-animations');
+                }
+                const btn = document.getElementById('settings-anim-toggle-btn');
+                if (btn) {
+                    btn.textContent = enabled ? '✨ Animations: ON' : '⚡ Animations: OFF';
+                    btn.className = enabled
+                        ? 'py-2 px-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-extrabold text-[10px] cursor-pointer flex items-center justify-center gap-1'
+                        : 'py-2 px-2.5 rounded-xl bg-zinc-800 border border-white/15 text-slate-300 font-extrabold text-[10px] cursor-pointer flex items-center justify-center gap-1';
+                }
+            };
+
+            window.toggleAppAnimationsSetting = function() {
+                const cur = window.isAppAnimationsEnabled();
+                const next = !cur;
+                try { localStorage.setItem('satta_pai_animations_off', next ? '0' : '1'); } catch(e) {}
+                window.applyAppAnimationsSettingUI();
+                window.showToast(next ? '✨ Smooth iOS & Chat Animations Enabled!' : '⚡ Animations turned OFF (Instant Mode)!');
+            };
+            window.applyAppAnimationsSettingUI();
+
+            // ------------------------------------------------------------------
+            // 2. GUARANTEED SCROLLING & ADMIN TAB SWITCHING (Fixes Point 9)
+            // ------------------------------------------------------------------
+            const baseSwitchTab = window.switchTab;
+            window.switchTab = function(tab, pushHistory = true) {
+                if (typeof baseSwitchTab === 'function') baseSwitchTab(tab, pushHistory);
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+                const mainEl = document.querySelector('main');
+                const portal = document.getElementById('admin-secured-portal');
+                if (tab === 'teams') {
+                    if (mainEl) mainEl.style.display = 'none';
+                    if (portal) {
+                        portal.removeAttribute('hidden');
+                        portal.removeAttribute('aria-hidden');
+                        portal.removeAttribute('inert');
+                        portal.style.display = 'block';
+                    }
+                } else {
+                    if (mainEl) mainEl.style.display = 'block';
+                    if (portal) portal.style.display = 'none';
+                }
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            };
+
+            // ------------------------------------------------------------------
+            // 3. GUARANTEED MESSAGE DELETION IN APP, LOCALSTORAGE & FIRESTORE
+            //    (Fixes Point 10 for both 'Delete for Me' & 'Delete for Everyone')
+            // ------------------------------------------------------------------
+            const purgeMsgIdFromAllLocalStorage = (targetId, senderEmail = '', timestamp = 0) => {
+                const tid = String(targetId || '').trim();
+                if (!tid) return;
+                if (window.saveDeletedDmId) window.saveDeletedDmId(tid);
+                if (window.saveDeletedGlobalChatId) window.saveDeletedGlobalChatId(tid);
+                if (senderEmail && timestamp) {
+                    const compositeKey = `${String(senderEmail).toLowerCase()}_${timestamp}`;
+                    if (window.saveDeletedDmId) window.saveDeletedDmId(compositeKey);
+                    if (window.saveDeletedGlobalChatId) window.saveDeletedGlobalChatId(compositeKey);
+                }
+
+                // Filter in-memory arrays
+                const matchFilter = (m) => {
+                    if (!m) return false;
+                    if (String(m.id || '') === tid || String(m.clientMsgId || '') === tid) return false;
+                    if (senderEmail && timestamp && String(m.senderEmail || m.userEmail || m.email || '').toLowerCase() === String(senderEmail).toLowerCase() && Math.abs(Number(m.timestamp || 0) - Number(timestamp)) < 2000) {
+                        return false;
+                    }
+                    return true;
+                };
+
+                if (Array.isArray(window._allDmMessages)) {
+                    window._allDmMessages = window._allDmMessages.filter(matchFilter);
+                }
+                if (Array.isArray(window.allChatMessages)) {
+                    window.allChatMessages = window.allChatMessages.filter(matchFilter);
+                }
+                if (Array.isArray(window._directFirestoreChats)) {
+                    window._directFirestoreChats = window._directFirestoreChats.filter(matchFilter);
+                }
+
+                // Overwrite encrypted & raw localStorage caches immediately!
+                if (window.saveLocalCachedDms) window.saveLocalCachedDms(window._allDmMessages || []);
+                if (window.saveLocalEncryptedGlobalChats) window.saveLocalEncryptedGlobalChats(window.allChatMessages || []);
+                if (window.SattaPaiEncryptedStorage) {
+                    try {
+                        const dmCached = window.SattaPaiEncryptedStorage.getEncryptedItem('satta_pai_dm_local_cache_v1', []);
+                        if (Array.isArray(dmCached)) {
+                            window.SattaPaiEncryptedStorage.setEncryptedItem('satta_pai_dm_local_cache_v1', dmCached.filter(matchFilter));
+                        }
+                        const globCached = window.SattaPaiEncryptedStorage.getEncryptedItem('satta_pai_global_chat_vault_v3', []);
+                        if (Array.isArray(globCached)) {
+                            window.SattaPaiEncryptedStorage.setEncryptedItem('satta_pai_global_chat_vault_v3', globCached.filter(matchFilter));
+                        }
+                    } catch(e) {}
+                }
+
+                // Remove DOM element immediately from screen for 0ms visual feedback
+                document.querySelectorAll(`[data-msg-id="${CSS.escape ? CSS.escape(tid) : tid}"]`).forEach(el => {
+                    const row = el.closest('.chat-row') || el.parentElement;
+                    if (row) row.remove();
+                    else el.remove();
+                });
+
+                if (typeof window.renderActiveDmConversation === 'function') window.renderActiveDmConversation();
+                if (typeof window.renderDmInboxList === 'function') window.renderDmInboxList();
+                if (typeof window.renderChatMessages === 'function') window.renderChatMessages();
+            };
+
+            // Also filter out any message marked deletedForEveryone in mergeDmSnapshotsWithLocal & mergeAndRenderAllGlobalChats
+            const origMergeDm = window.mergeDmSnapshotsWithLocal;
+            window.mergeDmSnapshotsWithLocal = function(remoteDocs) {
+                if (Array.isArray(remoteDocs)) {
+                    remoteDocs.forEach(d => {
+                        if (d && (d.deletedForEveryone === true || d.message === '[DELETED]')) {
+                            if (d.id && window.saveDeletedDmId) window.saveDeletedDmId(d.id);
+                            if (d.clientMsgId && window.saveDeletedDmId) window.saveDeletedDmId(d.clientMsgId);
+                        }
+                    });
+                }
+                const cleanRemote = Array.isArray(remoteDocs)
+                    ? remoteDocs.filter(d => d && !d.deletedForEveryone && d.message !== '[DELETED]')
+                    : remoteDocs;
+                if (typeof origMergeDm === 'function') origMergeDm(cleanRemote);
+            };
+
+            window.deletePrivateDmForMeOnly = function(msgIdRaw) {
+                const targetId = String(msgIdRaw || '').trim();
+                if (!targetId) return;
+                document.getElementById('chat-msg-actions-modal')?.classList.add('hidden');
+                const msg = (window._allDmMessages || []).find(m => m && (m.id === targetId || m.clientMsgId === targetId));
+                purgeMsgIdFromAllLocalStorage(targetId, msg?.senderEmail || '', msg?.timestamp || 0);
+                window.showToast('🗑️ Message deleted for you');
+            };
+
+            window.deletePrivateDmMessage = async function(msgIdRaw) {
+                const targetId = String(msgIdRaw || '').trim();
+                if (!targetId) return;
+                document.getElementById('chat-msg-actions-modal')?.classList.add('hidden');
+                const msg = (window._allDmMessages || []).find(m => m && (m.id === targetId || m.clientMsgId === targetId));
+                const docIdsToDel = new Set([targetId]);
+                if (msg && msg.id) docIdsToDel.add(msg.id);
+                if (msg && msg.clientMsgId) docIdsToDel.add(msg.clientMsgId);
+
+                purgeMsgIdFromAllLocalStorage(targetId, msg?.senderEmail || '', msg?.timestamp || 0);
+                window.showToast('🗑️ Deleted for everyone');
+
+                for (const idToDel of docIdsToDel) {
+                    if (idToDel && window.db && window.doc) {
+                        try {
+                            await window.setDoc(window.doc(window.db, 'dm_messages', idToDel), {
+                                deletedForEveryone: true,
+                                message: '[DELETED]',
+                                audioData: '',
+                                updatedAt: Date.now()
+                            }, { merge: true });
+                        } catch(e) {}
+                        try {
+                            await window.deleteDoc(window.doc(window.db, 'dm_messages', idToDel));
+                        } catch(e) {}
+                    }
+                }
+                if (window._globalBroadcastDeletedIds) {
+                    docIdsToDel.forEach(i => window._globalBroadcastDeletedIds.add(i));
+                    window.setDoc(window.doc(window.db, 'settings', 'chatConfig'), {
+                        deletedMsgIds: Array.from(window._globalBroadcastDeletedIds).slice(-120),
+                        lastDeleteAt: Date.now()
+                    }, { merge: true }).catch(() => {});
+                }
+            };
+
+            window.deletePrivateDmForEveryone = function(msgIdRaw) {
+                window.deletePrivateDmMessage(msgIdRaw);
+            };
+
+            window.deleteGlobalChatForMeOnly = function(msgIdRaw) {
+                const targetId = String(msgIdRaw || '').trim();
+                if (!targetId) return;
+                document.getElementById('chat-profile-modal')?.classList.add('hidden');
+                document.getElementById('chat-msg-actions-modal')?.classList.add('hidden');
+                const msg = (window.allChatMessages || []).find(m => m && (m.id === targetId || m.clientMsgId === targetId));
+                purgeMsgIdFromAllLocalStorage(targetId, msg?.userEmail || msg?.email || '', msg?.timestamp || 0);
+                window.showToast('🗑️ Message deleted for you');
+            };
+
+            window.instantDeleteGlobalChatMessage = async function(targetIdRaw, targetEmailRaw = '', targetMsgTextRaw = '') {
+                const targetId = String(targetIdRaw || '').trim();
+                if (!targetId) return;
+                document.getElementById('chat-profile-modal')?.classList.add('hidden');
+                document.getElementById('chat-msg-actions-modal')?.classList.add('hidden');
+                const msg = (window.allChatMessages || []).find(m => m && (m.id === targetId || m.clientMsgId === targetId));
+                const docIdsToDel = new Set([targetId]);
+                if (msg && msg.id) docIdsToDel.add(msg.id);
+                if (msg && msg.clientMsgId) docIdsToDel.add(msg.clientMsgId);
+
+                purgeMsgIdFromAllLocalStorage(targetId, targetEmailRaw || msg?.userEmail || '', msg?.timestamp || 0);
+                window.showToast('🗑️ Deleted for everyone');
+
+                for (const idToDel of docIdsToDel) {
+                    if (idToDel && !String(idToDel).startsWith('local_') && window.db && window.doc) {
+                        try {
+                            await window.setDoc(window.doc(window.db, 'chats', idToDel), {
+                                deletedForEveryone: true,
+                                message: '[DELETED]',
+                                updatedAt: Date.now()
+                            }, { merge: true });
+                        } catch(e) {}
+                        try {
+                            await window.deleteDoc(window.doc(window.db, 'chats', idToDel));
+                        } catch(e) {}
+                    }
+                }
+                if (window._globalBroadcastDeletedIds) {
+                    docIdsToDel.forEach(i => window._globalBroadcastDeletedIds.add(i));
+                    window.setDoc(window.doc(window.db, 'settings', 'chatConfig'), {
+                        deletedMsgIds: Array.from(window._globalBroadcastDeletedIds).slice(-120),
+                        lastDeleteAt: Date.now()
+                    }, { merge: true }).catch(() => {});
+                }
+            };
+
+            // ------------------------------------------------------------------
+            // 4. WHATSAPP SWIPE-RIGHT-TO-REPLY WITH VISUAL ARROW ANIMATION
+            //    & GUARANTEED REPLY ON ANY PRIVATE DM OR GLOBAL CHAT MESSAGE!
+            // ------------------------------------------------------------------
+            let swipeBadge = document.getElementById('sp-swipe-reply-badge');
+            if (!swipeBadge) {
+                swipeBadge = document.createElement('div');
+                swipeBadge.id = 'sp-swipe-reply-badge';
+                swipeBadge.className = 'sp-swipe-reply-indicator';
+                swipeBadge.innerHTML = '<svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>';
+                document.body.appendChild(swipeBadge);
+            }
+
+            window.setChatReplyQuote = function(mode, msgKey, fallbackSender = '', fallbackText = '') {
+                const key = String(msgKey || '').trim();
+                const domEl = key ? document.querySelector(`[data-msg-id="${CSS.escape ? CSS.escape(key) : key}"]`) : null;
+                const domSender = (domEl && domEl.getAttribute('data-msg-sender')) || fallbackSender || '';
+                const domText = (domEl && domEl.getAttribute('data-msg-text')) || fallbackText || '';
+
+                if (mode === 'dm') {
+                    const msg = (window._allDmMessages || []).find(m => m && (m.id === key || m.clientMsgId === key));
+                    const sName = domSender || (msg ? (window.getPublicPlayerDisplayName(msg.senderEmail, null, msg.senderName)) : 'Player');
+                    const sText = domText || (msg ? (msg.audioData ? '🎤 Voice Message' : String(msg.message || '').slice(0, 90)) : 'Message');
+                    window._activeDmReplyQuote = { name: sName, text: sText };
+                    const bar = document.getElementById('dm-reply-quote-bar');
+                    const nEl = document.getElementById('dm-reply-quote-sender');
+                    const tEl = document.getElementById('dm-reply-quote-text');
+                    if (nEl) nEl.textContent = '↩ Replying to ' + sName;
+                    if (tEl) tEl.textContent = sText;
+                    if (bar) bar.classList.remove('hidden');
+                    document.getElementById('dm-message-input')?.focus();
+                } else {
+                    const msg = (window.allChatMessages || []).find(m => m && (m.id === key || m.clientMsgId === key));
+                    const sName = domSender || (msg ? (window.getPublicPlayerDisplayName(msg.userEmail || msg.email, null, msg.displayName || msg.username)) : 'Player');
+                    const sText = domText || (msg ? String(msg.message || '').slice(0, 90) : 'Message');
+                    window._activeGlobalReplyQuote = { name: sName, text: sText };
+                    const gBar = document.getElementById('global-reply-quote-bar');
+                    const gnEl = document.getElementById('global-reply-quote-sender');
+                    const gtEl = document.getElementById('global-reply-quote-text');
+                    if (gnEl) gnEl.textContent = '↩ Replying to ' + sName;
+                    if (gtEl) gtEl.textContent = sText;
+                    if (gBar) gBar.classList.remove('hidden');
+                    const inp = document.getElementById('chat-input');
+                    if (inp) {
+                        inp.placeholder = `↩ Replying to ${sName}...`;
+                        inp.focus();
+                    }
+                }
+            };
+
+            const origClearQuote = window.clearChatReplyQuote;
+            window.clearChatReplyQuote = function(mode) {
+                if (typeof origClearQuote === 'function') origClearQuote(mode);
+                if (mode === 'global') {
+                    window._activeGlobalReplyQuote = null;
+                    document.getElementById('global-reply-quote-bar')?.classList.add('hidden');
+                    const inp = document.getElementById('chat-input');
+                    if (inp) inp.placeholder = 'Type a message...';
+                } else {
+                    window._activeDmReplyQuote = null;
+                    document.getElementById('dm-reply-quote-bar')?.classList.add('hidden');
+                }
+            };
+
+            // Bind unified Swipe-Right-to-Reply (with visual arrow badge) + Long-Press (350ms) on Chat containers
+            ['chat-messages', 'dm-messages-scroll-box'].forEach(boxId => {
+                const box = document.getElementById(boxId);
+                if (!box) return;
+                const mode = boxId === 'dm-messages-scroll-box' ? 'dm' : 'global';
+                let pressTimer = null;
+                let startX = 0, startY = 0;
+                let activeBubble = null;
+                let activeMsgId = '';
+
+                const findBubbleAndId = (target) => {
+                    if (!target || !target.closest) return { bubble: null, id: '' };
+                    const b = target.closest('[data-msg-id], .dm-swipe-bubble, .chat-bubble, [onclick*="openDmMessageActionsModal"]');
+                    if (!b) return { bubble: null, id: '' };
+                    let id = b.getAttribute('data-msg-id') || '';
+                    if (!id) {
+                        const oc = b.getAttribute('onclick') || '';
+                        const m1 = oc.match(/openDmMessageActionsModal\(['"]([^'"]+)['"]\)/);
+                        if (m1) id = m1[1];
+                        const m2 = oc.match(/openChatProfileByMsgId\(event,\s*['"]([^'"]+)['"]\)/);
+                        if (m2) id = m2[1];
+                    }
+                    return { bubble: b, id };
+                };
+
+                box.addEventListener('touchstart', (ev) => {
+                    const t = ev.touches && ev.touches[0];
+                    if (!t) return;
+                    const { bubble, id } = findBubbleAndId(ev.target);
+                    if (!bubble) return;
+                    activeBubble = bubble;
+                    activeMsgId = id;
+                    startX = t.clientX;
+                    startY = t.clientY;
+                    clearTimeout(pressTimer);
+                    pressTimer = setTimeout(() => {
+                        if (activeBubble && activeMsgId) {
+                            if (navigator.vibrate) navigator.vibrate(22);
+                            window._allowModalFromLongPress = true;
+                            if (mode === 'dm') {
+                                window.openDmMessageActionsModal(activeMsgId);
+                            } else {
+                                window.openGlobalChatMessageLongPressModal(activeMsgId);
+                            }
+                        }
+                    }, 360);
+                }, { passive: true });
+
+                box.addEventListener('touchmove', (ev) => {
+                    const t = ev.touches && ev.touches[0];
+                    if (!t || !activeBubble) return;
+                    const dx = t.clientX - startX;
+                    const dy = t.clientY - startY;
+                    if (Math.abs(dx) > 8 || Math.abs(dy) > 8) {
+                        clearTimeout(pressTimer);
+                    }
+                    if (dx > 10 && Math.abs(dy) < 32) {
+                        const shift = Math.min(68, dx * 0.85);
+                        activeBubble.style.transform = `translateX(${shift}px)`;
+                        const rect = activeBubble.getBoundingClientRect();
+                        swipeBadge.style.top = (rect.top + (rect.height / 2) - 17) + 'px';
+                        swipeBadge.classList.add('visible');
+                        swipeBadge.style.transform = `scale(${Math.min(1.15, 0.5 + (shift / 60))})`;
+                    }
+                }, { passive: true });
+
+                const finishSwipe = (ev) => {
+                    clearTimeout(pressTimer);
+                    swipeBadge.classList.remove('visible');
+                    if (!activeBubble) return;
+                    const ch = ev.changedTouches && ev.changedTouches[0];
+                    if (ch) {
+                        const dx = ch.clientX - startX;
+                        const dy = ch.clientY - startY;
+                        if (dx >= 40 && Math.abs(dy) < 38) {
+                            if (navigator.vibrate) navigator.vibrate(15);
+                            const sName = activeBubble.getAttribute('data-msg-sender') || '';
+                            const sText = activeBubble.getAttribute('data-msg-text') || '';
+                            window.setChatReplyQuote(mode, activeMsgId, sName, sText);
+                        }
+                    }
+                    activeBubble.style.transform = '';
+                    activeBubble = null;
+                    activeMsgId = '';
+                };
+                box.addEventListener('touchend', finishSwipe, { passive: true });
+                box.addEventListener('touchcancel', finishSwipe, { passive: true });
+            });
+
+            // ------------------------------------------------------------------
+            // 5. CONFERENCE CALL PLAYER SEARCH (SEARCHES BOTH ONLINE & OFFLINE!)
+            // ------------------------------------------------------------------
+            window.renderConferenceAddPlayersList = async function(queryRaw = '') {
+                const listEl = document.getElementById('dm-conference-players-list');
+                if (!listEl) return;
+                const q = String(queryRaw || '').trim().toLowerCase();
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const curPartner = (window._activeDmPartnerEmail || '').toLowerCase();
+
+                // Hydrate from chats, DMs, teams, and Firestore users if searching
+                if (typeof window.hydratePlayersDirectoryFromChatsAndTeams === 'function') {
+                    window.hydratePlayersDirectoryFromChatsAndTeams();
+                }
+                if (q.length >= 2 && window.getDocs && window.collection && window.db && !window._confUsersFetched) {
+                    window._confUsersFetched = true;
+                    try {
+                        const snap = await window.getDocs(window.query(window.collection(window.db, 'users'), window.limit(80)));
+                        snap.docs.forEach(d => {
+                            const data = d.data() || {};
+                            const em = String(data.email || d.id || '').trim().toLowerCase();
+                            if (em && em.includes('@')) {
+                                window.userCache[em] = { ...(window.userCache[em] || {}), ...data, email: em };
+                            }
+                        });
+                    } catch(e) {}
+                }
+
+                const allEmails = Object.keys(window.userCache || {}).filter(em => em.includes('@') && em !== myEm && em !== curPartner);
+                const matched = allEmails.filter(em => {
+                    if (!q) return true;
+                    const u = window.userCache[em] || {};
+                    const nick = window.getPublicPlayerDisplayName(em, u, '').toLowerCase();
+                    const uname = String(u.username || '').toLowerCase();
+                    const pid = String(u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '')).toLowerCase();
+                    const uid = String(u.gameUid || '').toLowerCase();
+                    return nick.includes(q) || uname.includes(q) || pid.includes(q) || uid.includes(q);
+                });
+
+                // Sort Online first, then Offline
+                matched.sort((a, b) => {
+                    const oa = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(a));
+                    const ob = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(b));
+                    return (ob ? 1 : 0) - (oa ? 1 : 0);
+                });
+
+                if (matched.length === 0) {
+                    listEl.innerHTML = `<div class="text-slate-400 text-[10.5px] py-2 text-center">No players found matching "${window.escapeHTML(queryRaw)}".</div>`;
+                    return;
+                }
+
+                listEl.innerHTML = matched.slice(0, 25).map(em => {
+                    const u = window.userCache[em] || {};
+                    const nm = window.getPublicPlayerDisplayName(em, u, '');
+                    const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '');
+                    const isOn = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(em));
+                    const statusBadge = isOn
+                        ? '<span class="text-[8.5px] text-emerald-400 font-bold">🟢 Online</span>'
+                        : '<span class="text-[8.5px] text-slate-400 font-semibold">⚫ Offline</span>';
+                    return `<div class="flex items-center justify-between p-2 rounded-xl bg-black/45 border border-white/10">
+                        <div class="min-w-0 flex-1 pr-2">
+                            <div class="font-extrabold text-white truncate text-[11px]">${window.escapeHTML(nm)} <span class="text-[9px] text-amber-300 font-mono">(${window.escapeHTML(pid)})</span></div>
+                            <div>${statusBadge}</div>
+                        </div>
+                        <button type="button" onclick="window.invitePlayerToConferenceCall('${window.escapeJsStr(em)}')" class="px-2.5 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-black text-[10px] cursor-pointer shrink-0">➕ Add Call</button>
+                    </div>`;
+                }).join('');
+            };
+
+            window.openAddConferenceCallModal = function() {
+                const modal = document.getElementById('dm-conference-add-modal');
+                if (!modal) return;
+                modal.classList.toggle('hidden');
+                if (!modal.classList.contains('hidden')) {
+                    const inp = document.getElementById('dm-conf-search-inp');
+                    if (inp) { inp.value = ''; inp.focus(); }
+                    window.renderConferenceAddPlayersList('');
+                }
+            };
+
+            // ------------------------------------------------------------------
+            // 6. REAL-TIME "TYPING..." INDICATOR IN PRIVATE DM & GLOBAL CHAT
+            // ------------------------------------------------------------------
+            let lastDmTypingSent = 0;
+            let lastGlobalTypingSent = 0;
+
+            const dmInp = document.getElementById('dm-message-input');
+            if (dmInp) {
+                dmInp.addEventListener('input', () => {
+                    const now = Date.now();
+                    if (now - lastDmTypingSent < 2200) return;
+                    lastDmTypingSent = now;
+                    const myEm = (window.loggedEmail || '').toLowerCase();
+                    const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                    if (!myEm || myEm === 'guest' || !partner || !window.setDoc || !window.doc || !window.db) return;
+                    const myNick = window.getPublicPlayerDisplayName(myEm);
+                    window.setDoc(window.doc(window.db, 'dm_messages', 'call_signal__' + partner), {
+                        typingFrom: myEm,
+                        typingName: myNick,
+                        typingAt: now
+                    }, { merge: true }).catch(() => {});
+                });
+            }
+
+            const globInp = document.getElementById('chat-input');
+            if (globInp) {
+                globInp.addEventListener('input', () => {
+                    const now = Date.now();
+                    if (now - lastGlobalTypingSent < 2500) return;
+                    lastGlobalTypingSent = now;
+                    const myEm = (window.loggedEmail || '').toLowerCase();
+                    if (!myEm || myEm === 'guest' || !window.setDoc || !window.doc || !window.db) return;
+                    const myNick = window.getPublicPlayerDisplayName(myEm);
+                    window.setDoc(window.doc(window.db, 'settings', 'chatConfig'), {
+                        typingEmail: myEm,
+                        typingName: myNick,
+                        typingAt: now
+                    }, { merge: true }).catch(() => {});
+                });
+            }
+
+            // Watch incoming typing events in Private DM & Global Chat
+            let dmTypingHideTimer = null;
+            let globTypingHideTimer = null;
+
+            setTimeout(() => {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (myEm && myEm !== 'guest' && window.onSnapshot && window.doc && window.db) {
+                    window.onSnapshot(window.doc(window.db, 'dm_messages', 'call_signal__' + myEm), (snap) => {
+                        if (!snap.exists()) return;
+                        const d = snap.data() || {};
+                        if (d.typingFrom && d.typingFrom !== myEm && (Date.now() - Number(d.typingAt || 0) < 4200)) {
+                            const tBar = document.getElementById('dm-typing-indicator-bar');
+                            const tTxt = document.getElementById('dm-typing-indicator-txt');
+                            const subEl = document.getElementById('dm-active-partner-sub');
+                            const senderNick = d.typingName || window.getPublicPlayerDisplayName(d.typingFrom);
+                            if (window._activeDmPartnerEmail === d.typingFrom) {
+                                if (tTxt) tTxt.textContent = `${senderNick} is typing...`;
+                                if (tBar) tBar.classList.remove('hidden');
+                                if (subEl) {
+                                    subEl.dataset.prevText = subEl.dataset.prevText || subEl.textContent;
+                                    subEl.textContent = '✍️ typing...';
+                                }
+                                clearTimeout(dmTypingHideTimer);
+                                dmTypingHideTimer = setTimeout(() => {
+                                    if (tBar) tBar.classList.add('hidden');
+                                    if (subEl && subEl.dataset.prevText) subEl.textContent = subEl.dataset.prevText;
+                                }, 3600);
+                            }
+                        }
+                    }, () => {});
+                }
+
+                if (window.onSnapshot && window.doc && window.db) {
+                    window.onSnapshot(window.doc(window.db, 'settings', 'chatConfig'), (snap) => {
+                        if (!snap.exists()) return;
+                        const d = snap.data() || {};
+                        const curMe = (window.loggedEmail || '').toLowerCase();
+                        if (d.typingEmail && d.typingEmail !== curMe && (Date.now() - Number(d.typingAt || 0) < 4000)) {
+                            const gBar = document.getElementById('global-typing-indicator-bar');
+                            const gTxt = document.getElementById('global-typing-indicator-txt');
+                            if (gTxt) gTxt.textContent = `${d.typingName || 'Player'} is typing...`;
+                            if (gBar) gBar.classList.remove('hidden');
+                            clearTimeout(globTypingHideTimer);
+                            globTypingHideTimer = setTimeout(() => {
+                                if (gBar) gBar.classList.add('hidden');
+                            }, 3500);
+                        }
+                    }, () => {});
+                }
+            }, 1300);
         })();
 
     </script>

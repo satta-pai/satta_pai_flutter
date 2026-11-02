@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.7"
-  APP_VERSION_CODE: "107"
+  APP_VERSION_NAME: "1.0.8"
+  APP_VERSION_CODE: "108"
 
 jobs:
   build:
@@ -122,6 +122,9 @@ jobs:
               <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
               <uses-permission android:name="android.permission.WAKE_LOCK"/>
               <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+              <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
               <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
               <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
@@ -177,8 +180,16 @@ jobs:
                   </intent-filter>
               </activity-alias>
           """
-          if "IconGoldAlias" not in manifest:
-              manifest = manifest.replace("</application>", aliases + "\n    </application>", 1)
+          service_decl = """
+              <service
+                  android:name=".SattaPaiKeepAliveService"
+                  android:enabled="true"
+                  android:exported="false"
+                  android:stopWithTask="false"
+                  android:foregroundServiceType="microphone|mediaPlayback" />
+          """
+          if "SattaPaiKeepAliveService" not in manifest:
+              manifest = manifest.replace("</application>", service_decl + "\n" + aliases + "\n    </application>", 1)
 
           with open(manifest_path, "w") as f:
               f.write(manifest)
@@ -196,23 +207,32 @@ jobs:
           import android.Manifest
           import android.accounts.AccountManager
           import android.app.Activity
+          import android.app.Notification
           import android.app.NotificationChannel
           import android.app.NotificationManager
           import android.app.PendingIntent
+          import android.app.Service
           import android.content.ComponentName
           import android.content.Context
           import android.content.Intent
           import android.content.pm.PackageManager
+          import android.content.pm.ServiceInfo
+          import android.graphics.Bitmap
+          import android.graphics.BitmapFactory
+          import android.graphics.Color
+          import android.media.AudioAttributes
+          import android.media.AudioManager
+          import android.media.RingtoneManager
           import android.net.Uri
           import android.os.Build
           import android.os.Bundle
-          import android.graphics.Bitmap
-          import android.graphics.BitmapFactory
+          import android.os.IBinder
+          import android.os.PowerManager
           import android.provider.OpenableColumns
           import android.util.Base64
-          import java.io.ByteArrayOutputStream
           import android.view.KeyEvent
           import android.view.WindowManager
+          import android.webkit.WebView
           import android.widget.Toast
           import androidx.core.app.ActivityCompat
           import androidx.core.app.NotificationCompat
@@ -221,13 +241,84 @@ jobs:
           import io.flutter.embedding.engine.FlutterEngine
           import io.flutter.plugin.common.MethodChannel
           import org.json.JSONObject
+          import java.io.ByteArrayOutputStream
           import java.io.File
           import java.io.FileOutputStream
+
+          class SattaPaiKeepAliveService : Service() {
+              private var wakeLock: PowerManager.WakeLock? = null
+
+              override fun onCreate() {
+                  super.onCreate()
+                  try {
+                      val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+                      wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SattaPai::VoiceCallWakeLock")
+                      wakeLock?.setReferenceCounted(false)
+                  } catch (e: Exception) {}
+              }
+
+              override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+                  val mode = intent?.getStringExtra("mode") ?: "standby"
+                  val partner = intent?.getStringExtra("partner") ?: "Arena Player"
+                  try {
+                      val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val chanId = "satta_pai_voice_service"
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          val chan = NotificationChannel(chanId, "Satta Pai Active Voice Call", NotificationManager.IMPORTANCE_LOW)
+                          chan.description = "Keeps Satta Pai Voice Call & Mic active in background"
+                          nm.createNotificationChannel(chan)
+                      }
+                      val openIntent = Intent(this, MainActivity::class.java).apply {
+                          this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                      }
+                      val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                      } else {
+                          PendingIntent.FLAG_UPDATE_CURRENT
+                      }
+                      val pi = PendingIntent.getActivity(this, 8801, openIntent, piFlags)
+                      val titleTxt = if (mode == "call") "📞 Active Voice Call • $partner" else "🛡️ Satta Pai Arena Connected"
+                      val bodyTxt = if (mode == "call") "Tap to return to ongoing voice call (Mic Active)" else "Listening for incoming Arena Voice Calls"
+                      val notif = NotificationCompat.Builder(this, chanId)
+                          .setSmallIcon(applicationInfo.icon)
+                          .setContentTitle(titleTxt)
+                          .setContentText(bodyTxt)
+                          .setOngoing(mode == "call")
+                          .setContentIntent(pi)
+                          .build()
+
+                      if (mode == "call") {
+                          wakeLock?.acquire(60 * 60 * 1000L)
+                          val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                          am.mode = AudioManager.MODE_IN_COMMUNICATION
+                          am.isSpeakerphoneOn = true
+                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                              startForeground(8801, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                          } else {
+                              startForeground(8801, notif)
+                          }
+                      } else {
+                          if (wakeLock?.isHeld == true) wakeLock?.release()
+                          val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                          am.mode = AudioManager.MODE_NORMAL
+                          stopForeground(true)
+                      }
+                  } catch (e: Exception) {}
+                  return START_STICKY
+              }
+
+              override fun onTaskRemoved(rootIntent: Intent?) {
+                  // Keep call service alive even if app is swiped from recents during a call
+                  super.onTaskRemoved(rootIntent)
+              }
+
+              override fun onBind(intent: Intent?): IBinder? = null
+          }
 
           class MainActivity: FlutterActivity() {
               private val CHANNEL = "satta_pai/native_auth"
               private val NOTIF_CHANNEL_ID = "satta_pai_esports_alerts"
-              private val CALL_CHANNEL_ID = "satta_pai_incoming_calls"
+              private val CALL_CHANNEL_ID = "satta_pai_heads_up_calls_v2"
               private var pendingResult: MethodChannel.Result? = null
               private var pendingFileResult: MethodChannel.Result? = null
               private val PICK_ACCOUNT_REQ = 9001
@@ -235,10 +326,22 @@ jobs:
               private val PICK_FILE_REQ = 9003
               private val REQ_RECORD_AUDIO = 9004
               private var isVipDmSecureShieldActive = false
-              private var pendingOpenDmEmail: String = "" 
+              private var pendingOpenDmEmail: String = ""
 
               override fun onCreate(savedInstanceState: Bundle?) {
                   super.onCreate(savedInstanceState)
+                  try {
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                          setShowWhenLocked(true)
+                          setTurnScreenOn(true)
+                      } else {
+                          @Suppress("DEPRECATION")
+                          window.addFlags(
+                              WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                              WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                          )
+                      }
+                  } catch (e: Exception) {}
                   intent?.getStringExtra("open_dm_email")?.let {
                       if (it.isNotEmpty()) pendingOpenDmEmail = it
                   }
@@ -252,12 +355,19 @@ jobs:
                   intent.getStringExtra("open_dm_email")?.let {
                       if (it.isNotEmpty()) pendingOpenDmEmail = it
                   }
+              }
+
+              private fun setCallForegroundState(active: Boolean, partnerName: String = "Player") {
                   try {
-                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                          window.attributes.layoutInDisplayCutoutMode =
-                              WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                      val sIntent = Intent(this, SattaPaiKeepAliveService::class.java).apply {
+                          putExtra("mode", if (active) "call" else "standby")
+                          putExtra("partner", partnerName)
                       }
-                      // Adaptive Refresh Rate: Let Android OS dynamically scale refresh rate (saves battery & prevents heating!)
+                      if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          startForegroundService(sIntent)
+                      } else {
+                          startService(sIntent)
+                      }
                   } catch (e: Exception) {}
               }
 
@@ -307,14 +417,21 @@ jobs:
                           chan.enableVibration(true)
                           nm.createNotificationChannel(chan)
 
+                          val ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                          val audioAttr = AudioAttributes.Builder()
+                              .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                              .build()
                           val callChan = NotificationChannel(
                               CALL_CHANNEL_ID,
-                              "Satta Pai Voice Calls",
+                              "Satta Pai Incoming Voice Calls",
                               NotificationManager.IMPORTANCE_HIGH
                           )
-                          callChan.description = "Incoming 1-to-1 Private Chat Voice Calls (Heads-Up Alert)"
+                          callChan.description = "WhatsApp-style Heads-Up Incoming Voice Call Banner over games & apps"
                           callChan.enableVibration(true)
-                          callChan.vibrationPattern = longArrayOf(0, 600, 300, 600, 300, 600, 300, 600)
+                          callChan.vibrationPattern = longArrayOf(0, 800, 400, 800, 400, 800, 400, 800)
+                          callChan.setSound(ringUri, audioAttr)
+                          callChan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                           nm.createNotificationChannel(callChan)
                       }
                   } catch (e: Exception) {}
@@ -336,25 +453,28 @@ jobs:
                       } else {
                           PendingIntent.FLAG_UPDATE_CURRENT
                       }
-                      val pendingIntent = PendingIntent.getActivity(this, notifId, intent, piFlags)
+                      val pendingIntent = PendingIntent.getActivity(this, if (isCallAlert) 9991 else notifId, intent, piFlags)
                       val channelToUse = if (isCallAlert) CALL_CHANNEL_ID else NOTIF_CHANNEL_ID
                       val builder = NotificationCompat.Builder(this, channelToUse)
                           .setSmallIcon(applicationInfo.icon)
                           .setContentTitle(title)
                           .setContentText(body)
                           .setStyle(NotificationCompat.BigTextStyle().bigText(body))
-                          .setPriority(if (isCallAlert) NotificationCompat.PRIORITY_MAX else NotificationCompat.PRIORITY_HIGH)
+                          .setPriority(NotificationCompat.PRIORITY_MAX)
                           .setCategory(if (isCallAlert) NotificationCompat.CATEGORY_CALL else NotificationCompat.CATEGORY_MESSAGE)
                           .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                          .setDefaults(NotificationCompat.DEFAULT_ALL)
                           .setAutoCancel(true)
                           .setContentIntent(pendingIntent)
 
                       if (isCallAlert) {
                           builder.setFullScreenIntent(pendingIntent, true)
-                          builder.setVibrate(longArrayOf(0, 600, 300, 600, 300, 600, 300, 600))
-                          builder.addAction(android.R.drawable.sym_action_call, "Answer / Open Call", pendingIntent)
+                          builder.setColor(Color.parseColor("#10B981"))
+                          builder.setColorized(true)
+                          builder.setVibrate(longArrayOf(0, 800, 400, 800, 400, 800, 400, 800))
+                          builder.addAction(android.R.drawable.sym_action_call, "📞 Answer Call", pendingIntent)
                       }
-                      nm.notify(notifId, builder.build())
+                      nm.notify(if (isCallAlert) 9991 else notifId, builder.build())
                   } catch (e: Exception) {}
               }
 
@@ -453,6 +573,12 @@ jobs:
                               val granted = ensureMicrophonePermission()
                               result.success(granted)
                           }
+                          "setCallState" -> {
+                              val active = call.argument<Boolean>("active") ?: false
+                              val partner = call.argument<String>("partner") ?: "Player"
+                              setCallForegroundState(active, partner)
+                              result.success(true)
+                          }
                           "launchFreeFire" -> {
                               val pkg = call.argument<String>("pkg") ?: "com.dts.freefiremax"
                               val ok = launchInstalledFreeFire(pkg)
@@ -540,7 +666,6 @@ jobs:
                               var rawBytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: ByteArray(0)
                               var finalMime = mime
 
-                              // If it's an image, compress natively in Kotlin to <= 640px JPEG so it's < 80KB and never exceeds Android 1MB Binder IPC limit!
                               if (mime.startsWith("image/") && rawBytes.isNotEmpty()) {
                                   try {
                                       val bmp = BitmapFactory.decodeByteArray(rawBytes, 0, rawBytes.size)
@@ -564,7 +689,6 @@ jobs:
 
                               FileOutputStream(tempFile).use { it.write(rawBytes) }
                               val fileUriStr = Uri.fromFile(tempFile).toString()
-                              // Only inline Base64 in JSON if <= 350KB; larger files (like MP3 songs) stream via local HttpServer /__picked_file!
                               val b64 = if (rawBytes.size <= 350 * 1024) {
                                   Base64.encodeToString(rawBytes, Base64.NO_WRAP)
                               } else ""
@@ -583,8 +707,7 @@ jobs:
                       }
                   }
               }
-          }
-          '''
+          }'''
           with open(kt_path, "w") as f:
               f.write(kt_code)
           PYEOF
@@ -913,6 +1036,14 @@ jobs:
                         await _authChannel.invokeMethod('setScreenshotBlock', {'enable': enable});
                       } else if (msg == 'request_mic_perm') {
                         await _authChannel.invokeMethod('requestMicPermission');
+                      } else if (msg.startsWith('call_state:')) {
+                        try {
+                          final rest = msg.substring('call_state:'.length);
+                          final parts = rest.split('|');
+                          final isAct = parts.isNotEmpty && parts[0] == '1';
+                          final pName = parts.length > 1 ? parts[1] : 'Player';
+                          await _authChannel.invokeMethod('setCallState', {'active': isAct, 'partner': pName});
+                        } catch (_) {}
                       } else if (msg.startsWith('pick_file:')) {
                         try {
                           final rest = msg.substring('pick_file:'.length);

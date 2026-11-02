@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.6"
-  APP_VERSION_CODE: "106"
+  APP_VERSION_NAME: "1.0.7"
+  APP_VERSION_CODE: "107"
 
 jobs:
   build:

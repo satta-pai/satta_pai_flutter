@@ -2038,6 +2038,82 @@ html.theme-ghost-live {
         }
     </style>
 
+
+    <style id="satta-pai-v16-master-css">
+        /* ✅ 1. NATIVE 120FPS SCROLLING ON ALL PAGES, ADMIN PORTAL & LOCKER (Fixes 1000132388, 1000132442, 1000132443) */
+        html {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+            min-height: 100% !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        body {
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            padding-bottom: calc(145px + env(safe-area-inset-bottom, 20px)) !important;
+            touch-action: pan-y pinch-zoom !important;
+        }
+        main {
+            padding-bottom: calc(135px + env(safe-area-inset-bottom, 20px)) !important;
+        }
+        #admin-secured-portal {
+            max-width: 520px !important;
+            margin: 0 auto !important;
+            padding: 10px 12px calc(160px + env(safe-area-inset-bottom, 24px)) 12px !important;
+        }
+        #section-profile,
+        #prof-subpanel-locker,
+        #prof-subpanel-account,
+        #prof-subpanel-squad,
+        #prof-subpanel-more,
+        #section-teams,
+        #console-super-admin,
+        #console-admin-host {
+            padding-bottom: 90px !important;
+            overflow: visible !important;
+        }
+        #profile-app-icon-switcher-card {
+            max-width: 100% !important;
+            margin-bottom: 32px !important;
+        }
+        button, a, input, select, textarea, [onclick], .cyber-card {
+            touch-action: pan-y !important;
+        }
+
+        /* 🎨 2. AUTO-THEME MATCHING FOR CHAT BUBBLES & TOAST NOTIFICATIONS */
+        .chat-own,
+        .dm-own-theme-bubble,
+        div.vip-skin-gold,
+        div.vip-skin-cyber,
+        div.vip-skin-crimson,
+        div.vip-skin-violet,
+        html:not(.dark) div.vip-skin-gold,
+        html:not(.dark) div.vip-skin-cyber,
+        html:not(.dark) div.vip-skin-crimson,
+        html:not(.dark) div.vip-skin-violet {
+            background: var(--btn-bg) !important;
+            border: 1.5px solid var(--accent-primary) !important;
+            color: #ffffff !important;
+            box-shadow: 0 3px 14px var(--accent-glow) !important;
+        }
+        #toast {
+            background: var(--btn-bg) !important;
+            border: 1.5px solid var(--accent-primary) !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 26px var(--accent-glow), 0 8px 20px rgba(0,0,0,0.5) !important;
+        }
+
+        /* 🟢 3. DRAGGABLE FLOATING CALL PIP PILL */
+        #dm-floating-call-pip {
+            touch-action: none !important;
+            user-select: none !important;
+            transition: box-shadow 0.15s ease !important;
+        }
+    </style>
+
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
 
@@ -2085,52 +2161,62 @@ html.theme-ghost-live {
         })();
     </script>
 
-    <!-- 👤 MANDATORY NEW GOOGLE USER PROFILE SETUP MODAL (Never shows Gmail name — user sets Profile right on Sign-In!) -->
+    <!-- 👤 GOOGLE ACCOUNT CONNECT & NICKNAME SETUP MODAL -->
     <div id="new-user-onboarding-modal" style="z-index: 9999996 !important;" class="fixed inset-0 z-[9999996] hidden flex items-center justify-center p-4 bg-black/95">
-        <div class="cyber-card p-5 max-w-sm w-full space-y-4 border-2 border-emerald-400/70 shadow-2xl text-xs">
+        <div class="cyber-card p-5 max-w-sm w-full space-y-3.5 border-2 border-emerald-400/70 shadow-2xl text-xs">
             <div class="text-center space-y-1">
-                <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase">
-                    <span>⚡ Step 1 of 1 • Player Setup</span>
+                <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[9.5px] font-black uppercase">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/><path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.9C3.5 21.4 7.4 24 12 24z"/></svg>
+                    <span>Google Account Verified</span>
                 </div>
-                <h3 class="text-base font-black text-white uppercase tracking-wide pt-1">Complete Your Arena Profile</h3>
-                <p class="text-[10.5px] text-slate-300">Set your gaming identity before entering the lobby. Your Gmail is kept 100% private & hidden!</p>
+                <h3 class="text-sm font-black text-white uppercase tracking-wide pt-1">Are you ready to connect with Satta Pai Esports?</h3>
+                <p class="text-[10px] text-slate-300">Your Google account is ready to link. Set your public Nickname below (your Gmail stays hidden from other players).</p>
             </div>
 
-            <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-900/90 border border-white/10">
-                <img id="onboard-preview-dp" src="https://ui-avatars.com/api/?name=SP&background=10b981&color=fff" class="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-400 shrink-0" alt="Avatar">
-                <div class="min-w-0 flex-1">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase">Your Official Arena ID</div>
-                    <div id="onboard-player-id-lbl" class="text-sm font-mono font-black text-amber-400">SP-1000</div>
-                    <div class="text-[9.5px] text-emerald-400 font-semibold mt-0.5">Tap an avatar below or upload DP</div>
+            <!-- Connected Google Account Preview Card (Shows Gmail & Google Pic to User!) -->
+            <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-900/95 border border-emerald-400/40">
+                <div class="relative shrink-0">
+                    <img id="onboard-preview-dp" src="https://ui-avatars.com/api/?name=SP&background=10b981&color=fff" class="w-13 h-13 rounded-full object-cover border-2 border-emerald-400" style="width:52px;height:52px;" alt="Google Profile">
+                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white flex items-center justify-center shadow ring-1 ring-black">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/><path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.9C3.5 21.4 7.4 24 12 24z"/></svg>
+                    </span>
+                </div>
+                <div class="min-w-0 flex-1 text-left">
+                    <div class="text-[9.5px] font-extrabold text-emerald-400 uppercase">Connected Google Account</div>
+                    <div id="onboard-connected-gmail-lbl" class="text-xs font-mono font-bold text-white truncate">user@gmail.com</div>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="text-[9.5px] font-mono text-amber-400 font-bold" id="onboard-player-id-lbl">SP-1000</span>
+                        <span class="text-[9px] text-slate-400">• Private & Encrypted</span>
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-6 gap-1.5">
-                <button type="button" onclick="window.selectOnboardingAvatar(0)" class="p-1.5 rounded-xl bg-zinc-900 border border-orange-500/40 text-center cursor-pointer"><div class="text-sm">🔥</div><div class="text-[7.5px] font-bold text-orange-300">Rusher</div></button>
-                <button type="button" onclick="window.selectOnboardingAvatar(1)" class="p-1.5 rounded-xl bg-zinc-900 border border-rose-500/40 text-center cursor-pointer"><div class="text-sm">💀</div><div class="text-[7.5px] font-bold text-rose-300">Sniper</div></button>
-                <button type="button" onclick="window.selectOnboardingAvatar(2)" class="p-1.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-center cursor-pointer"><div class="text-sm">👑</div><div class="text-[7.5px] font-bold text-amber-300">King</div></button>
-                <button type="button" onclick="window.selectOnboardingAvatar(3)" class="p-1.5 rounded-xl bg-zinc-900 border border-cyan-500/40 text-center cursor-pointer"><div class="text-sm">⚡</div><div class="text-[7.5px] font-bold text-cyan-300">Ninja</div></button>
-                <button type="button" onclick="window.selectOnboardingAvatar(4)" class="p-1.5 rounded-xl bg-zinc-900 border border-red-500/40 text-center cursor-pointer"><div class="text-sm">👻</div><div class="text-[7.5px] font-bold text-red-300">Ghost</div></button>
-                <button type="button" onclick="window.selectOnboardingAvatar(5)" class="p-1.5 rounded-xl bg-zinc-900 border border-emerald-500/40 text-center cursor-pointer"><div class="text-sm">🐉</div><div class="text-[7.5px] font-bold text-emerald-300">Dragon</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(0)" class="p-1 rounded-xl bg-zinc-900 border border-orange-500/40 text-center cursor-pointer"><div class="text-sm">🔥</div><div class="text-[7.5px] font-bold text-orange-300">Rusher</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(1)" class="p-1 rounded-xl bg-zinc-900 border border-rose-500/40 text-center cursor-pointer"><div class="text-sm">💀</div><div class="text-[7.5px] font-bold text-rose-300">Sniper</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(2)" class="p-1 rounded-xl bg-zinc-900 border border-amber-500/40 text-center cursor-pointer"><div class="text-sm">👑</div><div class="text-[7.5px] font-bold text-amber-300">King</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(3)" class="p-1 rounded-xl bg-zinc-900 border border-cyan-500/40 text-center cursor-pointer"><div class="text-sm">⚡</div><div class="text-[7.5px] font-bold text-cyan-300">Ninja</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(4)" class="p-1 rounded-xl bg-zinc-900 border border-red-500/40 text-center cursor-pointer"><div class="text-sm">👻</div><div class="text-[7.5px] font-bold text-red-300">Ghost</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(5)" class="p-1 rounded-xl bg-zinc-900 border border-emerald-500/40 text-center cursor-pointer"><div class="text-sm">🐉</div><div class="text-[7.5px] font-bold text-emerald-300">Dragon</div></button>
             </div>
 
-            <div class="space-y-2.5 text-left">
+            <div class="space-y-2 text-left">
                 <div>
-                    <label class="block font-extrabold text-[10.5px] text-slate-200 mb-1">1. Display Name / Username *</label>
-                    <input type="text" id="onboard-username-inp" maxlength="22" placeholder="e.g. Tharun Boss" class="cyber-input w-full px-3 py-2 text-xs font-bold">
+                    <label class="block font-extrabold text-[10px] text-slate-300 mb-0.5">1. Username (small letters & _ only, no spaces) *</label>
+                    <input type="text" id="onboard-username-inp" maxlength="22" oninput="this.value=this.value.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')" placeholder="e.g. tharun_boss" class="cyber-input w-full px-3 py-2 text-xs font-mono font-bold">
                 </div>
                 <div>
-                    <label class="block font-extrabold text-[10.5px] text-emerald-300 mb-1">2. Free Fire IGN (In-Game Name) *</label>
-                    <input type="text" id="onboard-ign-inp" maxlength="22" placeholder="e.g. THARUN_FF" class="cyber-input w-full px-3 py-2 text-xs font-bold">
+                    <label class="block font-extrabold text-[10px] text-amber-300 mb-0.5">2. Nickname (Shown in Chat & Matches) *</label>
+                    <input type="text" id="onboard-ign-inp" maxlength="22" placeholder="e.g. THARUN BOSS" class="cyber-input w-full px-3 py-2 text-xs font-bold">
                 </div>
                 <div>
-                    <label class="block font-extrabold text-[10.5px] text-amber-300 mb-1">3. Free Fire Game UID *</label>
+                    <label class="block font-extrabold text-[10px] text-emerald-300 mb-0.5">3. Free Fire Game UID *</label>
                     <input type="text" id="onboard-uid-inp" maxlength="14" inputmode="numeric" placeholder="e.g. 2489103847" class="cyber-input w-full px-3 py-2 text-xs font-mono font-bold">
                 </div>
             </div>
 
             <button type="button" onclick="window.submitNewUserOnboardingProfile()" class="btn-theme w-full py-3 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer shadow-xl">
-                🚀 Save Profile & Enter Arena
+                ✅ Connect & Enter Satta Pai Arena
             </button>
         </div>
     </div>
@@ -2364,7 +2450,7 @@ html.theme-ghost-live {
                     <button type="button" onclick="redeemMiniVipPass3Days()" class="cyber-card p-2 text-center hover:border-amber-400 cursor-pointer bg-zinc-950/70">
                         <div class="text-[11px] font-extrabold text-amber-400">⚡ 3-Day Mini Pro Pass</div>
                         <div class="text-[9px] text-amber-300 font-bold mt-0.5">🪙 800 SP Coins</div>
-                        <div class="text-[8px] text-slate-400">Unlock Live Themes & OFF</div>
+                        <div class="text-[8px] text-slate-400">Unlock SP Themes & OFF</div>
                     </button>
                     <button type="button" onclick="redeemGoldenChatMegaphone()" class="cyber-card p-2 text-center hover:border-purple-400 cursor-pointer bg-zinc-950/70">
                         <div class="text-[11px] font-extrabold text-purple-300">📢 Golden Chat Pin</div>
@@ -2603,15 +2689,15 @@ html.theme-ghost-live {
                         </div>
                     </div>
                     <div id="tg-demo-bubble-box" class="p-2 rounded-lg pro-plus-bubble bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-purple-600/20 text-[11px] text-white font-semibold flex items-center justify-between relative z-10 backdrop-blur-sm">
-                        <span id="tg-demo-chat-sample">"🔥 Buying Premium unlocks this Live Theme & Gold Badge permanently!"</span>
+                        <span id="tg-demo-chat-sample">"🔥 Buying Premium unlocks this SP Theme & Gold Badge permanently!"</span>
                         <span class="text-[9px] font-mono text-amber-300 shrink-0 ml-2">✓ VIP Look</span>
                     </div>
                 </div>
-                <!-- Interactive Live Theme & Perk Switcher Inside VIP Showcase -->
+                <!-- Interactive SP Theme & Perk Switcher Inside VIP Showcase -->
                 <div class="space-y-1.5 relative z-10">
                     <div class="text-[9px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                        <span>🎨 Tap any Live Theme / Perk below to test inside VIP Box:</span>
-                        <span class="text-amber-300">7 Live Themes</span>
+                        <span>🎨 Tap any SP Theme / Perk below to test inside VIP Box:</span>
+                        <span class="text-amber-300">7 SP Themes</span>
                     </div>
                     <div class="flex items-center gap-1 overflow-x-auto pb-1" style="scrollbar-width: none;">
                         <button type="button" onclick="switchTelegramVipPreview('anime-live')" class="px-2 py-1 rounded-lg bg-pink-500/25 border border-pink-400/60 text-pink-200 text-[9px] font-extrabold shrink-0 cursor-pointer">⚡ Anime</button>
@@ -2641,9 +2727,9 @@ html.theme-ghost-live {
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Global Chat Cooldown</div><div class="text-center text-amber-400">10s</div><div class="text-center text-emerald-400 font-bold">5s</div><div class="text-center text-yellow-300 font-extrabold">0s Unlimited ⚡</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Private DM Security (App)</div><div class="text-center text-slate-300">Normal</div><div class="text-center text-emerald-400 font-bold">🔒 Stealth</div><div class="text-center text-yellow-300 font-extrabold">🛡️ E2E Vault</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Hide Last Seen & Blue ✓✓</div><div class="text-center text-slate-300">Basic</div><div class="text-center text-emerald-400 font-bold">✓ Ghost</div><div class="text-center text-yellow-300 font-extrabold">👻 Pro Cloak</div></div>
-                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>DP Photo Change</div><div class="text-center text-amber-400">6 Days</div><div class="text-center text-emerald-400 font-bold">2 Days</div><div class="text-center text-yellow-300 font-extrabold">Unlimited ⚡</div></div>
-                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Name / IGN / UID Edit</div><div class="text-center text-amber-400">24 Hrs</div><div class="text-center text-emerald-400 font-bold">6 Hrs</div><div class="text-center text-yellow-300 font-extrabold">Unlimited ⚡</div></div>
-                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>App Themes & Icons</div><div class="text-center text-slate-300">Default</div><div class="text-center text-emerald-400 font-bold">Pro + Icons</div><div class="text-center text-yellow-300 font-extrabold">7 Live + Icons</div></div>
+                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>DP Photo Upload</div><div class="text-center text-amber-400">6 Hrs</div><div class="text-center text-emerald-400 font-bold">1 Hr</div><div class="text-center text-yellow-300 font-extrabold">Unlimited ⚡</div></div>
+                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Nickname & Profile Edit</div><div class="text-center text-emerald-400 font-bold">Unlimited</div><div class="text-center text-emerald-400 font-bold">Unlimited</div><div class="text-center text-yellow-300 font-extrabold">Unlimited ⚡</div></div>
+                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>App Themes & Icons</div><div class="text-center text-slate-300">Default</div><div class="text-center text-emerald-400 font-bold">Pro + Icons</div><div class="text-center text-yellow-300 font-extrabold">7 SP + Icons</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Daily Coins & BP XP</div><div class="text-center text-slate-300">1x (+10🪙)</div><div class="text-center text-emerald-400 font-bold">1.5x XP</div><div class="text-center text-yellow-300 font-extrabold">2x (+240 XP) 🔥</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Royal Crown Chat Aura</div><div class="text-center text-rose-400">✗</div><div class="text-center text-amber-400 font-bold">⭐ PRO</div><div class="text-center text-yellow-300 font-extrabold">👑 GOLD AURA</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] items-center"><div>AI Tactical Assistant</div><div class="text-center text-slate-300">15/Day</div><div class="text-center text-emerald-400 font-bold">60/Day</div><div class="text-center text-yellow-300 font-extrabold">♾️ Unlimited</div></div>
@@ -3190,6 +3276,9 @@ html.theme-ghost-live {
                         <span>📋</span><span>Copy Email</span>
                     </button>
                 </div>
+                <button type="button" onclick="window.openMaintenanceExternalUrl(window._cachedWhatsappChannelUrl || 'https://whatsapp.com/channel/0029VbE978BDeON879ZJiS3z', 'WhatsApp Channel')" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 hover:brightness-110 text-white font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg border border-emerald-300/40">
+                    <span>📢</span><span>Join Official WhatsApp Channel</span>
+                </button>
                 <a href="https://t.me/CHELLAM_STORE" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer">
                     <span>✈️</span><span>Telegram Support (@CHELLAM_STORE)</span>
                 </a>
@@ -3491,7 +3580,7 @@ html.theme-ghost-live {
                         </div>
 
                         <div class="pt-2 border-t" style="border-color: var(--border-color);">
-                            <button type="button" onclick="window.toggleThemesSection(event)" class="w-full flex items-center justify-between cursor-pointer py-1.5 hover:bg-zinc-500/10 rounded px-1">
+                            <button type="button" style="display:none !important;" onclick="window.toggleThemesSection(event)" class="w-full flex items-center justify-between cursor-pointer py-1.5 hover:bg-zinc-500/10 rounded px-1">
                                 <span class="themes-header" style="padding:0;">🎨 Themes</span>
                                 <svg id="themes-chevron" class="w-4 h-4 fill-current transition-transform duration-300" style="color: var(--accent-primary);" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
                             </button>
@@ -3525,7 +3614,7 @@ html.theme-ghost-live {
 
                                 <div class="space-y-1">
                                     <div class="font-semibold text-[10px] uppercase tracking-wider flex items-center justify-between" style="color: #facc15;">
-                                        <span class="flex items-center gap-1"><span>👑</span><span>Live Themes</span></span>
+                                        <span class="flex items-center gap-1"><span>👑</span><span>SP Themes</span></span>
                                         <span class="text-[8px] px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-400 to-yellow-500 text-black font-black">👑 PRO+ ONLY</span>
                                     </div>
                                     <div class="grid grid-cols-7 gap-1">
@@ -3538,7 +3627,7 @@ html.theme-ghost-live {
                                         <button data-theme-btn="cat-live" onclick="setTheme('cat-live')" class="theme-swatch premium live-preview swatch-cat" style="background: linear-gradient(135deg, #f472b6, #c084fc, #06b6d4); border-color: #f472b6;" title="Cat Neko Cyber Live (👑 PRO+ Exclusive)"></button>
                                     </div>
                                     <button type="button" onclick="closeMenuDropdown(); openVipPassModal('anime-live'); switchVipTier('plus');" class="w-full mt-1.5 py-1.5 px-2 rounded-lg bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-purple-500/20 border border-amber-400/50 text-[9.5px] font-extrabold text-amber-300 flex items-center justify-center gap-1 cursor-pointer hover:brightness-110">
-                                        <span>👑</span><span>Unlock PRO+ for All 7 Live Themes!</span>
+                                        <span>👑</span><span>Unlock PRO+ for All 7 SP Themes!</span>
                                     </button>
                                 </div>
                             </div>
@@ -4081,10 +4170,10 @@ html.theme-ghost-live {
                     </div>
                     <p class="text-[10px] text-emerald-400 font-semibold" id="dp-cooldown-text">✨ Instant DP & Gaming Avatar Switcher Unlocked!</p>
                     <div class="text-left"><label class="block font-bold text-xs mb-1">Player ID</label><input type="text" id="profile-player-id" readonly class="cyber-input w-full px-3 py-2 text-xs font-mono bg-zinc-800 cursor-not-allowed"></div>
-                    <p class="text-[10px] text-cyan-300 font-semibold" id="profile-text-cooldown-text">⏱️ Profile Edit Rule: Free = 24h | ⭐ PRO = 6h | 👑 PRO+ = Unlimited</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold" id="profile-text-cooldown-text">✨ Profile Edit: Unlimited Changes! (DP Upload: Free = 6h | ⭐ PRO = 1h | 👑 PRO+ = Unlimited)</p>
 
-                    <div class="text-left"><label class="block font-bold text-xs mb-1">Username *</label><input type="text" id="profile-username" class="cyber-input w-full px-3 py-2 text-xs" placeholder="Unique Name"></div>
-                    <div class="text-left"><label class="block font-bold text-xs mb-1">IGN (Free Fire Name) *</label><input type="text" id="profile-ign" class="cyber-input w-full px-3 py-2 text-xs" placeholder="FF Name"></div>
+                    <div class="text-left"><label class="block font-bold text-xs mb-1">Username (small letters & _ only, no spaces) *</label><input type="text" id="profile-username" oninput="this.value=this.value.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')" class="cyber-input w-full px-3 py-2 text-xs font-mono" placeholder="e.g. tharun_boss"></div>
+                    <div class="text-left"><label class="block font-bold text-xs mb-1 text-amber-300">Nickname (Shown in All Chats & Calls) *</label><input type="text" id="profile-ign" class="cyber-input w-full px-3 py-2 text-xs font-bold" placeholder="Your Chat Nickname"></div>
                     <div class="text-left"><label class="block font-bold text-xs mb-1">Game UID *</label><input type="text" id="profile-game-uid" class="cyber-input w-full px-3 py-2 text-xs font-mono" placeholder="123456789"></div>
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <button type="button" onclick="saveProfile()" class="btn-theme w-full py-2.5 text-xs font-bold uppercase cursor-pointer">💾 Save Profile</button>
@@ -4142,7 +4231,7 @@ html.theme-ghost-live {
                         <button type="button" onclick="redeemVipCodeFromProfile()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-lg text-xs cursor-pointer">Claim</button>
                     </div>
                     <div id="profile-vip-active-perks" class="hidden grid grid-cols-3 gap-1.5 pt-1 text-[9.5px] font-extrabold text-center">
-                        <div class="p-1.5 rounded-lg bg-pink-500/15 border border-pink-500/30 text-pink-300">🎨 7 Live Themes</div>
+                        <div class="p-1.5 rounded-lg bg-pink-500/15 border border-pink-500/30 text-pink-300">🎨 7 SP Themes</div>
                         <div class="p-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">💰 Fee Discount</div>
                         <div class="p-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300">⚡ Fast Chat & DP</div>
                     </div>
@@ -4289,11 +4378,55 @@ html.theme-ghost-live {
             </div>
         </section>
 
-        <section id="section-chat" hidden aria-hidden="true" inert class="hidden space-y-3">
-            <button onclick="switchTab('home')" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back</button>
-            <div class="cyber-card p-10 text-center space-y-4">
-                <h2 class="text-lg font-bold flex items-center justify-center gap-2"><svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg> Global Chat</h2>
-                <button onclick="openFullScreenChat()" class="btn-theme px-6 py-3 text-sm font-bold w-full max-w-xs mx-auto">Open Chat Room</button>
+        <section id="section-chat" hidden aria-hidden="true" inert class="hidden space-y-3.5">
+            <div class="flex items-center justify-between px-0.5 pt-0.5">
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-wide flex items-center gap-1.5"><span>💬</span><span>Satta Pai Communications Hub</span></h2>
+                    <p class="text-[10px]" style="color: var(--text-muted);">Choose Global Arena Chat or 1-to-1 Private Messenger</p>
+                </div>
+            </div>
+
+            <!-- 🌍 1. STANDALONE GLOBAL ARENA CHAT CARD -->
+            <div onclick="window.openDedicatedGlobalChat()" class="cyber-card p-4 space-y-3 cursor-pointer border border-emerald-500/40 relative overflow-hidden">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500/25 to-teal-600/25 border border-emerald-400/50 flex items-center justify-center text-emerald-400 shrink-0 shadow-lg">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1 text-left">
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-sm font-black uppercase tracking-tight">Global Arena Chat</h3>
+                                <span class="px-2 py-0.2 rounded-full text-[8.5px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">PUBLIC</span>
+                            </div>
+                            <p class="text-[10.5px] mt-0.5" style="color: var(--text-muted);">Live tournament discussion, squad callouts, swipe-to-reply & reactions</p>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); window.openDedicatedGlobalChat()" class="btn-theme w-full py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-lg">
+                    <span>🌍 Enter Global Chat</span><span>›</span>
+                </button>
+            </div>
+
+            <!-- 💬 2. STANDALONE PRIVATE 1-TO-1 MESSENGER & VOICE CALL CARD -->
+            <div onclick="window.openDedicatedPrivateDmChat()" class="cyber-card p-4 space-y-3 cursor-pointer border border-cyan-500/40 relative overflow-hidden">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500/25 to-blue-600/25 border border-cyan-400/50 flex items-center justify-center text-cyan-400 shrink-0 shadow-lg relative">
+                            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                            <span id="hub-dm-unread-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-600 text-white text-[9.5px] font-black flex items-center justify-center ring-2 ring-black">0</span>
+                        </div>
+                        <div class="min-w-0 flex-1 text-left">
+                            <div class="flex items-center gap-1.5">
+                                <h3 class="text-sm font-black uppercase tracking-tight">Private Chat & Voice Call</h3>
+                                <span class="px-2 py-0.2 rounded-full text-[8.5px] font-black bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">1-ON-1 E2EE</span>
+                            </div>
+                            <p class="text-[10.5px] mt-0.5" style="color: var(--text-muted);">1-to-1 private messages, voice notes, HD Voice & Conference Calls</p>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="event.stopPropagation(); window.openDedicatedPrivateDmChat()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-lg">
+                    <span>💬 Open Private Chat</span><span>›</span>
+                </button>
             </div>
         </section>
 
@@ -5388,8 +5521,30 @@ html.theme-ghost-live {
                         <button type="button" onclick="window.finishDmVoiceRecording()" class="px-3 py-1 rounded-lg bg-emerald-500 text-black font-black text-[10px] cursor-pointer shadow">Send Voice ▲</button>
                     </div>
                 </div>
+                <!-- 😊 Quick Emoji Picker Drawer for Private DM -->
+                <div id="dm-emoji-picker-bar" class="hidden px-3 py-1.5 border-t bg-zinc-950/95 flex items-center gap-2 overflow-x-auto text-lg shrink-0" style="border-color: var(--border-color);">
+                    <button type="button" onclick="window.insertChatEmoji('dm','😂')" class="cursor-pointer shrink-0">😂</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🔥')" class="cursor-pointer shrink-0">🔥</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','❤️')" class="cursor-pointer shrink-0">❤️</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','👑')" class="cursor-pointer shrink-0">👑</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','💀')" class="cursor-pointer shrink-0">💀</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','⚡')" class="cursor-pointer shrink-0">⚡</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🏆')" class="cursor-pointer shrink-0">🏆</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','😍')" class="cursor-pointer shrink-0">😍</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','😭')" class="cursor-pointer shrink-0">😭</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','😎')" class="cursor-pointer shrink-0">😎</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🤝')" class="cursor-pointer shrink-0">🤝</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🎯')" class="cursor-pointer shrink-0">🎯</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','💯')" class="cursor-pointer shrink-0">💯</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🙏')" class="cursor-pointer shrink-0">🙏</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🥳')" class="cursor-pointer shrink-0">🥳</button>
+                    <button type="button" onclick="window.insertChatEmoji('dm','🫡')" class="cursor-pointer shrink-0">🫡</button>
+                </div>
                 <!-- 1-to-1 DM Input Area -->
                 <div class="p-2 border-t bg-zinc-900/95 flex items-center gap-1.5 shrink-0" style="border-color: var(--border-color);">
+                    <button type="button" onclick="window.toggleChatEmojiBar('dm')" class="w-9 h-9 rounded-xl cyber-card flex items-center justify-center text-amber-400 border border-amber-400/30 cursor-pointer shrink-0" title="Emojis">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+                    </button>
                     <input type="text" id="dm-message-input" maxlength="250" placeholder="Write a private message..." class="cyber-input flex-1 px-3 py-2 text-xs" onkeypress="if(event.key === 'Enter') window.sendPrivateDmMessage()">
                     <button type="button" id="dm-voice-record-btn" onclick="window.toggleDmVoiceRecording()" class="w-9 h-9 rounded-xl cyber-card border border-emerald-400/40 text-emerald-300 flex items-center justify-center cursor-pointer shrink-0 hover:border-emerald-400" title="Record Voice Message">
                         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
@@ -5408,9 +5563,39 @@ html.theme-ghost-live {
             <button type="button" onclick="sendVoiceShoutoutChat('🎙️ [VOICE]: Rush Pannunga Squad! 🔥', 'Rush pannunga squad! Booyah namakku thaan!')" class="px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/40 text-cyan-300 font-bold shrink-0 cursor-pointer hover:bg-cyan-500/25">🎙️ Rush Voice</button>
             <button type="button" onclick="sendVoiceShoutoutChat('🎙️ [VOICE]: Room ID & Password Ready! Join Fast! ⚡', 'Attention squads! Room ID ready, join fast within five minutes!')" class="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 font-bold shrink-0 cursor-pointer hover:bg-amber-500/25">🎙️ Room Ready</button>
         </div>
-        <div id="chat-input-area" class="p-3 border-t flex gap-2" style="background: var(--bg-card); border-color: var(--border-color);">
-            <input type="text" id="chat-input" maxlength="200" placeholder="Type a message..." class="cyber-input flex-1 px-3 py-2 text-sm" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-            <button onclick="sendChatMessage()" class="btn-theme px-4 py-2 text-sm font-bold">Send</button>
+        <!-- 😊 Quick Emoji Picker Drawer for Global Chat -->
+        <div id="global-emoji-picker-bar" class="hidden px-3 py-2 border-t bg-zinc-950/95 flex items-center gap-2 overflow-x-auto text-lg shrink-0" style="border-color: var(--border-color);">
+            <button type="button" onclick="window.insertChatEmoji('global','😂')" class="cursor-pointer shrink-0">😂</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🔥')" class="cursor-pointer shrink-0">🔥</button>
+            <button type="button" onclick="window.insertChatEmoji('global','❤️')" class="cursor-pointer shrink-0">❤️</button>
+            <button type="button" onclick="window.insertChatEmoji('global','👑')" class="cursor-pointer shrink-0">👑</button>
+            <button type="button" onclick="window.insertChatEmoji('global','💀')" class="cursor-pointer shrink-0">💀</button>
+            <button type="button" onclick="window.insertChatEmoji('global','⚡')" class="cursor-pointer shrink-0">⚡</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🏆')" class="cursor-pointer shrink-0">🏆</button>
+            <button type="button" onclick="window.insertChatEmoji('global','😍')" class="cursor-pointer shrink-0">😍</button>
+            <button type="button" onclick="window.insertChatEmoji('global','😭')" class="cursor-pointer shrink-0">😭</button>
+            <button type="button" onclick="window.insertChatEmoji('global','😎')" class="cursor-pointer shrink-0">😎</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🤝')" class="cursor-pointer shrink-0">🤝</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🎯')" class="cursor-pointer shrink-0">🎯</button>
+            <button type="button" onclick="window.insertChatEmoji('global','💯')" class="cursor-pointer shrink-0">💯</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🙏')" class="cursor-pointer shrink-0">🙏</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🥳')" class="cursor-pointer shrink-0">🥳</button>
+            <button type="button" onclick="window.insertChatEmoji('global','🫡')" class="cursor-pointer shrink-0">🫡</button>
+        </div>
+        <!-- 💬 Reply Quote Preview Bar in Global Chat -->
+        <div id="global-reply-quote-bar" class="hidden px-3 py-1.5 border-t bg-zinc-900/95 border-emerald-500/40 flex items-center justify-between gap-2 text-[10.5px] shrink-0">
+            <div class="min-w-0 flex-1 border-l-2 border-emerald-400 pl-2">
+                <div id="global-reply-quote-sender" class="font-extrabold text-emerald-400 truncate">Replying to Player</div>
+                <div id="global-reply-quote-text" class="text-slate-300 truncate">Message</div>
+            </div>
+            <button type="button" onclick="window.clearChatReplyQuote('global')" class="w-5 h-5 rounded-full bg-zinc-800 text-slate-300 flex items-center justify-center text-[10px] cursor-pointer">✖</button>
+        </div>
+        <div id="chat-input-area" class="p-2.5 border-t flex items-center gap-1.5" style="background: var(--bg-card); border-color: var(--border-color);">
+            <button type="button" onclick="window.toggleChatEmojiBar('global')" class="w-9 h-9 rounded-xl cyber-card flex items-center justify-center text-amber-400 border border-amber-400/30 cursor-pointer shrink-0" title="Emojis">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg>
+            </button>
+            <input type="text" id="chat-input" maxlength="200" placeholder="Type a message..." class="cyber-input flex-1 px-3 py-2 text-xs" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+            <button onclick="sendChatMessage()" class="btn-theme px-4 py-2 text-xs font-extrabold shrink-0">Send</button>
         </div>
     </div>
 
@@ -6724,31 +6909,31 @@ html.theme-ghost-live {
                     border: '#ff2a85', glow: 'rgba(255, 42, 133, 0.45)', bg: 'linear-gradient(135deg, rgba(45,10,68,0.95), rgba(18,6,34,0.95))',
                     icon: '🌸', tag: '⚡ ANIME LIVE', title: '⚡ Anime Cyber Sakura Live — VIP Look',
                     desc: '🌸 Neon Sakura Petals + Katana Slashes + Cyber Samurai AI Bot Skin!',
-                    chat: '"🌸 Anime Live Theme lights up your entire Arena & Chat in Cyber Neon style!"'
+                    chat: '"🌸 Anime SP Theme lights up your entire Arena & Chat in Cyber Neon style!"'
                 },
                 'rain-live': {
                     border: '#38bdf8', glow: 'rgba(56, 189, 248, 0.45)', bg: 'linear-gradient(135deg, rgba(8,28,56,0.95), rgba(6,15,32,0.95))',
                     icon: '⛈️', tag: '🌧️ RAIN LIVE', title: '🌧️ Storm Rain Live — VIP Look',
                     desc: '🌧️ Animated Raindrops + Water Ripples + Storm Tactical AI Bot Skin!',
-                    chat: '"⛈️ Rain Live Theme brings real storm rain & lightning effects across your screen!"'
+                    chat: '"⛈️ Rain SP Theme brings real storm rain & lightning effects across your screen!"'
                 },
                 'winter-live': {
                     border: '#22d3ee', glow: 'rgba(34, 211, 238, 0.45)', bg: 'linear-gradient(135deg, rgba(6,36,52,0.95), rgba(4,19,29,0.95))',
                     icon: '❄️', tag: '❄️ WINTER LIVE', title: '❄️ Winter Snowfall Live — VIP Look',
                     desc: '❄️ Live Falling Snowflakes + Aurora Shimmer + Frost Yeti AI Bot!',
-                    chat: '"❄️ Winter Live Theme unlocks snowfall particles & Ice Neon Glow permanently!"'
+                    chat: '"❄️ Winter SP Theme unlocks snowfall particles & Ice Neon Glow permanently!"'
                 },
                 'hacker-live': {
                     border: '#22c55e', glow: 'rgba(34, 197, 94, 0.45)', bg: 'linear-gradient(135deg, rgba(3,28,12,0.95), rgba(2,10,5,0.95))',
                     icon: '💻', tag: '🟢 HACKER LIVE', title: '🟢 Matrix Hacker Live — VIP Look',
                     desc: '💻 Falling Green Matrix Code + Cyber Terminal HUD + Hacker AI Bot!',
-                    chat: '"🟢 Hacker Live Theme activates Matrix Code rain & Neon Green HUD!"'
+                    chat: '"🟢 Hacker SP Theme activates Matrix Code rain & Neon Green HUD!"'
                 },
                 'teddy-live': {
                     border: '#f472b6', glow: 'rgba(244, 114, 182, 0.45)', bg: 'linear-gradient(135deg, rgba(52,12,38,0.95), rgba(24,6,18,0.95))',
                     icon: '🧸', tag: '🧸 TEDDY LIVE', title: '🧸 Cute Teddy Pink Live — VIP Look',
                     desc: '🧸 Floating Teddy Bears & Hearts + Cute Wiggling Teddy AI Bot!',
-                    chat: '"🧸 Teddy Live Theme unlocks Cute Teddy Bot & floating Pink Hearts animation!"'
+                    chat: '"🧸 Teddy SP Theme unlocks Cute Teddy Bot & floating Pink Hearts animation!"'
                 },
                 'ghost-live': {
                     border: '#ef4444', glow: 'rgba(239, 68, 68, 0.5)', bg: 'linear-gradient(135deg, rgba(48,6,10,0.95), rgba(12,2,4,0.95))',
@@ -6760,7 +6945,7 @@ html.theme-ghost-live {
                     border: '#c084fc', glow: 'rgba(192, 132, 252, 0.45)', bg: 'linear-gradient(135deg, rgba(38,14,58,0.95), rgba(14,7,24,0.95))',
                     icon: '🐱', tag: '🐱 CAT NEKO LIVE', title: '🐱 Cyber Neko Cat Live — VIP Look',
                     desc: '🐾 Floating Neon Paws + Blinking Neko Eyes + Cute Cyber Cat AI Bot!',
-                    chat: '"🐾 Cat Live Theme activates Neko Cyber Cat Bot & Neon Paws animation!"'
+                    chat: '"🐾 Cat SP Theme activates Neko Cyber Cat Bot & Neon Paws animation!"'
                 },
                 'royal': {
                     border: '#a855f7', glow: 'rgba(168, 85, 247, 0.45)', bg: 'linear-gradient(135deg, rgba(35,20,64,0.95), rgba(12,6,23,0.95))',
@@ -7059,7 +7244,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 தீம்கள் (Themes)",
                 "Free Themes": "இலவச தீம்கள்",
                 "Premium Themes": "பிரீமியம் தீம்கள்",
-                "Live Themes": "லைவ் தீம்கள்",
+                "SP Themes": "லைவ் தீம்கள்",
                                 "Admin Portal": "அட்மின் போர்டல்",
                 "👑 Admin Control Panel": "👑 அட்மின் கட்டுப்பாட்டு மையம்",
                 "Super Admin": "சிஸ்டம் / அட்மின்",
@@ -7249,7 +7434,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 Themes",
                 "Free Themes": "Free Themes",
                 "Premium Themes": "Premium Themes",
-                "Live Themes": "Live Themes",
+                "SP Themes": "SP Themes",
                 "Admin Portal": "Admin Portal",
                 "🎬 Replay Intro Animation": "🎬 Intro Video Replay",
                 "Support": "Support",
@@ -7302,7 +7487,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 थीम्स",
                 "Free Themes": "फ्री थीम्स",
                 "Premium Themes": "प्रीमियम थीम्स",
-                "Live Themes": "लाइव थीम्स",
+                "SP Themes": "लाइव थीम्स",
                 "Admin Portal": "एडमिन पोर्टल",
                 "🎬 Replay Intro Animation": "🎬 इंट्रो फिर से देखें",
                 "Support": "सहायता (Support)",
@@ -7362,7 +7547,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 థీమ్స్",
                 "Free Themes": "ఉచిత థీమ్స్",
                 "Premium Themes": "ప్రీమియం థీమ్స్",
-                "Live Themes": "లైవ్ థీమ్స్",
+                "SP Themes": "లైవ్ థీమ్స్",
                 "Support": "సపోర్ట్",
                 "Privacy Policy": "గోప్యతా విధానం",
                 "Terms of Use": "నిబంధనలు",
@@ -7414,7 +7599,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 തീമുകൾ",
                 "Free Themes": "സൗജന്യ തീമുകൾ",
                 "Premium Themes": "പ്രീമിയം തീമുകൾ",
-                "Live Themes": "ലൈവ് തീമുകൾ",
+                "SP Themes": "ലൈവ് തീമുകൾ",
                 "Support": "സപ്പോർട്ട്",
                 "Privacy Policy": "സ്വകാര്യതാ നയം",
                 "Terms of Use": "നിബന്ധനകൾ",
@@ -7463,7 +7648,7 @@ Tap a quick button below or type your question!`
                 "🎨 Themes": "🎨 ಥೀಮ್‌ಗಳು",
                 "Free Themes": "ಉಚಿತ ಥೀಮ್‌ಗಳು",
                 "Premium Themes": "ಪ್ರೀಮಿಯಂ ಥೀಮ್‌ಗಳು",
-                "Live Themes": "ಲೈವ್ ಥೀಮ್‌ಗಳು",
+                "SP Themes": "ಲೈವ್ ಥೀಮ್‌ಗಳು",
                 "Support": "ಸಪೋರ್ಟ್",
                 "Privacy Policy": "ಗೌಪ್ಯತಾ ನೀತಿ",
                 "Terms of Use": "ನಿಯಮಗಳು",
@@ -9497,13 +9682,13 @@ CRITICAL RULES:
             // 1v1 Clash / Clan / Theme
             if (low.includes('1v1') || low.includes('clash') || low.includes('clan') || low.includes('guild') || low.includes('theme')) {
                 return lang === 'en'
-                    ? `⚔️ **1v1 Clash, Clans & Live Themes:**\n• Use **1v1 & Squads** on Home to challenge players or recruit teammates.\n• Switch between **WhatsApp, Play Store, Sakura, Rain, Matrix & Neko Cat** live themes in the top menu!`
-                    : `⚔️ **1v1 Clash, Clans & Live Themes:**\n• ஹோம் பக்கத்தில் **1v1 & Squads** தட்டி 1v1 சவால் விடலாம் அல்லது டீம்மேட்ஸ் சேர்க்கலாம்.\n• மேலே உள்ள மெனுவில் **WhatsApp, Play Store, Sakura, Matrix** போன்ற Live Themes மாற்றிக்கலாம்!`;
+                    ? `⚔️ **1v1 Clash, Clans & SP Themes:**\n• Use **1v1 & Squads** on Home to challenge players or recruit teammates.\n• Switch between **WhatsApp, Play Store, Sakura, Rain, Matrix & Neko Cat** live themes in the top menu!`
+                    : `⚔️ **1v1 Clash, Clans & SP Themes:**\n• ஹோம் பக்கத்தில் **1v1 & Squads** தட்டி 1v1 சவால் விடலாம் அல்லது டீம்மேட்ஸ் சேர்க்கலாம்.\n• மேலே உள்ள மெனுவில் **WhatsApp, Play Store, Sakura, Matrix** போன்ற SP Themes மாற்றிக்கலாம்!`;
             }
 
             if (lang === 'en') {
                 if (low.includes('vip') || low.includes('price') || low.includes('pass')) {
-                    return `⭐ **Royal PRO Pass:** 7d ₹${p7} | 14d ₹${p14} | 28d ₹${p28} (${disc}% Match Fee OFF + All Live Themes).\n👑 **Royal PRO PLUS Pass:** 28d ₹${plus28} | 60d ₹${plus60} | 90d ₹${plus90} (${plusDisc}% Match Fee OFF + 0s Chat Cooldown + Unlimited AI)!`;
+                    return `⭐ **Royal PRO Pass:** 7d ₹${p7} | 14d ₹${p14} | 28d ₹${p28} (${disc}% Match Fee OFF + All SP Themes).\n👑 **Royal PRO PLUS Pass:** 28d ₹${plus28} | 60d ₹${plus60} | 90d ₹${plus90} (${plusDisc}% Match Fee OFF + 0s Chat Cooldown + Unlimited AI)!`;
                 }
                 if (low.includes('coin') || low.includes('spin')) {
                     return `🪙 **Your Balance:** **${myCoins} SP Coins**.\nTap the top **🪙 Coins** button daily for **24h Lucky Spin (+2 to +25)**, **Daily Check-In (+5)**, for Arena Prestige Titles & Chat Shoutouts!`;
@@ -9937,7 +10122,7 @@ CRITICAL RULES:
         const ICON_HOST = `<svg viewBox="0 0 24 24" class="w-3 h-3 text-emerald-400 fill-current inline-block" title="Host"><path d="M21.58 16.09l-1.09-7.66C20.21 6.46 18.52 5 16.53 5H7.47C5.48 5 3.79 6.46 3.51 8.43l-1.09 7.66C2.2 17.63 3.39 19 4.94 19c.68 0 1.32-.27 1.8-.75L9 16h6l2.25 2.25c.48.48 1.13.75 1.8.75 1.56 0 2.75-1.37 2.53-2.91zM11 11H9v2H8v-2H6v-1h2V8h1v2h2v1zm4-1c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm2 3c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>`;
         const ICON_VIP = `<span class="inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7.5px] leading-tight font-black bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-sm align-middle" title="PRO Member"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 fill-current inline-block"><path d="M12 2l2.9 6.9L22 9.2l-5.4 4.7 1.7 7.1L12 17.6 5.7 21l1.7-7.1L2 9.2l7.1-.3L12 2z"/></svg>PRO</span>`;
         const ICON_PRO_PLUS = `<span class="inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7.5px] leading-tight font-black badge-pro-plus align-middle" title="PRO+ Member"><svg viewBox="0 0 24 24" class="w-2.5 h-2.5 fill-current inline-block"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>PRO+</span>`;
-        const ICON_VBADGE = `<span class="inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7.5px] leading-tight font-black badge-v-creator align-middle" title="Verified V-Badge">✓V</span>`;
+        const ICON_VBADGE = `<span class="inline-flex items-center justify-center align-middle mx-0.5" title="Official Verified Creator (V-Badge)"><svg class="w-4 h-4 drop-shadow-[0_0_6px_rgba(251,191,36,0.85)]" viewBox="0 0 24 24" fill="none"><path d="M12 1.5l2.6 2.1 3.3-.4 1.3 3.1 3.1 1.3-.4 3.3 2.1 2.6-2.1 2.6.4 3.3-3.1 1.3-1.3 3.1-3.3-.4L12 22.5l-2.6-2.1-3.3.4-1.3-3.1-3.1-1.3.4-3.3L0 12l2.1-2.6-.4-3.3 3.1-1.3 1.3-3.1 3.3.4L12 1.5z" fill="#fbbf24" stroke="#fef08a" stroke-width="1.3"/><path d="M8.1 8.8l2.5 6.6h2.8l2.5-6.6h-2.1l-1.8 4.8-1.8-4.8H8.1z" fill="#090d16"/></svg></span>`;
 
         let _lastTouchTime = 0;
         let _activeRipples = 0;
@@ -10832,9 +11017,7 @@ CRITICAL RULES:
             if (activeBnav) activeBnav.classList.add('active');
             if (tab === 'teams' && typeof window.checkLoginState === 'function') window.checkLoginState();
             if (tab === 'profile' && typeof window.loadProfileUI === 'function') window.loadProfileUI();
-            if (tab === 'chat' && typeof window.openFullScreenChat === 'function') {
-                window.openFullScreenChat();
-            }
+            // Tapping 'Chat' in bottom nav shows #section-chat Hub (Global Chat & Private Chat separated!)
             const subTxt = document.getElementById('app-native-screen-subtitle-txt');
             if (subTxt) {
                 const mapTitles = {
@@ -10991,7 +11174,7 @@ CRITICAL RULES:
                                 <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold border border-purple-400/40">All Rights Reserved</span>
                             </div>
                             <p class="text-xs sm:text-sm leading-relaxed">
-                                <strong>Copyright © 2024–2026 Satta Pai Official Esports Arena (<a href="mailto:satta0pai@gmail.com" class="text-amber-300 underline">satta0pai@gmail.com</a>). All Rights Reserved.</strong> All original source code, UI/UX layouts, custom tournament bracket engines, Multi-Gift System Inbox architecture, AI Tactical Sensitivity Core, Live Theme engines, and V-Badge emblems are protected under the <b>Indian Copyright Act, 1957</b>, the <b>Information Technology Act, 2000</b>, and international intellectual property treaties.
+                                <strong>Copyright © 2024–2026 Satta Pai Official Esports Arena (<a href="mailto:satta0pai@gmail.com" class="text-amber-300 underline">satta0pai@gmail.com</a>). All Rights Reserved.</strong> All original source code, UI/UX layouts, custom tournament bracket engines, Multi-Gift System Inbox architecture, AI Tactical Sensitivity Core, SP Theme engines, and V-Badge emblems are protected under the <b>Indian Copyright Act, 1957</b>, the <b>Information Technology Act, 2000</b>, and international intellectual property treaties.
                             </p>
                         </div>
 
@@ -12817,6 +13000,9 @@ CRITICAL RULES:
                 }
                 if (isOwn && within24Hours) {
                     actionsDiv.innerHTML += `<button type="button" onclick="openEditChatMsgPrompt()" class="col-span-2 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[11px] font-bold shadow cursor-pointer">Edit Message</button>`;
+                }
+                if (!isOwn) {
+                    actionsDiv.innerHTML += `<button type="button" onclick="window.requestCallFromGlobalChatProfile()" class="col-span-2 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-extrabold shadow cursor-pointer flex items-center justify-center gap-1.5"><span>📞</span><span>Voice Call (Request Permission)</span></button>`;
                 }
             }
 
@@ -23650,16 +23836,40 @@ CRITICAL RULES:
                     <button type="button" onclick="window.toggleMyForwardLock()" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">🔒 Fwd Lock</button>
                     <button type="button" id="settings-call-lock-btn" onclick="window.toggleMyIncomingCallsLock()" class="py-1.5 px-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[9.5px] cursor-pointer">📞 Calls: ON</button>
                 </div>
-                <div class="pt-1.5 border-t border-white/10 space-y-1.5">
+                <div class="pt-2 border-t border-white/10 space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-[9.5px] font-extrabold text-amber-300 uppercase">🎨 Chat Bubble Skin</span>
-                        <span id="settings-active-bubble-skin-lbl" class="text-[9px] font-mono text-emerald-400 font-bold uppercase">GOLD</span>
+                        <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider">🎨 SP Themes & Auto-Match Chat Color</span>
+                        <span class="text-[8.5px] font-mono text-emerald-400">Auto-Syncs Chat & Toasts</span>
                     </div>
-                    <div class="grid grid-cols-4 gap-1.5">
-                        <button type="button" data-bubble-skin-btn="gold" onclick="window.setMyVipChatBubbleSkin('gold')" class="py-1.5 rounded-lg bg-amber-500/25 border border-amber-400/60 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">Gold</button>
-                        <button type="button" data-bubble-skin-btn="cyber" onclick="window.setMyVipChatBubbleSkin('cyber')" class="py-1.5 rounded-lg bg-cyan-500/25 border border-cyan-400/60 text-cyan-300 font-extrabold text-[9.5px] cursor-pointer">Cyber</button>
-                        <button type="button" data-bubble-skin-btn="crimson" onclick="window.setMyVipChatBubbleSkin('crimson')" class="py-1.5 rounded-lg bg-rose-500/25 border border-rose-400/60 text-rose-300 font-extrabold text-[9.5px] cursor-pointer">Crimson</button>
-                        <button type="button" data-bubble-skin-btn="violet" onclick="window.setMyVipChatBubbleSkin('violet')" class="py-1.5 rounded-lg bg-purple-500/25 border border-purple-400/60 text-purple-300 font-extrabold text-[9.5px] cursor-pointer">Violet</button>
+                    <div class="space-y-1">
+                        <div class="text-[9px] font-bold text-slate-400 uppercase flex items-center justify-between"><span>Default Themes</span><span class="text-emerald-400">FREE</span></div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button type="button" data-theme-btn="whatsapp" onclick="setTheme('whatsapp')" class="theme-swatch" style="background: linear-gradient(135deg, #25d366, #059669);" title="Emerald Arena"></button>
+                            <button type="button" data-theme-btn="instagram" onclick="setTheme('instagram')" class="theme-swatch" style="background: linear-gradient(135deg, #e1306c, #be185d);" title="Sunset Crimson"></button>
+                            <button type="button" data-theme-btn="gold" onclick="setTheme('gold')" class="theme-swatch" style="background: linear-gradient(135deg, #f59e0b, #b45309);" title="Arena Gold"></button>
+                            <button type="button" data-theme-btn="blue" onclick="setTheme('blue')" class="theme-swatch" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);" title="Cyber Blue"></button>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[9px] font-bold text-amber-300 uppercase flex items-center justify-between"><span>⭐ Premium Themes</span><span class="text-amber-400">PRO & PRO+</span></div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button type="button" data-theme-btn="royal" onclick="setTheme('royal')" class="theme-swatch premium" style="background: linear-gradient(135deg, #a855f7, #6d28d9);" title="Royal Purple"></button>
+                            <button type="button" data-theme-btn="cyan" onclick="setTheme('cyan')" class="theme-swatch premium" style="background: linear-gradient(135deg, #22d3ee, #0891b2);" title="Cyan Neon"></button>
+                            <button type="button" data-theme-btn="ruby" onclick="setTheme('ruby')" class="theme-swatch premium" style="background: linear-gradient(135deg, #f43f5e, #be123c);" title="Ruby Crimson"></button>
+                            <button type="button" data-theme-btn="indigo" onclick="setTheme('indigo')" class="theme-swatch premium" style="background: linear-gradient(135deg, #818cf8, #4338ca);" title="Indigo Sapphire"></button>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="text-[9px] font-black text-yellow-300 uppercase flex items-center justify-between"><span>👑 Exclusive SP Themes</span><span class="px-1.5 py-0.2 rounded bg-amber-400 text-black text-[8px] font-black">PRO+ ONLY</span></div>
+                        <div class="grid grid-cols-7 gap-1">
+                            <button type="button" data-theme-btn="anime-live" onclick="setTheme('anime-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #ff2a85, #7c3aed, #06b6d4);" title="Anime SP Theme"></button>
+                            <button type="button" data-theme-btn="rain-live" onclick="setTheme('rain-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #60a5fa, #1d4ed8);" title="Storm Rain SP Theme"></button>
+                            <button type="button" data-theme-btn="winter-live" onclick="setTheme('winter-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #38bdf8, #0369a1);" title="Arctic Frost SP Theme"></button>
+                            <button type="button" data-theme-btn="hacker-live" onclick="setTheme('hacker-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #22c55e, #14532d);" title="Matrix Hacker SP Theme"></button>
+                            <button type="button" data-theme-btn="teddy-live" onclick="setTheme('teddy-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #f472b6, #9d174d);" title="Velvet Rose SP Theme"></button>
+                            <button type="button" data-theme-btn="ghost-live" onclick="setTheme('ghost-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #ef4444, #450a0a);" title="Phantom Red SP Theme"></button>
+                            <button type="button" data-theme-btn="cat-live" onclick="setTheme('cat-live')" class="theme-swatch premium" style="background: linear-gradient(135deg, #e879f9, #6b21a8, #06b6d4);" title="Cyber Neko SP Theme"></button>
+                        </div>
                     </div>
                 </div>
                 <button type="button" onclick="document.getElementById('app-quick-settings-modal').classList.add('hidden'); window.openAimReflexTrainerModal();" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-500 text-white font-black text-[11px] uppercase cursor-pointer shadow flex items-center justify-center gap-1.5">
@@ -23836,20 +24046,33 @@ CRITICAL RULES:
                 </button>
             </div>
 
-            <!-- Active / Outgoing Call Controls Dock -->
-            <div id="dm-call-active-actions" class="grid grid-cols-3 gap-2.5 p-3 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
-                <button type="button" id="dm-call-mute-btn" onclick="window.toggleDmCallMicMute()" class="py-3 rounded-2xl bg-white/10 border border-white/15 text-slate-100 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1">
+            <!-- Active / Outgoing Call Controls Dock (With ➕ Add Call / Conference!) -->
+            <div id="dm-call-active-actions" class="grid grid-cols-4 gap-2 p-2.5 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <button type="button" id="dm-call-mute-btn" onclick="window.toggleDmCallMicMute()" class="py-2.5 rounded-2xl bg-white/10 border border-white/15 text-slate-100 font-extrabold text-[10px] cursor-pointer flex flex-col items-center justify-center gap-1">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
                     <span>Mic: ON</span>
                 </button>
-                <button type="button" id="dm-call-speaker-btn" onclick="window.toggleDmCallSpeakerBoost()" class="py-3 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1">
+                <button type="button" id="dm-call-speaker-btn" onclick="window.toggleDmCallSpeakerBoost()" class="py-2.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[10px] cursor-pointer flex flex-col items-center justify-center gap-1">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                     <span>Speaker</span>
                 </button>
-                <button type="button" onclick="window.endActiveDmAudioCall('ended')" class="py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase cursor-pointer shadow-lg flex flex-col items-center justify-center gap-1">
+                <button type="button" onclick="window.openAddConferenceCallModal()" class="py-2.5 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-extrabold text-[10px] cursor-pointer flex flex-col items-center justify-center gap-1" title="Add Player to Conference Call">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span>Add Call</span>
+                </button>
+                <button type="button" onclick="window.endActiveDmAudioCall('ended')" class="py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[10px] uppercase cursor-pointer shadow-lg flex flex-col items-center justify-center gap-1">
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
                     <span>End Call</span>
                 </button>
+            </div>
+
+            <!-- 👥 Conference Call Player Picker Modal -->
+            <div id="dm-conference-add-modal" class="hidden mt-3 p-3 rounded-2xl bg-zinc-900/95 border border-cyan-400/50 space-y-2 text-left max-h-48 overflow-y-auto">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10.5px] font-black text-cyan-300 uppercase">👥 Add Player to Conference Call</span>
+                    <button type="button" onclick="document.getElementById('dm-conference-add-modal').classList.add('hidden')" class="text-xs text-slate-400 px-1.5">✖</button>
+                </div>
+                <div id="dm-conference-players-list" class="space-y-1.5 text-xs"></div>
             </div>
         </div>
     </div>
@@ -27209,6 +27432,1218 @@ GHOST SQUAD, 0, 11, 39</textarea>
                 });
                 secObs.observe(document.documentElement, { childList: true, subtree: true });
             } catch(e) {}
+        })();
+
+    
+
+        // 🚀 V16.0 COMPLETE MASTER ENGINE (All 32 User Requirements)
+        (function() {
+            // ------------------------------------------------------------------
+            // 1. FIX ADMIN PORTAL BLANK TOP GAP & SCROLLING (1000132442.jpg)
+            // ------------------------------------------------------------------
+            const origSwitchTab = window.switchTab;
+            if (typeof origSwitchTab === 'function') {
+                window.switchTab = function(tab, pushHistory = true) {
+                    origSwitchTab(tab, pushHistory);
+                    const mainEl = document.querySelector('main');
+                    if (mainEl) {
+                        if (tab === 'teams') {
+                            mainEl.style.display = 'none';
+                        } else {
+                            mainEl.style.display = 'block';
+                        }
+                    }
+                    if (tab === 'chat' && typeof window.updateDmUnreadBadge === 'function') {
+                        window.updateDmUnreadBadge();
+                    }
+                };
+            }
+
+            // ------------------------------------------------------------------
+            // 2. SEPARATE GLOBAL CHAT vs PRIVATE CHAT ENTRY FUNCTIONS
+            // ------------------------------------------------------------------
+            window.openDedicatedGlobalChat = function() {
+                window.openFullScreenChat();
+                window.switchChatTabMode('global');
+                const swBar = document.getElementById('app-chat-mode-switcher-bar');
+                if (swBar) swBar.style.display = 'none';
+                const hdrTitle = document.querySelector('#chat-fullscreen header h2');
+                if (hdrTitle) hdrTitle.textContent = 'Global Arena Chat';
+            };
+
+            window.openDedicatedPrivateDmChat = function() {
+                window.openFullScreenChat();
+                window.switchChatTabMode('dm');
+                const swBar = document.getElementById('app-chat-mode-switcher-bar');
+                if (swBar) swBar.style.display = 'none';
+                const hdrTitle = document.querySelector('#chat-fullscreen header h2');
+                if (hdrTitle) hdrTitle.textContent = 'Private Messenger';
+            };
+
+            // Sync unread badge on Chat Hub card
+            const origUpdateUnread = window.updateDmUnreadBadge;
+            window.updateDmUnreadBadge = function() {
+                if (typeof origUpdateUnread === 'function') origUpdateUnread();
+                const b1 = document.getElementById('dm-unread-total-badge');
+                const b2 = document.getElementById('hub-dm-unread-badge');
+                if (b1 && b2) {
+                    b2.textContent = b1.textContent;
+                    if (b1.classList.contains('hidden')) b2.classList.add('hidden');
+                    else b2.classList.remove('hidden');
+                }
+            };
+
+            // ------------------------------------------------------------------
+            // 3. EMOJI PICKER BAR NEXT TO CHAT INPUT (GLOBAL & PRIVATE DM)
+            // ------------------------------------------------------------------
+            window.toggleChatEmojiBar = function(mode) {
+                const id = mode === 'dm' ? 'dm-emoji-picker-bar' : 'global-emoji-picker-bar';
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden');
+            };
+
+            window.insertChatEmoji = function(mode, emo) {
+                const inpId = mode === 'dm' ? 'dm-message-input' : 'chat-input';
+                const inp = document.getElementById(inpId);
+                if (!inp) return;
+                inp.value = (inp.value || '') + emo;
+                inp.focus();
+            };
+
+            // ------------------------------------------------------------------
+            // 4. DP COOLDOWN (Free = 6h, PRO = 1h, PRO+ = Unlimited) &
+            //    UNLIMITED PROFILE TEXT EDITS + NICKNAME DISPLAY EVERYWHERE
+            // ------------------------------------------------------------------
+            window.getUserDpCooldownStatus = function(emailLow, userData) {
+                const isSuper = Boolean(window.isSuperAdminGlobal);
+                const isProPlus = isSuper || Boolean(window.isCurrentUserProPlus && window.isCurrentUserProPlus());
+                if (isProPlus) {
+                    return { locked: false, cooldownMs: 0, cooldownHrs: 0, tierLabel: '👑 PRO+ (Unlimited DP Uploads)', remainingStr: '' };
+                }
+                const isPro = Boolean(window.isCurrentUserVip && window.isCurrentUserVip());
+                const cooldownHrs = isPro ? 1 : 6;
+                const cooldownMs = cooldownHrs * 60 * 60 * 1000;
+                const tierLabel = isPro ? '⭐ PRO (Every 1 Hour)' : 'Free (Every 6 Hours)';
+                const u = userData || (emailLow ? (window.userCache && window.userCache[emailLow]) : {}) || {};
+                let localTs = 0;
+                try { localTs = Number(localStorage.getItem('satta_pai_last_dp_' + emailLow) || 0); } catch(e) {}
+                const lastTs = Math.max(Number(u.lastDpUpdate || 0), localTs);
+                const now = Date.now();
+                if (lastTs > 0 && (now - lastTs) < cooldownMs) {
+                    const remMs = cooldownMs - (now - lastTs);
+                    const remH = Math.floor(remMs / 3600000);
+                    const remM = Math.ceil((remMs % 3600000) / 60000);
+                    const remainingStr = remH > 0 ? `${remH}h ${remM}m` : `${remM}m`;
+                    return { locked: true, cooldownMs, cooldownHrs, tierLabel, remainingStr, lastTs };
+                }
+                return { locked: false, cooldownMs, cooldownHrs, tierLabel, remainingStr: '', lastTs };
+            };
+
+            window.getUserProfileTextCooldownStatus = function() {
+                return { locked: false, cooldownMs: 0, cooldownHrs: 0, tierLabel: 'Unlimited Edits', remainingStr: '', lastTs: 0 };
+            };
+
+            // Enforce lowercase + '_' on Username & show Nickname (ign) in all chats!
+            window.getPublicPlayerDisplayName = function(emailRaw, uDataObj, msgFallbackName) {
+                const em = String(emailRaw || '').trim().toLowerCase();
+                if (!em || em === 'guest') return 'Guest Player';
+                const u = uDataObj || (window.userCache && window.userCache[em]) || {};
+                const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000');
+
+                // 1. Always prioritize Nickname (stored in u.nickname or u.ign)
+                const nick = u.nickname || u.ign || '';
+                if (nick && String(nick).trim() && !window.isDefaultGmailPrefixName(nick, em)) {
+                    return String(nick).trim();
+                }
+                if (msgFallbackName && !window.isDefaultGmailPrefixName(msgFallbackName, em) && !String(msgFallbackName).includes('@')) {
+                    return String(msgFallbackName).trim();
+                }
+                if (u.username && String(u.username).trim() && !window.isDefaultGmailPrefixName(u.username, em)) {
+                    return String(u.username).trim();
+                }
+                return 'Player ' + pid;
+            };
+
+            // Update Google Connect Onboarding check so it shows Gmail & Google Pic on the connect screen,
+            // and auto-populates Nickname if the user already has a username (fixing 1000132437.jpg!)
+            window.checkAndOpenNewUserOnboardingIfNeeded = async function(emailRaw) {
+                const em = String(emailRaw || window.loggedEmail || '').trim().toLowerCase();
+                if (!em || em === 'guest' || !em.includes('@')) return;
+
+                if (localStorage.getItem('sp_profile_onboarded_' + em) === '1') return;
+
+                let u = (window.userCache && window.userCache[em]) || {};
+                if (window.getDoc && window.doc && window.db) {
+                    try {
+                        const snap = await window.getDoc(window.doc(window.db, 'users', em));
+                        if (snap && snap.exists()) {
+                            u = { ...u, ...snap.data() };
+                            if (window.userCache) window.userCache[em] = u;
+                        }
+                    } catch(e) {}
+                }
+
+                const existingNick = String(u.nickname || u.ign || (!window.isDefaultGmailPrefixName(u.username, em) ? u.username : '') || '').trim();
+                const existingUser = String(u.username || existingNick || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                const existingUid = String(u.gameUid || '').trim();
+
+                if (existingNick.length >= 2 && existingUid.length >= 5) {
+                    // Auto-save normalized username & nickname so existing users aren't blocked!
+                    localStorage.setItem('sp_profile_onboarded_' + em, '1');
+                    return;
+                }
+
+                const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000');
+                const pidLbl = document.getElementById('onboard-player-id-lbl');
+                if (pidLbl) pidLbl.textContent = pid;
+                const gmLbl = document.getElementById('onboard-connected-gmail-lbl');
+                if (gmLbl) gmLbl.textContent = em;
+
+                const onbImg = document.getElementById('onboard-preview-dp');
+                if (onbImg) {
+                    if (u.dpBase64 || u.photoURL) {
+                        onbImg.src = u.dpBase64 || u.photoURL;
+                    } else {
+                        onbImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(em.charAt(0).toUpperCase())}&background=10b981&color=fff`;
+                    }
+                }
+
+                const uEl = document.getElementById('onboard-username-inp');
+                const iEl = document.getElementById('onboard-ign-inp');
+                const gEl = document.getElementById('onboard-uid-inp');
+                if (uEl) uEl.value = existingUser;
+                if (iEl) iEl.value = existingNick;
+                if (gEl) gEl.value = existingUid;
+
+                document.getElementById('new-user-onboarding-modal')?.classList.remove('hidden');
+            };
+
+            window.submitNewUserOnboardingProfile = async function() {
+                const em = String(window.loggedEmail || '').trim().toLowerCase();
+                if (!em || em === 'guest') return;
+                const rawU = String(document.getElementById('onboard-username-inp')?.value || '').trim();
+                const cleanU = rawU.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+                const nickVal = String(document.getElementById('onboard-ign-inp')?.value || '').trim();
+                const gVal = String(document.getElementById('onboard-uid-inp')?.value || '').trim();
+
+                if (cleanU.length < 2) {
+                    window.showToast('⚠️ Enter a valid lowercase Username (e.g. tharun_ff)!');
+                    return;
+                }
+                if (nickVal.length < 2 || nickVal.includes('@')) {
+                    window.showToast('⚠️ Enter your Chat Nickname!');
+                    return;
+                }
+                if (gVal.length < 5) {
+                    window.showToast('⚠️ Enter your Free Fire Game UID!');
+                    return;
+                }
+
+                const pid = window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000';
+                const onbDp = document.getElementById('onboard-preview-dp')?.src || '';
+                const updatePayload = {
+                    email: em,
+                    username: cleanU,
+                    nickname: nickVal,
+                    ign: nickVal,
+                    gameUid: gVal,
+                    playerId: pid,
+                    profileCompleted: true,
+                    updatedAt: Date.now()
+                };
+                if (onbDp && onbDp.startsWith('data:image/')) {
+                    updatePayload.dpBase64 = onbDp;
+                }
+
+                localStorage.setItem('sp_profile_onboarded_' + em, '1');
+                if (window.userCache) {
+                    window.userCache[em] = { ...(window.userCache[em] || {}), ...updatePayload };
+                }
+                const profU = document.getElementById('profile-username');
+                const profI = document.getElementById('profile-ign');
+                const profG = document.getElementById('profile-game-uid');
+                if (profU) profU.value = cleanU;
+                if (profI) profI.value = nickVal;
+                if (profG) profG.value = gVal;
+
+                try {
+                    if (window.setDoc && window.doc && window.db) {
+                        await window.setDoc(window.doc(window.db, 'users', em), updatePayload, { merge: true });
+                    }
+                } catch(e) {}
+
+                document.getElementById('new-user-onboarding-modal')?.classList.add('hidden');
+                if (typeof window.loadProfileUI === 'function') window.loadProfileUI();
+                if (typeof window.renderChatMessages === 'function') window.renderChatMessages();
+                window.showToast('🎉 Connected! Welcome ' + nickVal + '!');
+            };
+
+            // ------------------------------------------------------------------
+            // 5. REAL-TIME "DELETE FOR EVERYONE" SYNC ACROSS ALL PLAYERS
+            // ------------------------------------------------------------------
+            window._globalBroadcastDeletedIds = new Set();
+
+            // Listen to deletedMsgIds in settings/chatConfig so all connected clients purge deleted messages immediately
+            setTimeout(() => {
+                if (window.onSnapshot && window.doc && window.db) {
+                    try {
+                        window.onSnapshot(window.doc(window.db, 'settings', 'chatConfig'), (snap) => {
+                            if (!snap.exists()) return;
+                            const d = snap.data() || {};
+                            if (Array.isArray(d.deletedMsgIds)) {
+                                let changed = false;
+                                d.deletedMsgIds.forEach(delId => {
+                                    const s = String(delId || '').trim();
+                                    if (s && !window._globalBroadcastDeletedIds.has(s)) {
+                                        window._globalBroadcastDeletedIds.add(s);
+                                        if (window.saveDeletedGlobalChatId) window.saveDeletedGlobalChatId(s);
+                                        if (window.saveDeletedDmId) window.saveDeletedDmId(s);
+                                        changed = true;
+                                    }
+                                });
+                                if (changed) {
+                                    window._allDmMessages = (window._allDmMessages || []).filter(m => !window._globalBroadcastDeletedIds.has(m.id) && !window._globalBroadcastDeletedIds.has(m.clientMsgId));
+                                    if (window.saveLocalCachedDms) window.saveLocalCachedDms(window._allDmMessages);
+                                    if (window.allChatMessages) {
+                                        window.allChatMessages = window.allChatMessages.filter(m => !window._globalBroadcastDeletedIds.has(m.id) && !window._globalBroadcastDeletedIds.has(m.clientMsgId));
+                                        if (window.saveLocalEncryptedGlobalChats) window.saveLocalEncryptedGlobalChats(window.allChatMessages);
+                                    }
+                                    if (typeof window.renderChatMessages === 'function') window.renderChatMessages();
+                                    if (typeof window.renderActiveDmConversation === 'function') window.renderActiveDmConversation();
+                                    if (typeof window.renderDmInboxList === 'function') window.renderDmInboxList();
+                                }
+                            }
+                        }, () => {});
+                    } catch(e) {}
+                }
+            }, 1000);
+
+            const broadcastDeletedMsgIdToEveryone = async (targetId, collectionName) => {
+                const cleanId = String(targetId || '').trim();
+                if (!cleanId || !window.db || !window.doc || !window.setDoc) return;
+                window._globalBroadcastDeletedIds.add(cleanId);
+                try {
+                    // 1. Mark doc as deletedForEveryone AND delete it
+                    await window.setDoc(window.doc(window.db, collectionName, cleanId), {
+                        deletedForEveryone: true,
+                        message: '',
+                        audioData: '',
+                        updatedAt: Date.now()
+                    }, { merge: true }).catch(() => {});
+                    if (window.deleteDoc) {
+                        window.deleteDoc(window.doc(window.db, collectionName, cleanId)).catch(() => {});
+                    }
+                    // 2. Append to settings/chatConfig.deletedMsgIds so receivers' localStorage caches purge it in 0ms!
+                    const recentDeleted = Array.from(window._globalBroadcastDeletedIds).slice(-120);
+                    await window.setDoc(window.doc(window.db, 'settings', 'chatConfig'), {
+                        deletedMsgIds: recentDeleted,
+                        lastDeleteAt: Date.now()
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
+            };
+
+            const origInstantDelGlobal = window.instantDeleteGlobalChatMessage;
+            window.instantDeleteGlobalChatMessage = function(targetIdRaw, targetEmailRaw = '', targetMsgTextRaw = '') {
+                const targetId = String(targetIdRaw || '').trim();
+                if (typeof origInstantDelGlobal === 'function') {
+                    origInstantDelGlobal(targetIdRaw, targetEmailRaw, targetMsgTextRaw);
+                }
+                if (targetId) broadcastDeletedMsgIdToEveryone(targetId, 'chats');
+            };
+
+            const origDelDm = window.deletePrivateDmMessage;
+            window.deletePrivateDmMessage = function(targetIdRaw) {
+                const targetId = String(targetIdRaw || '').trim();
+                if (typeof origDelDm === 'function') {
+                    origDelDm(targetIdRaw);
+                }
+                if (targetId) broadcastDeletedMsgIdToEveryone(targetId, 'dm_messages');
+            };
+
+            // ------------------------------------------------------------------
+            // 6. LONG-PRESS FOR REACTIONS & DELETE + SWIPE-RIGHT TO REPLY
+            // ------------------------------------------------------------------
+            // Prevent single-tap on DM message bubble from opening modal; require Long-Press (360ms) or Swipe-Right to Reply!
+            window._allowModalFromLongPress = false;
+            const origOpenDmActions = window.openDmMessageActionsModal;
+            window.openDmMessageActionsModal = function(msgKeyRaw) {
+                if (!window._allowModalFromLongPress) return;
+                window._allowModalFromLongPress = false;
+                if (typeof origOpenDmActions === 'function') origOpenDmActions(msgKeyRaw);
+            };
+
+            // Also for Global Chat bubble clicks: clicking Avatar/Meta opens Profile; Long-Press on bubble opens Reactions & Delete!
+            const origOpenChatProfile = window.openChatProfileByMsgId;
+            window.openChatProfileByMsgId = function(e, msgId) {
+                const targetEl = e && e.target;
+                if (targetEl && targetEl.closest && targetEl.closest('.chat-bubble') && !window._allowModalFromLongPress) {
+                    return;
+                }
+                window._allowModalFromLongPress = false;
+                if (typeof origOpenChatProfile === 'function') origOpenChatProfile(e, msgId);
+            };
+
+            // Attach Long-Press (360ms) + WhatsApp Swipe-Right-to-Reply on both #chat-messages and #dm-messages-scroll-box
+            const setupChatTouchGestures = () => {
+                ['chat-messages', 'dm-messages-scroll-box'].forEach(boxId => {
+                    const box = document.getElementById(boxId);
+                    if (!box || box._gesturesAttached) return;
+                    box._gesturesAttached = true;
+                    const mode = boxId === 'dm-messages-scroll-box' ? 'dm' : 'global';
+
+                    let pressTimer = null;
+                    let startX = 0;
+                    let startY = 0;
+                    let activeBubble = null;
+                    let activeMsgId = '';
+
+                    const extractMsgIdFromBubble = (el) => {
+                        if (!el) return '';
+                        const oc = el.getAttribute('onclick') || '';
+                        const m1 = oc.match(/openDmMessageActionsModal\(['"]([^'"]+)['"]\)/);
+                        if (m1) return m1[1];
+                        const m2 = oc.match(/openChatProfileByMsgId\(event,\s*['"]([^'"]+)['"]\)/);
+                        if (m2) return m2[1];
+                        return '';
+                    };
+
+                    box.addEventListener('touchstart', (ev) => {
+                        const t = ev.touches && ev.touches[0];
+                        if (!t) return;
+                        const b = ev.target.closest(mode === 'dm' ? '[onclick*="openDmMessageActionsModal"]' : '.chat-bubble');
+                        if (!b) return;
+                        activeBubble = b;
+                        activeMsgId = extractMsgIdFromBubble(b);
+                        startX = t.clientX;
+                        startY = t.clientY;
+                        clearTimeout(pressTimer);
+                        pressTimer = setTimeout(() => {
+                            if (activeBubble && activeMsgId) {
+                                if (navigator.vibrate) navigator.vibrate(20);
+                                window._allowModalFromLongPress = true;
+                                if (mode === 'dm') {
+                                    window.openDmMessageActionsModal(activeMsgId);
+                                } else {
+                                    window.openGlobalChatMessageLongPressModal(activeMsgId);
+                                }
+                            }
+                        }, 380);
+                    }, { passive: true });
+
+                    box.addEventListener('touchmove', (ev) => {
+                        const t = ev.touches && ev.touches[0];
+                        if (!t || !activeBubble) return;
+                        const dx = t.clientX - startX;
+                        const dy = t.clientY - startY;
+                        if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                            clearTimeout(pressTimer);
+                        }
+                        // WhatsApp Swipe-Right to Reply
+                        if (dx > 12 && Math.abs(dy) < 28) {
+                            const shift = Math.min(62, dx);
+                            activeBubble.style.transform = `translateX(${shift}px)`;
+                        }
+                    }, { passive: true });
+
+                    const endTouch = (ev) => {
+                        clearTimeout(pressTimer);
+                        if (!activeBubble) return;
+                        const ch = ev.changedTouches && ev.changedTouches[0];
+                        if (ch) {
+                            const dx = ch.clientX - startX;
+                            const dy = ch.clientY - startY;
+                            if (dx >= 46 && Math.abs(dy) < 35 && activeMsgId) {
+                                if (navigator.vibrate) navigator.vibrate(15);
+                                if (typeof window.setChatReplyQuote === 'function') {
+                                    window.setChatReplyQuote(mode, activeMsgId);
+                                }
+                            }
+                        }
+                        activeBubble.style.transform = '';
+                        activeBubble = null;
+                        activeMsgId = '';
+                    };
+                    box.addEventListener('touchend', endTouch, { passive: true });
+                    box.addEventListener('touchcancel', endTouch, { passive: true });
+                });
+            };
+            setTimeout(setupChatTouchGestures, 900);
+
+            window.openGlobalChatMessageLongPressModal = function(msgId) {
+                const msg = (window.allChatMessages || []).find(m => m && (m.id === msgId || m.clientMsgId === msgId));
+                if (!msg) return;
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const isMe = String(msg.userEmail || msg.email || '').toLowerCase() === myEm;
+                const isAdmin = Boolean(window.isSuperAdminGlobal || (window.isAdminEmail && window.isAdminEmail(myEm)));
+                const previewEl = document.getElementById('dm-action-msg-preview');
+                const btnBox = document.getElementById('dm-action-buttons-box');
+                if (previewEl) previewEl.textContent = msg.message || '';
+                if (!btnBox) return;
+
+                let btns = `
+                    <div class="flex items-center justify-between gap-1 bg-zinc-900/90 p-1.5 rounded-xl border border-white/10 mb-1">
+                        ${['🔥','👑','❤️','😂','⚡','💀'].map(emo => `<button type="button" onclick="window.toggleChatMessageReaction('global', '${window.escapeJsStr(msgId)}', '${emo}')" class="flex-1 py-1 rounded-lg hover:bg-white/10 text-sm cursor-pointer">${emo}</button>`).join('')}
+                    </div>
+                    <div class="grid grid-cols-2 gap-1.5">
+                        <button type="button" onclick="document.getElementById('chat-msg-actions-modal').classList.add('hidden'); window.setChatReplyQuote('global', '${window.escapeJsStr(msgId)}');" class="py-2 px-2.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs cursor-pointer">↩ Reply</button>
+                        <button type="button" onclick="window.copyChatMessageText('global', '${window.escapeJsStr(msgId)}')" class="py-2 px-2.5 rounded-xl bg-zinc-700 text-white font-extrabold text-xs cursor-pointer">📋 Copy</button>
+                    </div>
+                `;
+                if (isMe || isAdmin) {
+                    btns += `
+                        <div class="grid grid-cols-2 gap-1.5 pt-1">
+                            <button type="button" onclick="document.getElementById('chat-msg-actions-modal').classList.add('hidden'); window.saveDeletedGlobalChatId('${window.escapeJsStr(msgId)}'); window.mergeAndRenderAllGlobalChats();" class="py-2 px-2.5 rounded-xl bg-zinc-800 text-slate-200 font-bold text-xs cursor-pointer">🗑️ Delete for Me</button>
+                            <button type="button" onclick="document.getElementById('chat-msg-actions-modal').classList.add('hidden'); window.instantDeleteGlobalChatMessage('${window.escapeJsStr(msgId)}');" class="py-2 px-2.5 rounded-xl bg-rose-600 text-white font-extrabold text-xs cursor-pointer">🗑️ Delete for Everyone</button>
+                        </div>
+                    `;
+                } else {
+                    btns += `
+                        <button type="button" onclick="document.getElementById('chat-msg-actions-modal').classList.add('hidden'); window.saveDeletedGlobalChatId('${window.escapeJsStr(msgId)}'); window.mergeAndRenderAllGlobalChats();" class="w-full mt-1 py-2 px-2.5 rounded-xl bg-zinc-800 text-slate-200 font-bold text-xs cursor-pointer">🗑️ Delete for Me</button>
+                    `;
+                }
+                btnBox.innerHTML = btns;
+                document.getElementById('chat-msg-actions-modal')?.classList.remove('hidden');
+            };
+
+            // Make Reaction Pills under messages clickable so tapping a reaction removes/toggles it!
+            window.renderMessageReactionsPillHtml = function(msgObj) {
+                const rx = (msgObj && msgObj.reactions) || {};
+                const entries = Object.entries(rx).filter(([_, arr]) => Array.isArray(arr) && arr.length > 0);
+                if (entries.length === 0) return '';
+                const msgKey = msgObj.clientMsgId || msgObj.id || '';
+                const isDm = Boolean(msgObj.receiverEmail || msgObj.threadId);
+                const mode = isDm ? 'dm' : 'global';
+                const pills = entries.map(([emo, users]) => {
+                    const myEm = (window.loggedEmail || '').toLowerCase();
+                    const iReacted = users.includes(myEm);
+                    return `<button type="button" onclick="event.stopPropagation(); window.toggleChatMessageReaction('${mode}', '${window.escapeJsStr(msgKey)}', '${emo}')" class="px-1.5 py-0.2 rounded-full ${iReacted ? 'bg-emerald-500/30 border-emerald-400 text-white' : 'bg-black/45 border-white/15 text-slate-200'} border text-[9.5px] font-bold inline-flex items-center gap-0.5 cursor-pointer" title="Tap to remove/toggle reaction"><span>${emo}</span><span>${users.length}</span></button>`;
+                }).join('');
+                return `<div class="flex flex-wrap gap-1 mt-1">${pills}</div>`;
+            };
+
+            // ------------------------------------------------------------------
+            // 7. DRAGGABLE FLOATING MINIMIZED CALL PILL (#dm-floating-call-pip)
+            // ------------------------------------------------------------------
+            setTimeout(() => {
+                const pip = document.getElementById('dm-floating-call-pip');
+                if (!pip) return;
+                let dragging = false;
+                let moved = false;
+                let sx = 0, sy = 0, initLeft = 0, initTop = 0;
+
+                pip.addEventListener('touchstart', (e) => {
+                    const t = e.touches[0];
+                    if (!t) return;
+                    dragging = true;
+                    moved = false;
+                    const rect = pip.getBoundingClientRect();
+                    sx = t.clientX;
+                    sy = t.clientY;
+                    initLeft = rect.left;
+                    initTop = rect.top;
+                }, { passive: true });
+
+                pip.addEventListener('touchmove', (e) => {
+                    if (!dragging) return;
+                    const t = e.touches[0];
+                    if (!t) return;
+                    const dx = t.clientX - sx;
+                    const dy = t.clientY - sy;
+                    if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+                    if (moved) {
+                        const newL = Math.max(6, Math.min(window.innerWidth - pip.offsetWidth - 6, initLeft + dx));
+                        const newT = Math.max(8, Math.min(window.innerHeight - pip.offsetHeight - 70, initTop + dy));
+                        pip.style.right = 'auto';
+                        pip.style.left = newL + 'px';
+                        pip.style.top = newT + 'px';
+                    }
+                }, { passive: true });
+
+                pip.addEventListener('touchend', () => {
+                    dragging = false;
+                    if (moved) {
+                        pip._justDragged = true;
+                        setTimeout(() => { pip._justDragged = false; }, 200);
+                    }
+                }, { passive: true });
+
+                const origRestore = window.restoreDmCallFromPip;
+                window.restoreDmCallFromPip = function() {
+                    if (pip._justDragged) return;
+                    if (typeof origRestore === 'function') origRestore();
+                };
+            }, 800);
+
+            // ------------------------------------------------------------------
+            // 8. COMPLETE AUDIO CALL UPGRADES:
+            //    - Reset timer on re-call (unique callId)
+            //    - Auto-pause background music during call
+            //    - Native Foreground Service ('call_state:1|...') so mic works when minimized!
+            //    - WhatsApp-style Missed Call & Call Summary message in Private DM
+            //    - "On another call" busy detection
+            //    - Conference Call ("Add Call") support
+            //    - Global Chat Call Permission Request ("Allow Call")
+            // ------------------------------------------------------------------
+            window._dmConferencePeers = {};
+
+            const notifyNativeCallForegroundService = (active, partnerName = 'Player') => {
+                try {
+                    if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                        window.SattaPaiNativeAuth.postMessage('call_state:' + (active ? '1' : '0') + '|' + String(partnerName || 'Player'));
+                    }
+                } catch(e) {}
+            };
+
+            const pauseBgMusicForCall = () => {
+                try {
+                    const bg = document.getElementById('bg-music');
+                    if (bg && !bg.paused) {
+                        bg.pause();
+                    }
+                    document.getElementById('music-viz-container')?.classList.add('hidden');
+                } catch(e) {}
+            };
+
+            window.sendAutomaticDmCallLogMessage = function(partnerEmail, logText) {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const partner = String(partnerEmail || '').trim().toLowerCase();
+                if (!myEm || myEm === 'guest' || !partner || !logText) return;
+                const now = Date.now();
+                const clientMsgId = 'dm_calllog_' + now + '_' + Math.random().toString(36).slice(2, 6);
+                const threadId = [myEm, partner].sort().join('__');
+                const myU = (window.userCache && window.userCache[myEm]) || {};
+                const senderName = window.getPublicPlayerDisplayName(myEm, myU, '');
+                const payload = {
+                    clientMsgId,
+                    threadId,
+                    participants: [myEm, partner],
+                    senderEmail: myEm,
+                    receiverEmail: partner,
+                    senderName,
+                    message: logText,
+                    isCallLog: true,
+                    status: 'delivered',
+                    deliveredAt: now,
+                    readAt: 0,
+                    timestamp: now
+                };
+                if (window.mergeDmSnapshotsWithLocal) window.mergeDmSnapshotsWithLocal([{ id: clientMsgId, ...payload }]);
+                if (window.renderActiveDmConversation) window.renderActiveDmConversation();
+                if (window.renderDmInboxList) window.renderDmInboxList();
+                if (window.setDoc && window.doc && window.db) {
+                    window.setDoc(window.doc(window.db, 'dm_messages', clientMsgId), payload).catch(() => {});
+                }
+            };
+
+            window.openAddConferenceCallModal = function() {
+                const modal = document.getElementById('dm-conference-add-modal');
+                const listEl = document.getElementById('dm-conference-players-list');
+                if (!modal || !listEl) return;
+                modal.classList.toggle('hidden');
+                if (modal.classList.contains('hidden')) return;
+
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const curPartner = (window._activeDmPartnerEmail || '').toLowerCase();
+                const candidates = Object.keys(window.userCache || {}).filter(em => em.includes('@') && em !== myEm && em !== curPartner);
+                if (candidates.length === 0) {
+                    listEl.innerHTML = '<div class="text-slate-400 text-[10.5px] py-2 text-center">No other online players available to add right now.</div>';
+                    return;
+                }
+                listEl.innerHTML = candidates.slice(0, 12).map(em => {
+                    const u = window.userCache[em] || {};
+                    const nm = window.getPublicPlayerDisplayName(em, u, '');
+                    const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '');
+                    return `<div class="flex items-center justify-between p-1.5 rounded-xl bg-black/40 border border-white/10">
+                        <span class="font-bold text-white truncate">${window.escapeHTML(nm)} <span class="text-[9px] text-emerald-400 font-mono">(${window.escapeHTML(pid)})</span></span>
+                        <button type="button" onclick="window.invitePlayerToConferenceCall('${window.escapeJsStr(em)}')" class="px-2.5 py-1 rounded-lg bg-cyan-500 text-black font-black text-[10px] cursor-pointer">➕ Add</button>
+                    </div>`;
+                }).join('');
+            };
+
+            window.invitePlayerToConferenceCall = async function(thirdEmailRaw) {
+                const thirdEm = String(thirdEmailRaw || '').trim().toLowerCase();
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!thirdEm || !myEm || !window._dmLocalAudioStream) return;
+                document.getElementById('dm-conference-add-modal')?.classList.add('hidden');
+                const u = (window.userCache && window.userCache[thirdEm]) || {};
+                const thirdName = window.getPublicPlayerDisplayName(thirdEm, u, '');
+                window.showToast('📞 Adding ' + thirdName + ' to Conference Call...');
+
+                try {
+                    const RTC_CFG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+                    const pc2 = new RTCPeerConnection(RTC_CFG);
+                    window._dmConferencePeers[thirdEm] = pc2;
+                    window._dmLocalAudioStream.getTracks().forEach(t => pc2.addTrack(t, window._dmLocalAudioStream));
+
+                    pc2.ontrack = (ev) => {
+                        let confAudio = document.getElementById('dm-conf-audio-' + thirdEm.replace(/[^a-z0-9]/g, ''));
+                        if (!confAudio) {
+                            confAudio = document.createElement('audio');
+                            confAudio.id = 'dm-conf-audio-' + thirdEm.replace(/[^a-z0-9]/g, '');
+                            confAudio.autoplay = true;
+                            confAudio.playsInline = true;
+                            document.body.appendChild(confAudio);
+                        }
+                        if (ev.streams && ev.streams[0]) {
+                            confAudio.srcObject = ev.streams[0];
+                            confAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const offer = await pc2.createOffer();
+                    await pc2.setLocalDescription(offer);
+                    const myU = (window.userCache && window.userCache[myEm]) || {};
+                    const myName = window.getPublicPlayerDisplayName(myEm, myU, '');
+
+                    await window.setDoc(window.doc(window.db, 'dm_messages', 'call_signal__' + thirdEm), {
+                        isCallSignal: true,
+                        isConference: true,
+                        callId: 'conf_' + Date.now(),
+                        callerEmail: myEm,
+                        callerName: myName + ' (Conference)',
+                        calleeEmail: thirdEm,
+                        status: 'ringing',
+                        offer: { type: offer.type, sdp: offer.sdp },
+                        answer: null,
+                        timestamp: Date.now()
+                    });
+
+                    const nmEl = document.getElementById('dm-call-partner-name');
+                    if (nmEl && !nmEl.textContent.includes('+')) {
+                        nmEl.textContent = nmEl.textContent + ' + ' + thirdName;
+                    }
+                } catch(e) {}
+            };
+
+            // Override Call Lifecycle with unique callId, Reset Timer, Busy Check, Missed Call bubble & Native KeepAlive
+            const getCallSignalDocRef = (targetEmail) => {
+                const clean = String(targetEmail || '').trim().toLowerCase();
+                return window.doc(window.db, 'dm_messages', 'call_signal__' + clean);
+            };
+
+            const origCleanupV14 = window.cleanupDmWebRtcResources;
+            window.cleanupDmWebRtcResources = function() {
+                clearInterval(window._dmCallTimerInterval);
+                window._dmCallTimerInterval = null;
+                clearInterval(window._dmCallDurationTimer);
+                window._dmCallDurationTimer = null;
+                window._dmCallSeconds = 0;
+                const pipTimer = document.getElementById('dm-pip-call-timer');
+                if (pipTimer) pipTimer.textContent = '00:00';
+                Object.values(window._dmConferencePeers || {}).forEach(p => { try { p.close(); } catch(e) {} });
+                window._dmConferencePeers = {};
+                notifyNativeCallForegroundService(false, '');
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (myEm && myEm !== 'guest' && window.setDoc && window.doc && window.db) {
+                    window.setDoc(window.doc(window.db, 'users', myEm), { inActiveCall: false }, { merge: true }).catch(() => {});
+                }
+                if (typeof origCleanupV14 === 'function') origCleanupV14();
+            };
+
+            window.startPrivateDmAudioCall = async function(fromGlobalChatRequest = false) {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !partner) {
+                    window.showToast('🔐 Sign in & select a player first!');
+                    return;
+                }
+                if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(partner)) {
+                    window.showToast('🚫 Cannot call — user is blocked!');
+                    return;
+                }
+
+                // Pause background song immediately!
+                pauseBgMusicForCall();
+
+                let isPartnerOnlineNow = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(partner));
+                try {
+                    const pSnap = await window.getDoc(window.doc(window.db, 'users', partner));
+                    if (pSnap && pSnap.exists()) {
+                        const pd = pSnap.data() || {};
+                        const partnerIsVip = window.isPartnerVipInCurrentDm ? window.isPartnerVipInCurrentDm(partner) : false;
+                        if (partnerIsVip && pd.disableIncomingCalls === true) {
+                            window.showToast('📵 This PRO / PRO+ player has disabled incoming audio calls!');
+                            return;
+                        }
+                        // Busy on another call check!
+                        if (pd.inActiveCall === true && pd.activeCallPartner && pd.activeCallPartner !== myEm) {
+                            window.showToast('📞 Player is on another call right now!');
+                            return;
+                        }
+                        const lastTs = Number(pd.lastSeenAt || pd.updatedAt || 0);
+                        isPartnerOnlineNow = Boolean(pd.isOnline && (Date.now() - lastTs < 240000));
+
+                        // Global Chat Call Permission Check: if calling from Global Chat and not yet allowed by partner
+                        const allowedList = Array.isArray(pd.allowedCallers) ? pd.allowedCallers : [];
+                        if (fromGlobalChatRequest && !allowedList.includes(myEm)) {
+                            const myU = (window.userCache && window.userCache[myEm]) || {};
+                            const myNick = window.getPublicPlayerDisplayName(myEm, myU, '');
+                            await window.setDoc(getCallSignalDocRef(partner), {
+                                isCallSignal: true,
+                                status: 'call_permission_request',
+                                callerEmail: myEm,
+                                callerName: myNick,
+                                timestamp: Date.now()
+                            });
+                            window.showToast('🔔 Call permission request sent! Waiting for player to Allow...');
+                            return;
+                        }
+                    }
+                } catch(e) {}
+
+                // Reset all previous call timers & states BEFORE starting new call!
+                window.cleanupDmWebRtcResources();
+                const currentCallId = 'call_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+                window._currentActiveCallId = currentCallId;
+                window._dmCallWasConnected = false;
+                window._dmCallSeconds = 0;
+
+                const u = (window.userCache && window.userCache[partner]) || {};
+                const pName = window.getPublicPlayerDisplayName(partner, u, '');
+                const pDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(partner, u, null, pName) : '';
+                const dpEl = document.getElementById('dm-call-partner-dp');
+                const nmEl = document.getElementById('dm-call-partner-name');
+                const stEl = document.getElementById('dm-call-status-lbl');
+                if (dpEl) dpEl.src = pDp;
+                if (nmEl) nmEl.textContent = pName;
+                if (stEl) stEl.textContent = isPartnerOnlineNow ? '🔔 Ringing...' : '📡 Calling...';
+
+                document.getElementById('dm-call-incoming-actions')?.classList.add('hidden');
+                document.getElementById('dm-call-active-actions')?.classList.remove('hidden');
+                document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('outgoing');
+                notifyNativeCallForegroundService(true, pName);
+
+                let stream = null;
+                try {
+                    stream = await window.acquireSafeCallAudioStream();
+                } catch(e) {
+                    window.cleanupDmWebRtcResources();
+                    return;
+                }
+
+                try {
+                    window._dmLocalAudioStream = stream;
+                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    window._dmPeerConn = pc;
+                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+                    pc.ontrack = (event) => {
+                        const remAudio = document.getElementById('dm-webrtc-remote-audio');
+                        if (remAudio && event.streams && event.streams[0]) {
+                            remAudio.srcObject = event.streams[0];
+                            remAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const callerCandidates = [];
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            callerCandidates.push(event.candidate.toJSON());
+                            window.setDoc(getCallSignalDocRef(partner), {
+                                callId: currentCallId,
+                                callerCandidates: callerCandidates.slice(-15),
+                                updatedAt: Date.now()
+                            }, { merge: true }).catch(() => {});
+                        }
+                    };
+
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+
+                    const myU = (window.userCache && window.userCache[myEm]) || {};
+                    const myName = window.getPublicPlayerDisplayName(myEm, myU, '');
+                    window._activeCallDocId = partner;
+
+                    window.setDoc(window.doc(window.db, 'users', myEm), { inActiveCall: true, activeCallPartner: partner }, { merge: true }).catch(() => {});
+
+                    await window.setDoc(getCallSignalDocRef(partner), {
+                        isCallSignal: true,
+                        callId: currentCallId,
+                        callerEmail: myEm,
+                        callerName: myName,
+                        calleeEmail: partner,
+                        status: 'ringing',
+                        ringingAck: isPartnerOnlineNow,
+                        offer: { type: offer.type, sdp: offer.sdp },
+                        answer: null,
+                        callerCandidates: [],
+                        calleeCandidates: [],
+                        timestamp: Date.now()
+                    });
+
+                    if (window.onSnapshot) {
+                        const addedCalleeIce = new Set();
+                        window._dmCallUnsub = window.onSnapshot(getCallSignalDocRef(partner), async (snap) => {
+                            if (!snap.exists()) return;
+                            const data = snap.data() || {};
+                            // Ignore stale events from any previous call!
+                            if (data.callId && data.callId !== currentCallId) return;
+
+                            if (data.status === 'busy_another_call') {
+                                const lbl = document.getElementById('dm-call-status-lbl');
+                                if (lbl) lbl.textContent = '📞 Player is on another call';
+                                window.showToast('📞 ' + pName + ' is on another call!');
+                                setTimeout(() => window.cleanupDmWebRtcResources(), 1600);
+                                return;
+                            }
+                            if (data.status === 'declined' || data.status === 'ended') {
+                                if (!window._dmCallWasConnected) {
+                                    window.sendAutomaticDmCallLogMessage(partner, '📵 Missed Voice Call');
+                                }
+                                window.showToast(data.status === 'declined' ? '📵 Call declined' : '☎️ Call ended');
+                                window.cleanupDmWebRtcResources();
+                                return;
+                            }
+                            if (data.ringingAck && !window._dmCallWasConnected) {
+                                const lbl = document.getElementById('dm-call-status-lbl');
+                                if (lbl && lbl.textContent.includes('Calling')) lbl.textContent = '🔔 Ringing...';
+                            }
+                            if (data.answer && data.status === 'connected' && pc.signalingState !== 'stable') {
+                                try {
+                                    window._dmCallWasConnected = true;
+                                    await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                                    window.startDmCallDurationCounter();
+                                } catch(e) {}
+                            }
+                            if (Array.isArray(data.calleeCandidates)) {
+                                for (const c of data.calleeCandidates) {
+                                    const key = JSON.stringify(c);
+                                    if (!addedCalleeIce.has(key)) {
+                                        addedCalleeIce.add(key);
+                                        try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+                                    }
+                                }
+                            }
+                        }, () => {});
+                    }
+                } catch(err) {
+                    window.cleanupDmWebRtcResources();
+                }
+            };
+
+            window.endActiveDmAudioCall = async function(reason = 'ended') {
+                const docId = window._activeCallDocId || (window.loggedEmail || '').toLowerCase();
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                const wasConnected = Boolean(window._dmCallWasConnected);
+                const callSecs = Number(window._dmCallSeconds || 0);
+                window.cleanupDmWebRtcResources();
+
+                if (partner && docId === partner) {
+                    if (!wasConnected && reason === 'ended') {
+                        window.sendAutomaticDmCallLogMessage(partner, '📵 Missed Voice Call');
+                    } else if (wasConnected && callSecs > 0) {
+                        const m = String(Math.floor(callSecs / 60)).padStart(2, '0');
+                        const s = String(callSecs % 60).padStart(2, '0');
+                        window.sendAutomaticDmCallLogMessage(partner, `📞 Voice Call • ${m}:${s}`);
+                    }
+                }
+                if (docId && window.setDoc && window.doc && window.db) {
+                    try {
+                        await window.setDoc(getCallSignalDocRef(docId), {
+                            status: reason,
+                            answer: null,
+                            updatedAt: Date.now()
+                        }, { merge: true });
+                    } catch(e) {}
+                }
+            };
+
+            // Add "📞 Request Voice Call" button inside Global Chat Player Profile Modal (#chat-profile-modal)
+            window.requestCallFromGlobalChatProfile = function() {
+                const targetEm = (window.currentChatTargetEmail || '').toLowerCase();
+                if (!targetEm) return;
+                document.getElementById('chat-profile-modal')?.classList.add('hidden');
+                window._activeDmPartnerEmail = targetEm;
+                window.startPrivateDmAudioCall(true);
+            };
+
+            // Upgrade Incoming Call Listener to handle:
+            // - Busy on another call ('busy_another_call')
+            // - Global Chat Call Permission Request ('call_permission_request')
+            // - Auto-Pause Background Music & Start Native Call Foreground Service
+            window._dmCallListenerEmail = '';
+            if (window._dmCallListenerUnsub) { try { window._dmCallListenerUnsub(); } catch(e) {} window._dmCallListenerUnsub = null; }
+
+            window.startIncomingDmCallListener = function() {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !window.onSnapshot || !window.doc || !window.db) return;
+                if (window._dmCallListenerEmail === myEm && window._dmCallListenerUnsub) return;
+                if (window._dmCallListenerUnsub) { try { window._dmCallListenerUnsub(); } catch(e) {} }
+                window._dmCallListenerEmail = myEm;
+
+                window._dmCallListenerUnsub = window.onSnapshot(getCallSignalDocRef(myEm), (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const ageMs = Date.now() - Number(d.timestamp || 0);
+
+                    if (d.status === 'call_permission_request' && ageMs < 60000 && d.callerEmail && d.callerEmail !== myEm) {
+                        const cEm = String(d.callerEmail).toLowerCase();
+                        const cName = d.callerName || window.getPublicPlayerDisplayName(cEm);
+                        if (window.askConfirm) {
+                            window.askConfirm(
+                                '📞 Voice Call Request',
+                                `${cName} wants to Voice Call you. Allow calls from ${cName}?`,
+                                async () => {
+                                    const u = (window.userCache && window.userCache[myEm]) || {};
+                                    const list = Array.from(new Set([...(u.allowedCallers || []), cEm]));
+                                    if (window.userCache && window.userCache[myEm]) window.userCache[myEm].allowedCallers = list;
+                                    await window.setDoc(window.doc(window.db, 'users', myEm), { allowedCallers: list }, { merge: true }).catch(() => {});
+                                    window.showToast('✅ Allowed voice calls from ' + cName + '!');
+                                },
+                                '✅ Allow Call'
+                            );
+                        }
+                        return;
+                    }
+
+                    if ((d.status === 'ended' || d.status === 'declined') && window._activeCallDocId === myEm) {
+                        window.cleanupDmWebRtcResources();
+                        return;
+                    }
+
+                    if (d.status === 'ringing' && ageMs < 45000 && d.callerEmail && d.callerEmail !== myEm) {
+                        // If already in an active call with someone else, reply 'busy_another_call'!
+                        if (window._dmPeerConn && window._activeCallDocId && window._activeCallDocId !== d.callerEmail) {
+                            window.setDoc(getCallSignalDocRef(myEm), { status: 'busy_another_call', updatedAt: Date.now() }, { merge: true }).catch(() => {});
+                            return;
+                        }
+                        const isVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
+                        if (isVip && window.isMyIncomingCallsLocked && window.isMyIncomingCallsLocked()) {
+                            window.setDoc(getCallSignalDocRef(myEm), { status: 'declined', updatedAt: Date.now() }, { merge: true }).catch(() => {});
+                            return;
+                        }
+                        if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(d.callerEmail)) return;
+
+                        pauseBgMusicForCall();
+                        if (!d.ringingAck) {
+                            window.setDoc(getCallSignalDocRef(myEm), { ringingAck: true }, { merge: true }).catch(() => {});
+                        }
+
+                        window._incomingCallSnapData = d;
+                        window._activeCallDocId = myEm;
+                        window._dmCallSeconds = 0;
+                        const cEm = String(d.callerEmail).toLowerCase();
+                        const u = (window.userCache && window.userCache[cEm]) || {};
+                        const cName = d.callerName || window.getPublicPlayerDisplayName(cEm, u, '');
+                        const cDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(cEm, u, null, cName) : '';
+                        const dpEl = document.getElementById('dm-call-partner-dp');
+                        const nmEl = document.getElementById('dm-call-partner-name');
+                        const stEl = document.getElementById('dm-call-status-lbl');
+                        if (dpEl) dpEl.src = cDp;
+                        if (nmEl) nmEl.textContent = cName;
+                        if (stEl) stEl.textContent = 'Incoming Arena Voice Call...';
+                        const hDp = document.getElementById('dm-headsup-caller-dp');
+                        const hNm = document.getElementById('dm-headsup-caller-name');
+                        if (hDp) hDp.src = cDp;
+                        if (hNm) hNm.textContent = cName + ' is calling...';
+
+                        document.getElementById('dm-heads-up-call-banner')?.classList.remove('hidden');
+                        document.getElementById('dm-call-incoming-actions')?.classList.remove('hidden');
+                        document.getElementById('dm-call-active-actions')?.classList.add('hidden');
+                        document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+
+                        notifyNativeCallForegroundService(true, cName);
+                        if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('incoming');
+                        if (window.triggerSystemMatchNotification) {
+                            window.triggerSystemMatchNotification('📞 Incoming Satta Pai Voice Call', cName + ' is calling you! Tap to Answer.', 'call:' + cEm);
+                        }
+                    }
+                }, () => {});
+            };
+            setTimeout(() => { window.startIncomingDmCallListener(); }, 1100);
+
+            // ------------------------------------------------------------------
+            // 9. SEASON PASS S1–S50, 1000 EXP MAX & AUTOMATIC 2-MONTH ROTATION
+            // ------------------------------------------------------------------
+            const SEASON_THEMES_50 = [
+                'Booyah Ignis', 'Cyber Dragon', 'Shadow Shinobi', 'Crimson Valkyrie', 'Arctic Frost',
+                'Neon Samurai', 'Phantom Reaper', 'Solar Emperor', 'Venom Cobra', 'Thunder Titan',
+                'Abyssal Leviathan', 'Celestial Phoenix', 'Inferno Demon', 'Quantum Hacker', 'Golden Pharaoh',
+                'Storm Kitsune', 'Obsidian Shogun', 'Blood Moon Wolf', 'Astral Paladin', 'Mecha Overlord',
+                'Emerald Viper', 'Royal Gladiator', 'Void Assassin', 'Chrono Traveler', 'Blazing Ronin',
+                'Diamond Warlord', 'Chaos Berserker', 'Nebula Sniper', 'Sacred Guardian', 'Nightmare Specter',
+                'Cybernetic Neko', 'Ragnarok Viking', 'Volcanic Golem', 'Starlight Empress', 'Iron Juggernaut',
+                'Mystic Onmyoji', 'Savage Predator', 'Hurricane Falcon', 'Dark Matter King', 'Ruby Executioner',
+                'Sapphire Monarch', 'Omega Sentinel', 'Ghost Rider', 'Solar Flare', 'Frostbite Hydra',
+                'Arcane Grandmaster', 'Shadow Monarch', 'Immortal Conqueror', 'Supreme Legend', 'Satta Pai God Tier'
+            ];
+
+            window.SEASON_CATALOG_50 = {};
+            for (let s = 1; s <= 50; s++) {
+                const code = 'S' + s;
+                const themeTitle = SEASON_THEMES_50[s - 1] || ('Arena Legend ' + s);
+                const bonus = (s - 1) * 5;
+                window.SEASON_CATALOG_50[code] = {
+                    code,
+                    name: `🎖️ Season ${s}: ${themeTitle} Pass`,
+                    shortBadge: `${code} PASS`,
+                    tiers: [
+                        { tier: 1, xpReq: 0, freeReward: `🪙 +${25 + bonus} SP Coins`, vipReward: `🎖️ Title: ${code} CONTENDER`, coins: 25 + bonus, title: `🎖️ ${code} CONTENDER` },
+                        { tier: 5, xpReq: 80, freeReward: `🪙 +${40 + bonus} SP Coins`, vipReward: `🔥 Title: ${code} SURVIVOR`, coins: 40 + bonus, title: `🔥 ${code} SURVIVOR` },
+                        { tier: 10, xpReq: 200, freeReward: `🪙 +${60 + bonus} SP Coins`, vipReward: `⚡ Title: ${code} COMMANDER`, coins: 60 + bonus, title: `⚡ ${code} COMMANDER` },
+                        { tier: 20, xpReq: 400, freeReward: `🪙 +${100 + bonus} SP Coins`, vipReward: `💎 Title: ${code} HEADSHOT GOD`, coins: 100 + bonus, title: `💎 ${code} HEADSHOT GOD` },
+                        { tier: 35, xpReq: 700, freeReward: `🪙 +${150 + bonus} SP Coins`, vipReward: `🐉 Title: ${code} WARLORD`, coins: 150 + bonus, title: `🐉 ${code} WARLORD` },
+                        { tier: 50, xpReq: 1000, freeReward: `🪙 +${250 + bonus} SP Coins`, vipReward: `👑 Title: ${code} ${themeTitle.toUpperCase()}`, coins: 250 + bonus, title: `👑 ${code} ${themeTitle.toUpperCase()}` }
+                    ]
+                };
+            }
+
+            // Populate Admin Season Select with S1..S50 & Auto-Rotate every 2 Months (60 Days)
+            const TWO_MONTHS_MS = 60 * 24 * 60 * 60 * 1000;
+            const SEASON_1_EPOCH = new Date('2026-11-01T00:00:00Z').getTime();
+
+            window.getAutoRotatedSeasonInfo = function() {
+                const now = Date.now();
+                const elapsed = Math.max(0, now - SEASON_1_EPOCH);
+                const autoIdx = Math.min(49, Math.floor(elapsed / TWO_MONTHS_MS));
+                const nextRotationTs = SEASON_1_EPOCH + ((autoIdx + 1) * TWO_MONTHS_MS);
+                const remMs = Math.max(0, nextRotationTs - now);
+                const remDays = Math.floor(remMs / 86400000);
+                const remHrs = Math.floor((remMs % 86400000) / 3600000);
+                return {
+                    autoCode: 'S' + (autoIdx + 1),
+                    remDays,
+                    remHrs,
+                    countdownText: `⏳ Auto-Rotates in ${remDays}d ${remHrs}h (2-Month Cycle)`
+                };
+            };
+
+            window.getPlayerBattlePassXP = function() {
+                const emailLow = (window.loggedEmail || 'guest').toLowerCase();
+                const u = (window.userCache && window.userCache[emailLow]) || {};
+                const myTeam = (window.allTeams || []).find(t => (t.userEmail || '').toLowerCase() === emailLow);
+                const cStats = window.getPlayerCareerStats ? window.getPlayerCareerStats(emailLow, u.ign, myTeam?.teamName) : { matchesPlayed: 0, totalKills: 0, totalWins: 0 };
+                let locBonus = 0;
+                try { locBonus = Number(localStorage.getItem('satta_pai_bp_xp_' + emailLow) || 0); } catch(e) {}
+                const bonusXp = Math.max(Number(u.bpBonusXp || 0), locBonus);
+                const totalXp = Math.min(1000, (cStats.matchesPlayed * 60) + (cStats.totalKills * 15) + (cStats.totalWins * 100) + bonusXp);
+                const level = Math.min(50, Math.floor(totalXp / 20) + 1);
+                return { totalXp, level };
+            };
+
+            const origRenderBp = window.renderBattlePassUI;
+            window.renderBattlePassUI = function() {
+                const autoInfo = window.getAutoRotatedSeasonInfo();
+                const activeCode = window.currentActiveSeason || autoInfo.autoCode || 'S1';
+                const sObj = window.SEASON_CATALOG_50[activeCode] || window.SEASON_CATALOG_50.S1;
+
+                // Ensure Admin dropdown has S1..S50
+                const adminSel = document.getElementById('admin-season-select');
+                if (adminSel && adminSel.options.length < 50) {
+                    adminSel.innerHTML = Object.keys(window.SEASON_CATALOG_50).map(k => `<option value="${k}">${window.SEASON_CATALOG_50[k].name}</option>`).join('');
+                    adminSel.value = activeCode;
+                }
+
+                if (typeof origRenderBp === 'function') origRenderBp();
+
+                // Override XP display to 1000 EXP Max & show 2-Month Countdown Timer!
+                const { totalXp, level } = window.getPlayerBattlePassXP();
+                const lvlEl = document.getElementById('bp-current-level-lbl');
+                const xpEl = document.getElementById('bp-current-xp-lbl');
+                const barEl = document.getElementById('bp-xp-progress-bar');
+                const modalTitle = document.getElementById('bp-modal-season-title');
+                if (modalTitle) {
+                    modalTitle.innerHTML = `${window.escapeHTML(sObj.name)} <span class="block text-[9.5px] font-mono text-amber-300 mt-0.5">${autoInfo.countdownText}</span>`;
+                }
+                if (lvlEl) lvlEl.textContent = `🎖️ Tier Lv.${level} / 50`;
+                if (xpEl) xpEl.textContent = `(${totalXp} / 1000 EXP)`;
+                if (barEl) barEl.style.width = `${Math.min(100, Math.max(6, (totalXp / 1000) * 100))}%`;
+            };
+
+            // ------------------------------------------------------------------
+            // 10. ROOM ID VOICE ALARM: PLAY ONLY IF REGISTERED & MATCH STARTING
+            // ------------------------------------------------------------------
+            window.checkAutoRoomSirenAndTimer = function() {
+                try {
+                    const matches = window.allMatches || [];
+                    const active = matches.filter(m => m.status !== 'ended');
+                    const badgeEl = document.getElementById('home-countdown-badge');
+                    const txtEl = document.getElementById('home-next-match-timer-txt');
+                    const emailLow = (window.loggedEmail || '').toLowerCase();
+                    const myTeams = ( emailLow && emailLow !== 'guest' )
+                        ? (window.allTeams || []).filter(t => (t.userEmail || '').toLowerCase() === emailLow && t.status !== 'banned')
+                        : [];
+
+                    if (active.length > 0) {
+                        const nextM = active[0];
+                        const isRegisteredInNext = myTeams.some(t => t.matchId === nextM.id);
+                        const hasAnyRoom = Boolean(nextM.roomId) || Object.values(nextM.groupRooms || {}).some(gr => gr && gr.roomId);
+                        if (badgeEl) badgeEl.textContent = (hasAnyRoom && isRegisteredInNext) ? '🔑 ROOM READY!' : (isRegisteredInNext ? '✅ REGISTERED' : 'AUTO');
+                        if (txtEl) {
+                            txtEl.textContent = isRegisteredInNext
+                                ? (hasAnyRoom ? `🚨 Room ID Ready for ${nextM.title}! Tap Room Keys!` : `Registered in ${nextM.title} • Alarm will ring when match starts!`)
+                                : `Register in a match to receive automatic pre-match Room ID voice alarm`;
+                        }
+                    }
+                    if (!window._sirenAlertEnabled || myTeams.length === 0) return;
+
+                    // Strictly play siren ONLY for matches where THIS user is registered AND Room ID is published / match starting!
+                    active.forEach(m => {
+                        const groupRooms = m.groupRooms || {};
+                        myTeams.filter(t => t.matchId === m.id).forEach(myT => {
+                            const grp = (myT.slotGroup || 'TEAM A').toUpperCase();
+                            const gRoom = groupRooms[grp] || { roomId: m.roomId || '', roomPass: m.roomPass || '' };
+                            if (gRoom.roomId) {
+                                const key = `${m.id}_${grp}_${gRoom.roomId}`;
+                                if (!window._notifiedRoomMatches.has(key)) {
+                                    window._notifiedRoomMatches.add(key);
+                                    if (window._initialMatchesLoaded) {
+                                        if (typeof window.testMatchRoomSirenNow === 'function') window.testMatchRoomSirenNow();
+                                        if (typeof window.triggerSystemMatchNotification === 'function') {
+                                            window.triggerSystemMatchNotification(
+                                                `🚨 [${grp}] Room ID Ready: ${gRoom.roomId}`,
+                                                `Match: ${m.title} is starting! Room Pass: ${gRoom.roomPass || 'None'}`
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    window._initialMatchesLoaded = true;
+                } catch(e) {}
+            };
+
+            // ------------------------------------------------------------------
+            // 11. PROTECT SUPER ADMIN FROM ANY REPORTS
+            // ------------------------------------------------------------------
+            const isTargetSuperAdmin = (val) => {
+                const s = String(val || '').trim().toLowerCase();
+                if (!s) return false;
+                if (window.isSuperAdminEmail && window.isSuperAdminEmail(s)) return true;
+                const saEm = String(window.superAdminEmail || 'satta0pai@gmail.com').toLowerCase();
+                if (s.includes(saEm) || s === 'satta0pai@gmail.com') return true;
+                const saUser = (window.userCache && window.userCache[saEm]) || {};
+                if (saUser.playerId && s.includes(String(saUser.playerId).toLowerCase())) return true;
+                if (saUser.ign && s === String(saUser.ign).toLowerCase()) return true;
+                return false;
+            };
+
+            const origSubmitCheat = window.submitCheatReport;
+            if (typeof origSubmitCheat === 'function') {
+                window.submitCheatReport = async function() {
+                    const nameVal = document.getElementById('cr-suspect-name')?.value || '';
+                    const uidVal = document.getElementById('cr-suspect-uid')?.value || '';
+                    if (isTargetSuperAdmin(nameVal) || isTargetSuperAdmin(uidVal)) {
+                        window.showToast('🛡️ Official Super Admin cannot be reported!');
+                        return;
+                    }
+                    return await origSubmitCheat();
+                };
+            }
+
+            const origOpenDmReport = window.openDmAiReportModal;
+            if (typeof origOpenDmReport === 'function') {
+                window.openDmAiReportModal = function() {
+                    const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                    if (isTargetSuperAdmin(partner)) {
+                        window.showToast('🛡️ Official Super Admin cannot be reported!');
+                        return;
+                    }
+                    origOpenDmReport();
+                };
+            }
         })();
 
     </script>

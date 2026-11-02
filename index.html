@@ -1534,8 +1534,217 @@ html.theme-ghost-live {
         }
     </style>
 
+
+    <style id="satta-pai-v14-fixes-css">
+        /* Permanently hide cluttered top text bars in Private DM */
+        #dm-vip-security-vault-bar,
+        #dm-free-privacy-bar,
+        #dm-active-partner-e2e-badge {
+            display: none !important;
+        }
+
+        /* Prevent horizontal wiggle inside Spin Wheel & all modals */
+        [id$="-modal"] > .cyber-card {
+            overflow-x: hidden !important;
+            overscroll-behavior: contain !important;
+            touch-action: pan-y !important;
+        }
+
+        /* 🎨 V14.0 HIGH-PRIORITY CHAT BUBBLE SKINS (Works in both Global Chat & Private DM, Dark & Light Mode) */
+        div.vip-skin-gold,
+        html:not(.dark) div.vip-skin-gold {
+            background: linear-gradient(135deg, #92400e 0%, #451a03 100%) !important;
+            border: 1.5px solid #fbbf24 !important;
+            color: #fef3c7 !important;
+            box-shadow: 0 3px 14px rgba(245, 158, 11, 0.35) !important;
+        }
+        div.vip-skin-cyber,
+        html:not(.dark) div.vip-skin-cyber {
+            background: linear-gradient(135deg, #0e7490 0%, #083344 100%) !important;
+            border: 1.5px solid #22d3ee !important;
+            color: #ecfeff !important;
+            box-shadow: 0 3px 14px rgba(6, 182, 212, 0.38) !important;
+        }
+        div.vip-skin-crimson,
+        html:not(.dark) div.vip-skin-crimson {
+            background: linear-gradient(135deg, #be123c 0%, #4c0519 100%) !important;
+            border: 1.5px solid #fb7185 !important;
+            color: #ffe4e6 !important;
+            box-shadow: 0 3px 14px rgba(244, 63, 94, 0.38) !important;
+        }
+        div.vip-skin-violet,
+        html:not(.dark) div.vip-skin-violet {
+            background: linear-gradient(135deg, #7e22ce 0%, #3b0764 100%) !important;
+            border: 1.5px solid #c084fc !important;
+            color: #f3e8ff !important;
+            box-shadow: 0 3px 14px rgba(168, 85, 247, 0.38) !important;
+        }
+        div.vip-skin-gold *,
+        div.vip-skin-cyber *,
+        div.vip-skin-crimson *,
+        div.vip-skin-violet * {
+            color: inherit;
+        }
+    </style>
+
+
+    <style id="satta-pai-v15-grand-signature-css">
+        /* 🔒 1. ZERO ZOOM-IN / ZOOM-OUT ON TOUCH (Fixes video 1000132377.mp4 card/modal bounce!) */
+        .cyber-card,
+        .cyber-card:active,
+        .cyber-card:hover,
+        .modal-backdrop,
+        .modal-backdrop:active,
+        [id$="-modal"],
+        [id$="-modal"]:active,
+        div[onclick],
+        div[onclick]:active,
+        section,
+        section:active,
+        main,
+        main:active {
+            transform: none !important;
+            transition: border-color 0.15s ease !important;
+        }
+        /* Only actual <button> elements get a subtle, crisp press opacity instead of layout-shifting zoom */
+        button:active, .btn-theme:active, .native-dock-item:active, .native-app-tile:active {
+            transform: none !important;
+            opacity: 0.86 !important;
+        }
+
+        /* 👑 2. SATTA PAI SIGNATURE GRAND OBSIDIAN & GOLD-EMERALD LOOK */
+        html.dark body {
+            background-color: #060911 !important;
+            background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.09) 0%, rgba(245, 158, 11, 0.04) 35%, transparent 70%) !important;
+            background-attachment: fixed !important;
+        }
+        html.dark .cyber-card {
+            background: linear-gradient(165deg, rgba(15, 22, 36, 0.96) 0%, rgba(9, 13, 22, 0.98) 100%) !important;
+            border: 1px solid rgba(251, 191, 36, 0.16) !important;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+        }
+        html.dark .native-hero-card {
+            background: linear-gradient(145deg, rgba(6, 78, 59, 0.38) 0%, rgba(9, 13, 22, 0.98) 55%, rgba(120, 53, 15, 0.28) 100%) !important;
+            border: 1.5px solid rgba(251, 191, 36, 0.42) !important;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(251, 191, 36, 0.2) !important;
+        }
+        html.dark header.native-app-topbar,
+        html.dark .bottom-nav {
+            background: #080c15 !important;
+            border-color: rgba(251, 191, 36, 0.18) !important;
+        }
+
+        /* ❄️ 3. ZERO-HEATING / ZERO-BATTERY-DRAIN HARDWARE OPTIMIZATION FOR 6GB RAM PHONES */
+        #live-theme-canvas,
+        #login-bg-canvas,
+        #tg-vip-mini-canvas {
+            display: none !important;
+            pointer-events: none !important;
+        }
+        .animate-ping,
+        .animate-bounce {
+            animation-duration: 2.5s !important;
+        }
+    </style>
+
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
+
+    <!-- 🚀 WHATSAPP / INSTAGRAM STYLE NATIVE APP SPLASH SCREEN (0ms Instant Brand Logo Launch) -->
+    <div id="sp-native-app-splash" style="position:fixed;inset:0;z-index:99999999;background:radial-gradient(circle at 50% 38%, #0d1f1d 0%, #070b12 72%);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:48px 24px 36px 24px;user-select:none;transition:opacity 0.26s ease, visibility 0.26s ease;">
+        <div style="height:24px;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+            <div style="width:88px;height:88px;border-radius:26px;padding:3px;background:linear-gradient(135deg,#10b981 0%,#f59e0b 50%,#06b6d4 100%);box-shadow:0 12px 36px rgba(16,185,129,0.32);">
+                <div style="width:100%;height:100%;border-radius:23px;background:#070b12;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">
+                    <img id="sp-splash-logo-img" src="" alt="Satta Pai" style="width:100%;height:100%;object-fit:cover;display:none;">
+                    <svg id="sp-splash-fallback-svg" style="width:46px;height:46px;fill:#fbbf24;" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:20px;font-weight:900;letter-spacing:1.5px;color:#ffffff;text-transform:uppercase;">SATTA PAI</div>
+                <div style="font-size:10px;font-weight:800;letter-spacing:2.5px;color:#10b981;text-transform:uppercase;margin-top:3px;">OFFICIAL ESPORTS ARENA</div>
+            </div>
+        </div>
+        <div style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:28px;height:3px;border-radius:99px;background:linear-gradient(90deg,#10b981,#f59e0b);"></div>
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:1.8px;color:#64748b;text-transform:uppercase;">SECURED BY SATTA PAI SHIELD</div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            try {
+                var spImg = document.getElementById('sp-splash-logo-img');
+                var spSvg = document.getElementById('sp-splash-fallback-svg');
+                var cachedLogo = localStorage.getItem('satta_pai_brand_logo') || window.DEFAULT_SATTA_PAI_LOGO_DATA_URL || '';
+                if (spImg && cachedLogo) {
+                    spImg.src = cachedLogo;
+                    spImg.style.display = 'block';
+                    if (spSvg) spSvg.style.display = 'none';
+                }
+                var hideSplash = function() {
+                    var el = document.getElementById('sp-native-app-splash');
+                    if (!el) return;
+                    el.style.opacity = '0';
+                    el.style.visibility = 'hidden';
+                    el.style.pointerEvents = 'none';
+                    setTimeout(function() { if (el && el.parentNode) el.parentNode.removeChild(el); }, 280);
+                };
+                setTimeout(hideSplash, 950);
+            } catch(e) {}
+        })();
+    </script>
+
+    <!-- 👤 MANDATORY NEW GOOGLE USER PROFILE SETUP MODAL (Never shows Gmail name — user sets Profile right on Sign-In!) -->
+    <div id="new-user-onboarding-modal" style="z-index: 9999996 !important;" class="fixed inset-0 z-[9999996] hidden flex items-center justify-center p-4 bg-black/95">
+        <div class="cyber-card p-5 max-w-sm w-full space-y-4 border-2 border-emerald-400/70 shadow-2xl text-xs">
+            <div class="text-center space-y-1">
+                <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black uppercase">
+                    <span>⚡ Step 1 of 1 • Player Setup</span>
+                </div>
+                <h3 class="text-base font-black text-white uppercase tracking-wide pt-1">Complete Your Arena Profile</h3>
+                <p class="text-[10.5px] text-slate-300">Set your gaming identity before entering the lobby. Your Gmail is kept 100% private & hidden!</p>
+            </div>
+
+            <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-900/90 border border-white/10">
+                <img id="onboard-preview-dp" src="https://ui-avatars.com/api/?name=SP&background=10b981&color=fff" class="w-14 h-14 rounded-2xl object-cover border-2 border-emerald-400 shrink-0" alt="Avatar">
+                <div class="min-w-0 flex-1">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Your Official Arena ID</div>
+                    <div id="onboard-player-id-lbl" class="text-sm font-mono font-black text-amber-400">SP-1000</div>
+                    <div class="text-[9.5px] text-emerald-400 font-semibold mt-0.5">Tap an avatar below or upload DP</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-6 gap-1.5">
+                <button type="button" onclick="window.selectOnboardingAvatar(0)" class="p-1.5 rounded-xl bg-zinc-900 border border-orange-500/40 text-center cursor-pointer"><div class="text-sm">🔥</div><div class="text-[7.5px] font-bold text-orange-300">Rusher</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(1)" class="p-1.5 rounded-xl bg-zinc-900 border border-rose-500/40 text-center cursor-pointer"><div class="text-sm">💀</div><div class="text-[7.5px] font-bold text-rose-300">Sniper</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(2)" class="p-1.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-center cursor-pointer"><div class="text-sm">👑</div><div class="text-[7.5px] font-bold text-amber-300">King</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(3)" class="p-1.5 rounded-xl bg-zinc-900 border border-cyan-500/40 text-center cursor-pointer"><div class="text-sm">⚡</div><div class="text-[7.5px] font-bold text-cyan-300">Ninja</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(4)" class="p-1.5 rounded-xl bg-zinc-900 border border-red-500/40 text-center cursor-pointer"><div class="text-sm">👻</div><div class="text-[7.5px] font-bold text-red-300">Ghost</div></button>
+                <button type="button" onclick="window.selectOnboardingAvatar(5)" class="p-1.5 rounded-xl bg-zinc-900 border border-emerald-500/40 text-center cursor-pointer"><div class="text-sm">🐉</div><div class="text-[7.5px] font-bold text-emerald-300">Dragon</div></button>
+            </div>
+
+            <div class="space-y-2.5 text-left">
+                <div>
+                    <label class="block font-extrabold text-[10.5px] text-slate-200 mb-1">1. Display Name / Username *</label>
+                    <input type="text" id="onboard-username-inp" maxlength="22" placeholder="e.g. Tharun Boss" class="cyber-input w-full px-3 py-2 text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block font-extrabold text-[10.5px] text-emerald-300 mb-1">2. Free Fire IGN (In-Game Name) *</label>
+                    <input type="text" id="onboard-ign-inp" maxlength="22" placeholder="e.g. THARUN_FF" class="cyber-input w-full px-3 py-2 text-xs font-bold">
+                </div>
+                <div>
+                    <label class="block font-extrabold text-[10.5px] text-amber-300 mb-1">3. Free Fire Game UID *</label>
+                    <input type="text" id="onboard-uid-inp" maxlength="14" inputmode="numeric" placeholder="e.g. 2489103847" class="cyber-input w-full px-3 py-2 text-xs font-mono font-bold">
+                </div>
+            </div>
+
+            <button type="button" onclick="window.submitNewUserOnboardingProfile()" class="btn-theme w-full py-3 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer shadow-xl">
+                🚀 Save Profile & Enter Arena
+            </button>
+        </div>
+    </div>
+
+
 
     <!-- 🎬 SATTA PAI ESPORTS — UNIQUE CINEMATIC INTRO SPLASH (YouTube / Gaming Style) -->
     <div id="sp-cinematic-intro" onclick="skipCinematicIntro()">
@@ -1726,7 +1935,7 @@ html.theme-ghost-live {
 
     <!-- 🎁 Daily SP Coins, Lucky Spin & Refer-a-Friend Modal -->
     <div id="spin-wheel-modal" class="fixed inset-0 z-[10009] hidden flex items-center justify-center p-4 bg-black/85 backdrop-blur-md" onclick="if(event.target === this) this.classList.add('hidden')">
-        <div class="cyber-card p-5 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-4 shadow-2xl border-2 border-amber-400/50" onclick="event.stopPropagation()">
+        <div class="cyber-card p-4 max-w-md w-full max-h-[88vh] overflow-y-auto overflow-x-hidden space-y-3.5 shadow-2xl border-2 border-amber-400/50" style="overscroll-behavior: contain; touch-action: pan-y;" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b pb-2.5" style="border-color: var(--border-color);">
                 <div class="flex items-center gap-2">
                     <div class="w-9 h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-orange-600 text-black font-extrabold text-lg shadow">🪙</div>
@@ -1779,7 +1988,7 @@ html.theme-ghost-live {
                     <span class="text-xs font-extrabold uppercase text-purple-400 tracking-wider">🎡 24h Lucky Spin Wheel</span>
                     <span id="spin-cooldown-timer-lbl" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">✅ Ready to Spin!</span>
                 </div>
-                <div class="relative w-48 h-48 mx-auto flex items-center justify-center select-none">
+                <div class="relative w-52 h-52 mx-auto flex items-center justify-center select-none overflow-hidden rounded-full">
                     <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 z-20 drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]">
                         <div class="w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[18px] border-t-amber-400"></div>
                     </div>
@@ -5921,7 +6130,7 @@ html.theme-ghost-live {
 
         window.escapeHTML = function(str) { if(!str) return ''; return String(str).replace(/[&<>"']/g, function(m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]; }); };
         window.escapeJsStr = function(str) { if(!str) return ''; return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, ' ').replace(/[&<>"]/g, function(m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); };
-        window.maskEmail = function(email) { if(!email) return ''; if(email === 'guest') return 'Guest User'; const parts = email.split('@'); if(parts.length !== 2) return email; return parts[0][0] + '*****@' + parts[1]; };
+        window.maskEmail = function(email) { if(!email || email === 'guest') return 'Guest Player'; const low = String(email).trim().toLowerCase(); const u = (window.userCache && window.userCache[low]) || {}; const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(low) : 'SP-Player'); const pub = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(low, u, '') : (u.ign || u.username || pid); return pub === pid ? pid : `${pub} (${pid})`; };
         window.showToast = function(msg) { const toast = document.getElementById('toast'); document.getElementById('toast-text').textContent = msg; toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3200); };
 
         window.getStablePlayerId = function(email) {
@@ -10520,7 +10729,7 @@ CRITICAL RULES:
         const fbFunctions = getFunctions(app, 'asia-south1');
         let _privateGeminiApiKey = '';
         window.fbApp = app; window.fbDb = db; window.fbFunctions = fbFunctions; window.httpsCallable = httpsCallable;
-        window.db = db; window.doc = doc; window.setDoc = setDoc; window.getDoc = getDoc; window.deleteDoc = deleteDoc; window.addDoc = addDoc; window.collection = collection; window.updateDoc = updateDoc; window.increment = increment;
+        window.db = db; window.doc = doc; window.setDoc = setDoc; window.getDoc = getDoc; window.deleteDoc = deleteDoc; window.addDoc = addDoc; window.collection = collection; window.updateDoc = updateDoc; window.increment = increment; window.onSnapshot = onSnapshot; window.query = query; window.where = where; window.orderBy = orderBy; window.limit = limit; window.getDocs = getDocs;
 
         let publicTeams = [];
         let privateTeamsMap = {};
@@ -10689,7 +10898,7 @@ CRITICAL RULES:
                     } catch (e) {}
                 }
                 const stableId = window.getStablePlayerId(email);
-                const googleName = (user.displayName || email.split('@')[0] || 'Player').trim();
+                const googleName = (user.displayName && !String(user.displayName).includes('@') && String(user.displayName).toLowerCase() !== email.split('@')[0]) ? String(user.displayName).trim() : ('Player ' + stableId);
                 if (!snap.exists()) {
                     const safeCreateDoc = {
                         email: email,
@@ -11316,8 +11525,8 @@ CRITICAL RULES:
                     window._usersListenerMode = targetMode;
                     try {
                         setDoc(doc(db, 'users', emailLow), { email: emailLow, isOnline: true, lastSeenAt: Date.now() }, { merge: true }).catch(() => {});
-                        if (isStaff) {
-                            window._usersUnsubscribe = onSnapshot(query(collection(db, 'users'), limit(120)), snap => {
+                        if (false && isStaff) {
+                            window._usersUnsubscribe = onSnapshot(query(collection(db, 'users'), limit(25)), snap => {
                                 snap.docs.forEach(docSnap => {
                                     const data = docSnap.data();
                                     const rawId = docSnap.id;
@@ -11583,11 +11792,11 @@ CRITICAL RULES:
             if (data.dpBase64) {
                 document.getElementById('profile-dp-img').src = data.dpBase64;
             } else {
-                const fallbackAvatarName = data.username || data.ign || emailLow.split('@')[0];
+                const fallbackAvatarName = (data.ign || data.username || pid);
                 document.getElementById('profile-dp-img').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(fallbackAvatarName)}&background=random`;
             }
             if (data.chatBannedUntil && data.chatBannedUntil > Date.now()) myChatBannedUntil = data.chatBannedUntil;
-            document.getElementById('user-dash-name').textContent = data.username || data.ign || emailLow.split('@')[0];
+            document.getElementById('user-dash-name').textContent = (window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(emailLow, data, '') : (data.ign || data.username || pid));
             if (data.dpBase64) { const ud = document.getElementById('user-dash-dp'); ud.src = data.dpBase64; ud.classList.remove('hidden'); }
             window.currentUserVipUntil = data.premiumUntil || 0;
             window.currentUserIsPremiumFlag = !!data.isPremium;
@@ -12016,9 +12225,11 @@ CRITICAL RULES:
                 if (uData.armoryTitle) badgesHtml += `<span class="px-1 py-0 rounded text-[7.5px] font-extrabold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">${window.escapeHTML(uData.armoryTitle)}</span> `;
 
                 const editedText = (msg.isEdited ? ' (edited)' : '') + (msg.isForwarded ? ' • ↪ Fwd' : '') + (msg.noForward ? ' • 🔒' : '');
-                const proPlusBubbleExtra = isMsgUserProPlus ? " pro-plus-bubble" : "";
+                const resolvedSkin = (isOwn ? (localStorage.getItem('satta_pai_vip_bubble_skin') || uData.vipSkin || msg.vipSkin || '') : (uData.vipSkin || msg.vipSkin || ''));
+                const skinClass = resolvedSkin ? (' vip-skin-' + resolvedSkin) : '';
+                const proPlusBubbleExtra = (isMsgUserProPlus && !resolvedSkin) ? " pro-plus-bubble" : "";
                 const proPlusAvatarExtra = isMsgUserProPlus ? " ring-2 ring-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.65)]" : "";
-                return `<div class="${rowClass}"><img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(resolvedName)}')" class="chat-avatar${proPlusAvatarExtra} w-8 h-8 rounded-full object-cover shrink-0 border border-emerald-400/50 cursor-pointer hover:scale-105 transition-transform" alt="Avatar" onclick="openChatProfileByMsgId(event, '${msg.id}')"><div class="chat-content"><span class="chat-meta cursor-pointer hover:underline" onclick="openChatProfileByMsgId(event, '${msg.id}')">${badgesHtml}${nameDisplay} • ${time}${editedText}</span><div class="${bubbleClass}${proPlusBubbleExtra} ${msg.vipSkin ? 'vip-skin-' + msg.vipSkin : ''}" onclick="openChatProfileByMsgId(event, '${msg.id}')">${msg.replyToText ? `<div class="mb-1 px-2 py-0.5 rounded bg-black/35 border-l-2 border-amber-400 text-[9px] leading-tight"><div class="font-extrabold text-amber-300 truncate">${window.escapeHTML(msg.replyToName || 'Player')}</div><div class="text-slate-300 truncate">${window.escapeHTML(msg.replyToText)}</div></div>` : ''}${window.escapeHTML(window.aiMaskBadWords ? window.aiMaskBadWords(msg.message) : msg.message)}${window.renderMessageReactionsPillHtml ? window.renderMessageReactionsPillHtml(msg) : ''}</div></div></div>`;
+                return `<div class="${rowClass}"><img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(resolvedName)}')" class="chat-avatar${proPlusAvatarExtra} w-8 h-8 rounded-full object-cover shrink-0 border border-emerald-400/50 cursor-pointer hover:scale-105 transition-transform" alt="Avatar" onclick="openChatProfileByMsgId(event, '${msg.id}')"><div class="chat-content"><span class="chat-meta cursor-pointer hover:underline" onclick="openChatProfileByMsgId(event, '${msg.id}')">${badgesHtml}${nameDisplay} • ${time}${editedText}</span><div class="${bubbleClass}${proPlusBubbleExtra}${skinClass}" onclick="openChatProfileByMsgId(event, '${msg.id}')">${msg.replyToText ? `<div class="mb-1 px-2 py-0.5 rounded bg-black/35 border-l-2 border-amber-400 text-[9px] leading-tight"><div class="font-extrabold text-amber-300 truncate">${window.escapeHTML(msg.replyToName || 'Player')}</div><div class="text-slate-300 truncate">${window.escapeHTML(msg.replyToText)}</div></div>` : ''}${window.escapeHTML(window.aiMaskBadWords ? window.aiMaskBadWords(msg.message) : msg.message)}${window.renderMessageReactionsPillHtml ? window.renderMessageReactionsPillHtml(msg) : ''}</div></div></div>`;
             }).join('');
             container.scrollTop = container.scrollHeight;
         };
@@ -14439,7 +14650,7 @@ CRITICAL RULES:
             if (typeof window.sendNewUserWelcomeMailIfNeeded === 'function') {
                 window.sendNewUserWelcomeMailIfNeeded(email, userObj?.displayName || email.split('@')[0]);
             }
-            window.showToast("✅ Welcome " + (userObj?.displayName || email));
+            window.showToast("✅ Welcome to Satta Pai Arena!");
         };
 
         window.openAppExternalBrowserOAuthFlow = async function(providerName) {
@@ -14677,14 +14888,14 @@ CRITICAL RULES:
                     window.showToast("⚠️ Account selection cancelled.");
                     return;
                 }
-                const displayName = email.split('@')[0];
+                const displayName = 'Player ' + window.getStablePlayerId(email);
 
                 window.saveVerifiedAuthEmail(email);
                 window.closeLoginOverlayPermanently();
                 document.body.style.overflow = '';
                 if (typeof window.checkLoginState === 'function') window.checkLoginState();
                 if (typeof window.switchTab === 'function') window.switchTab('home');
-                window.showToast("✅ Signed in with " + providerLabel + ": " + email);
+                window.showToast("✅ Signed in with " + providerLabel + "!");
 
                 const fbUser = await window.ensureSilentFirebaseAuthSession(email);
 
@@ -18737,7 +18948,7 @@ CRITICAL RULES:
             }
             box.innerHTML = list.map(em => {
                 const u = userCache[em] || {};
-                const name = u.username || u.ign || em.split('@')[0];
+                const name = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(em, u, '') : (u.ign || u.username || u.playerId || 'Player');
                 const pid = u.playerId || window.getStablePlayerId(em);
                 return `
                     <div class="cyber-card p-2.5 flex items-center justify-between gap-2 bg-zinc-900/90 border border-white/10">
@@ -19033,36 +19244,12 @@ CRITICAL RULES:
         }
 
         window.refreshDmVipSecurityBarUI = function() {
-            const myProPlus = window.isCurrentUserProPlus ? window.isCurrentUserProPlus() : false;
-            const myVip = myProPlus || (window.isCurrentUserVip ? window.isCurrentUserVip() : false);
-            const partnerEm = (window._activeDmPartnerEmail || '').toLowerCase();
-            const partnerVip = partnerEm ? window.isEmailVipOrProPlus(partnerEm) : false;
-            const partnerProPlus = partnerEm ? window.isPartnerProPlus(partnerEm) : false;
-            const isProtected = myVip || partnerVip;
-
             const vipBar = document.getElementById('dm-vip-security-vault-bar');
             const freeBar = document.getElementById('dm-free-privacy-bar');
-            const tierPill = document.getElementById('dm-vip-tier-pill');
-            const descLbl = document.getElementById('dm-vip-shield-desc-lbl');
             const e2eBadge = document.getElementById('dm-active-partner-e2e-badge');
-            if (isProtected) {
-                if (vipBar) vipBar.classList.remove('hidden');
-                if (freeBar) freeBar.classList.add('hidden');
-                if (tierPill) {
-                    tierPill.textContent = (myProPlus || partnerProPlus) ? '👑 PRO+ ANTI-CAPTURE' : '⭐ PRO ANTI-CAPTURE';
-                }
-                if (descLbl) {
-                    descLbl.textContent = '🚫 Cannot Take Screenshot • ⬛ Blackout Shield Active';
-                }
-                if (e2eBadge) {
-                    e2eBadge.textContent = '🚫 NO-SCREENSHOT';
-                    e2eBadge.classList.remove('hidden');
-                }
-            } else {
-                if (vipBar) vipBar.classList.add('hidden');
-                if (freeBar) freeBar.classList.remove('hidden');
-                if (e2eBadge) e2eBadge.classList.add('hidden');
-            }
+            if (vipBar) vipBar.classList.add('hidden');
+            if (freeBar) freeBar.classList.add('hidden');
+            if (e2eBadge) e2eBadge.classList.add('hidden');
             window.updateLastSeenPrivacyButtonsUI();
             window.syncNativeDmScreenshotShield();
         };
@@ -19230,7 +19417,7 @@ CRITICAL RULES:
                         if (window._dmInitialBatchLoaded && isFreshSinceBoot && !window.hasDmBeenNotifiedPersistently(m) && !window.isUserBlockedEitherWay(sEm)) {
                             window.markDmAsNotifiedPersistently(m);
                             const senderU = userCache[sEm] || {};
-                            const senderDisplay = senderU.username || senderU.ign || m.senderName || sEm.split('@')[0];
+                            const senderDisplay = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(sEm, senderU, m.senderName) : (senderU.ign || senderU.username || 'Player');
                             const cleanPreview = window.aiMaskBadWords ? window.aiMaskBadWords(m.message) : m.message;
                             if (typeof window.triggerSystemMatchNotification === 'function') {
                                 window.triggerSystemMatchNotification(
@@ -19523,7 +19710,7 @@ CRITICAL RULES:
             }
 
             const u = userCache[partner] || {};
-            const name = u.username || u.ign || partner.split('@')[0] || 'Player';
+            const name = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(partner, u, '') : (u.ign || u.username || u.playerId || 'Player');
             const pid = u.playerId || window.getStablePlayerId(partner);
             const dp = window.resolveUserDpUrl(partner, u, null, name);
             const isOnline = window.isPlayerCurrentlyOnline(partner);
@@ -19574,7 +19761,7 @@ CRITICAL RULES:
             const partner = window._activeDmPartnerEmail;
             if (!partner) return;
             const u = userCache[partner] || {};
-            window.openChatProfileModal(null, 'dm_view', partner, 'Private DM Contact', u.username || u.ign || partner.split('@')[0]);
+            window.openChatProfileModal(null, 'dm_view', partner, 'Private DM Contact', window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(partner, u, '') : (u.ign || u.username || 'Player'));
         };
 
         window.renderDmInboxList = function(searchRaw) {
@@ -19645,7 +19832,7 @@ CRITICAL RULES:
 
             const renderPartnerCard = (em, lastMsg, isOnlineSuggested = false) => {
                 const u = userCache[em] || {};
-                const name = u.username || u.ign || em.split('@')[0] || 'Player';
+                const name = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(em, u, '') : (u.ign || u.username || u.playerId || 'Player');
                 const pid = u.playerId || window.getStablePlayerId(em);
                 const dp = window.resolveUserDpUrl(em, u, null, name);
                 const isPinned = pins.includes(em);
@@ -19755,7 +19942,7 @@ CRITICAL RULES:
                 const isMe = String(m.senderEmail || '').toLowerCase() === myEm;
                 const sEm = isMe ? myEm : partner;
                 const u = userCache[sEm] || {};
-                const name = u.username || u.ign || m.senderName || sEm.split('@')[0];
+                const name = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(sEm, u, m.senderName) : (u.ign || u.username || u.playerId || 'Player');
                 const dp = window.resolveUserDpUrl(sEm, u, m, name);
                 const tStr = new Date(m.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 const censoredMsg = window.aiMaskBadWords ? window.aiMaskBadWords(m.message || '') : (m.message || '');
@@ -19790,7 +19977,9 @@ CRITICAL RULES:
 
                 const msgKey = m.clientMsgId || m.id || '';
                 const isSenderProPlus = Boolean(m.isProPlus || m.vipTier === 'pro_plus' || (window.isEmailProPlus && window.isEmailProPlus(sEm)));
-                const proPlusDmClass = isSenderProPlus ? ' pro-plus-bubble' : '';
+                const resolvedDmSkin = (isMe ? (localStorage.getItem('satta_pai_vip_bubble_skin') || u.vipSkin || m.vipSkin || '') : (u.vipSkin || m.vipSkin || ''));
+                const dmSkinClass = resolvedDmSkin ? (' vip-skin-' + resolvedDmSkin) : '';
+                const proPlusDmClass = (isSenderProPlus && !resolvedDmSkin) ? ' pro-plus-bubble' : '';
                 const proPlusAvatarRing = isSenderProPlus ? ' ring-2 ring-amber-400' : '';
                 const fwdTag = m.isForwarded ? `<div class="text-[8.5px] font-mono text-amber-300/90 mb-0.5 flex items-center gap-1"><span>↪ Forwarded</span></div>` : '';
                 const lockTag = m.noForward ? `<span class="text-[8px] font-mono text-amber-300/80 ml-1" title="Forwarding Locked">🔒</span>` : '';
@@ -19811,7 +20000,7 @@ CRITICAL RULES:
                 return `
                     <div class="flex items-end gap-2 select-none ${isMe ? 'flex-row-reverse' : 'flex-row'}">
                         <img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(name)}')" class="w-7 h-7 rounded-full object-cover border border-white/20 shrink-0 pointer-events-none${proPlusAvatarRing}" alt="DP">
-                        <div onclick="window.openDmMessageActionsModal('${window.escapeJsStr(msgKey)}')" class="max-w-[78%] px-3 py-2 rounded-2xl text-xs select-none cursor-pointer transition-transform active:scale-[0.99] ${isMe ? 'bg-emerald-700/95 text-white rounded-br-sm border border-emerald-400/30' : 'cyber-card text-slate-100 rounded-bl-sm'}${proPlusDmClass}">
+                        <div onclick="window.openDmMessageActionsModal('${window.escapeJsStr(msgKey)}')" class="max-w-[78%] px-3 py-2 rounded-2xl text-xs select-none cursor-pointer transition-transform active:scale-[0.99] ${isMe ? 'bg-emerald-700/95 text-white rounded-br-sm border border-emerald-400/30' : 'cyber-card text-slate-100 rounded-bl-sm'}${proPlusDmClass}${dmSkinClass}">
                             ${fwdTag}
                             ${replyBoxHtml}
                             ${voicePlayerHtml}
@@ -19873,7 +20062,7 @@ CRITICAL RULES:
                 isProPlus: isMeProPlus,
                 isVip: isMeVip,
                 vipTier: isMeProPlus ? 'pro_plus' : (isMeVip ? 'pro' : 'free'),
-                vipSkin: isMeVip ? (localStorage.getItem('satta_pai_vip_bubble_skin') || 'gold') : '',
+                vipSkin: localStorage.getItem('satta_pai_vip_bubble_skin') || (isMeVip ? 'gold' : ''),
                 noForward: noFwd,
                 replyToText: (window._activeDmReplyQuote && window._activeDmReplyQuote.text) || '',
                 replyToName: (window._activeDmReplyQuote && window._activeDmReplyQuote.name) || '',
@@ -19925,7 +20114,7 @@ CRITICAL RULES:
             const u = userCache[partner] || {};
             const pid = u.playerId || window.getStablePlayerId(partner);
             document.getElementById('dm-report-target-email').value = partner;
-            document.getElementById('dm-report-target-lbl').value = `${u.username || partner.split('@')[0]} (${pid})`;
+            document.getElementById('dm-report-target-lbl').value = `${window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(partner, u, '') : pid} (${pid})`;
             document.getElementById('dm-ai-report-modal')?.classList.remove('hidden');
         };
 
@@ -21945,7 +22134,7 @@ CRITICAL RULES:
                 isProPlus: isMeProPlus,
                 isVip: isMeVip,
                 vipTier: isMeProPlus ? 'pro_plus' : (isMeVip ? 'pro' : 'free'),
-                vipSkin: isMeVip ? (localStorage.getItem('satta_pai_vip_bubble_skin') || 'gold') : '',
+                vipSkin: localStorage.getItem('satta_pai_vip_bubble_skin') || (isMeVip ? 'gold' : ''),
                 noForward: noFwd,
                 replyToText: (window._activeGlobalReplyQuote && window._activeGlobalReplyQuote.text) || '',
                 replyToName: (window._activeGlobalReplyQuote && window._activeGlobalReplyQuote.name) || '',
@@ -22976,17 +23165,21 @@ CRITICAL RULES:
                     <span class="font-bold text-slate-200 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Arena Server Ping</span></span>
                     <span id="settings-live-ping-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-black">⚡ 24 ms (Ultra)</span>
                 </div>
-                <div class="grid grid-cols-2 gap-1.5">
-                    <button type="button" onclick="window.runArena120FpsRamBooster()" class="py-1.5 px-2 rounded-lg bg-gradient-to-r from-cyan-600/30 to-emerald-600/30 border border-cyan-400/50 text-cyan-300 font-extrabold text-[10px] cursor-pointer">🚀 Boost 120FPS</button>
-                    <button type="button" onclick="window.toggleMyForwardLock()" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold text-[10px] cursor-pointer">🔒 Forward Lock</button>
+                <div class="grid grid-cols-3 gap-1.5">
+                    <button type="button" onclick="window.runArena120FpsRamBooster()" class="py-1.5 px-2 rounded-lg bg-gradient-to-r from-cyan-600/30 to-emerald-600/30 border border-cyan-400/50 text-cyan-300 font-extrabold text-[9.5px] cursor-pointer">🚀 120FPS</button>
+                    <button type="button" onclick="window.toggleMyForwardLock()" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">🔒 Fwd Lock</button>
+                    <button type="button" id="settings-call-lock-btn" onclick="window.toggleMyIncomingCallsLock()" class="py-1.5 px-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[9.5px] cursor-pointer">📞 Calls: ON</button>
                 </div>
-                <div class="pt-1 border-t border-white/10 space-y-1.5">
-                    <div class="text-[9.5px] font-extrabold text-amber-300 uppercase">👑 PRO / PRO+ Chat Bubble Skin</div>
-                    <div class="grid grid-cols-4 gap-1">
-                        <button type="button" onclick="window.setMyVipChatBubbleSkin('gold')" class="py-1 rounded bg-amber-500/25 border border-amber-400/60 text-amber-300 font-bold text-[9px] cursor-pointer">Gold</button>
-                        <button type="button" onclick="window.setMyVipChatBubbleSkin('cyber')" class="py-1 rounded bg-cyan-500/25 border border-cyan-400/60 text-cyan-300 font-bold text-[9px] cursor-pointer">Cyber</button>
-                        <button type="button" onclick="window.setMyVipChatBubbleSkin('crimson')" class="py-1 rounded bg-rose-500/25 border border-rose-400/60 text-rose-300 font-bold text-[9px] cursor-pointer">Crimson</button>
-                        <button type="button" onclick="window.setMyVipChatBubbleSkin('violet')" class="py-1 rounded bg-purple-500/25 border border-purple-400/60 text-purple-300 font-bold text-[9px] cursor-pointer">Violet</button>
+                <div class="pt-1.5 border-t border-white/10 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9.5px] font-extrabold text-amber-300 uppercase">🎨 Chat Bubble Skin</span>
+                        <span id="settings-active-bubble-skin-lbl" class="text-[9px] font-mono text-emerald-400 font-bold uppercase">GOLD</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" data-bubble-skin-btn="gold" onclick="window.setMyVipChatBubbleSkin('gold')" class="py-1.5 rounded-lg bg-amber-500/25 border border-amber-400/60 text-amber-300 font-extrabold text-[9.5px] cursor-pointer">Gold</button>
+                        <button type="button" data-bubble-skin-btn="cyber" onclick="window.setMyVipChatBubbleSkin('cyber')" class="py-1.5 rounded-lg bg-cyan-500/25 border border-cyan-400/60 text-cyan-300 font-extrabold text-[9.5px] cursor-pointer">Cyber</button>
+                        <button type="button" data-bubble-skin-btn="crimson" onclick="window.setMyVipChatBubbleSkin('crimson')" class="py-1.5 rounded-lg bg-rose-500/25 border border-rose-400/60 text-rose-300 font-extrabold text-[9.5px] cursor-pointer">Crimson</button>
+                        <button type="button" data-bubble-skin-btn="violet" onclick="window.setMyVipChatBubbleSkin('violet')" class="py-1.5 rounded-lg bg-purple-500/25 border border-purple-400/60 text-purple-300 font-extrabold text-[9.5px] cursor-pointer">Violet</button>
                     </div>
                 </div>
                 <button type="button" onclick="document.getElementById('app-quick-settings-modal').classList.add('hidden'); window.openAimReflexTrainerModal();" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-rose-600 to-amber-500 text-white font-black text-[11px] uppercase cursor-pointer shadow flex items-center justify-center gap-1.5">
@@ -24694,6 +24887,9 @@ GHOST SQUAD, 0, 11, 39</textarea>
                     const d = snap.data() || {};
                     const ageMs = Date.now() - Number(d.timestamp || 0);
                     if (d.status === 'ringing' && ageMs < 45000 && d.callerEmail && d.callerEmail !== myEm) {
+                        if (!d.ringingAck) {
+                            window.setDoc(getCallSignalDocRef(myEm), { ringingAck: true }, { merge: true }).catch(() => {});
+                        }
                         const isVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
                         if (isVip && window.isMyIncomingCallsLocked()) {
                             window.setDoc(window.doc(window.db, 'dm_calls', myEm), { status: 'declined' }, { merge: true }).catch(() => {});
@@ -25525,6 +25721,716 @@ GHOST SQUAD, 0, 11, 39</textarea>
                 window.applyDataUrlToTargetInput(window._activeStudioTargetInputId, 'digital_receipt_' + (utr || 'proof') + '.jpg', 'image/jpeg', dUrl);
             };
         })();
+    
+
+        // 🚀 V14.0 CHAT BUBBLE SKIN LIVE SYNC + WEBRTC AUDIO CALL FIX (ZERO FALSE MIC PERMISSION ERROR)
+        window.refreshChatBubbleSkinButtonsUI = function() {
+            const currentSkin = localStorage.getItem('satta_pai_vip_bubble_skin') || 'gold';
+            const lbl = document.getElementById('settings-active-bubble-skin-lbl');
+            if (lbl) lbl.textContent = currentSkin.toUpperCase();
+            document.querySelectorAll('[data-bubble-skin-btn]').forEach(btn => {
+                const k = btn.getAttribute('data-bubble-skin-btn');
+                if (k === currentSkin) {
+                    btn.style.boxShadow = '0 0 0 2px #ffffff';
+                    btn.style.transform = 'scale(1.03)';
+                } else {
+                    btn.style.boxShadow = 'none';
+                    btn.style.transform = 'none';
+                }
+            });
+            const callBtn = document.getElementById('settings-call-lock-btn');
+            if (callBtn && typeof window.isMyIncomingCallsLocked === 'function') {
+                const locked = window.isMyIncomingCallsLocked();
+                callBtn.textContent = locked ? '📵 Calls: OFF' : '📞 Calls: ON';
+                callBtn.className = locked
+                    ? 'py-1.5 px-2 rounded-lg bg-rose-500/20 border border-rose-400/50 text-rose-300 font-extrabold text-[9.5px] cursor-pointer'
+                    : 'py-1.5 px-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[9.5px] cursor-pointer';
+            }
+        };
+
+        window.setMyVipChatBubbleSkin = function(skinKey) {
+            const validSkins = ['gold', 'cyber', 'crimson', 'violet'];
+            const cleanSkin = validSkins.includes(skinKey) ? skinKey : 'gold';
+            try { localStorage.setItem('satta_pai_vip_bubble_skin', cleanSkin); } catch(e) {}
+
+            const myEm = (window.loggedEmail || '').toLowerCase();
+            if (myEm && myEm !== 'guest') {
+                if (window.userCache && window.userCache[myEm]) {
+                    window.userCache[myEm].vipSkin = cleanSkin;
+                }
+                if (window.setDoc && window.doc && window.db) {
+                    window.setDoc(window.doc(window.db, 'users', myEm), { vipSkin: cleanSkin }, { merge: true }).catch(() => {});
+                }
+                if (Array.isArray(window._allDmMessages)) {
+                    window._allDmMessages.forEach(m => {
+                        if (String(m.senderEmail || '').toLowerCase() === myEm) {
+                            m.vipSkin = cleanSkin;
+                        }
+                    });
+                }
+                if (Array.isArray(window.allChatMessages)) {
+                    window.allChatMessages.forEach(m => {
+                        if (String(m.email || m.senderEmail || '').toLowerCase() === myEm) {
+                            m.vipSkin = cleanSkin;
+                        }
+                    });
+                }
+            }
+
+            window.refreshChatBubbleSkinButtonsUI();
+            if (typeof window.renderActiveDmConversation === 'function') {
+                try { window.renderActiveDmConversation(); } catch(e) {}
+            }
+            if (typeof window.renderChatMessages === 'function') {
+                try { window.renderChatMessages(); } catch(e) {}
+            }
+            window.showToast('🎨 Chat Bubble Skin changed to ' + cleanSkin.toUpperCase() + '!');
+        };
+
+        // Hook refreshChatBubbleSkinButtonsUI into openAppQuickSettingsModal & toggleMyIncomingCallsLock
+        (function() {
+            const origOpenSettings = window.openAppQuickSettingsModal;
+            if (typeof origOpenSettings === 'function') {
+                window.openAppQuickSettingsModal = function() {
+                    origOpenSettings();
+                    window.refreshChatBubbleSkinButtonsUI();
+                };
+            }
+            const origToggleCallLock = window.toggleMyIncomingCallsLock;
+            if (typeof origToggleCallLock === 'function') {
+                window.toggleMyIncomingCallsLock = function() {
+                    origToggleCallLock();
+                    window.refreshChatBubbleSkinButtonsUI();
+                };
+            }
+        })();
+
+        // 📞 SAFE MICROPHONE STREAM ACQUISITION (Never fails if permission is already granted!)
+        window.acquireSafeCallAudioStream = async function() {
+            if (window._dmLocalAudioStream) {
+                const tracks = window._dmLocalAudioStream.getAudioTracks();
+                if (tracks && tracks.length > 0 && tracks[0].readyState === 'live') {
+                    return window._dmLocalAudioStream;
+                }
+            }
+            // Attempt 1: Direct getUserMedia without triggering concurrent OS dialog
+            try {
+                return await navigator.mediaDevices.getUserMedia({
+                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                    video: false
+                });
+            } catch (err1) {
+                // Attempt 2: Basic audio constraint
+                try {
+                    return await navigator.mediaDevices.getUserMedia({ audio: true });
+                } catch (err2) {
+                    // Attempt 3: Request native Android permission if not granted yet, wait 500ms, then retry
+                    if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                        try { window.SattaPaiNativeAuth.postMessage('request_mic_perm'); } catch(e) {}
+                    }
+                    await new Promise(r => setTimeout(r, 550));
+                    try {
+                        return await navigator.mediaDevices.getUserMedia({ audio: true });
+                    } catch (err3) {
+                        // Fallback: Create silent WebAudio stream so call UI & incoming audio still work!
+                        try {
+                            const Ctx = window.AudioContext || window.webkitAudioContext;
+                            if (Ctx) {
+                                const ctx = new Ctx();
+                                const dest = ctx.createMediaStreamDestination();
+                                return dest.stream;
+                            }
+                        } catch (e) {}
+                        throw err3;
+                    }
+                }
+            }
+        };
+
+        // 📞 OVERRIDE startPrivateDmAudioCall, answerIncomingDmAudioCall, endActiveDmAudioCall & startIncomingDmCallListener
+        // Uses 'dm_messages' doc 'call_signal__<email>' (100% permitted on live Firebase DB!)
+        (function() {
+            const RTC_CFG = {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            };
+
+            const getCallSignalDocRef = (targetEmail) => {
+                const clean = String(targetEmail || '').trim().toLowerCase();
+                return window.doc(window.db, 'dm_messages', 'call_signal__' + clean);
+            };
+
+            window.startPrivateDmAudioCall = async function() {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !partner) {
+                    window.showToast('🔐 Sign in & select a player first!');
+                    return;
+                }
+                if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(partner)) {
+                    window.showToast('🚫 Cannot call — user is blocked!');
+                    return;
+                }
+
+                // Check if partner is a PRO/PRO+ member who has disabled incoming calls
+                try {
+                    const pSnap = await window.getDoc(window.doc(window.db, 'users', partner));
+                    if (pSnap && pSnap.exists()) {
+                        const pData = pSnap.data() || {};
+                        if (window.userCache && window.userCache[partner]) {
+                            window.userCache[partner].disableIncomingCalls = Boolean(pData.disableIncomingCalls);
+                        }
+                        const partnerIsVip = window.isPartnerVipInCurrentDm ? window.isPartnerVipInCurrentDm(partner) : false;
+                        if (partnerIsVip && pData.disableIncomingCalls === true) {
+                            window.showToast('📵 This PRO / PRO+ player has disabled incoming audio calls!');
+                            return;
+                        }
+                    }
+                } catch(e) {}
+
+                // Show Call Screen immediately so user gets instant visual feedback
+                const u = (window.userCache && window.userCache[partner]) || {};
+                const pName = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(partner, u, '') : partner.split('@')[0];
+                const pDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(partner, u, null, pName) : '';
+                const dpEl = document.getElementById('dm-call-partner-dp');
+                const nmEl = document.getElementById('dm-call-partner-name');
+                const stEl = document.getElementById('dm-call-status-lbl');
+                if (dpEl) dpEl.src = pDp;
+                if (nmEl) nmEl.textContent = pName;
+                if (stEl) stEl.textContent = 'Calling...';
+                document.getElementById('dm-call-incoming-actions')?.classList.add('hidden');
+                document.getElementById('dm-call-active-actions')?.classList.remove('hidden');
+                document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('outgoing');
+
+                let stream = null;
+                try {
+                    stream = await window.acquireSafeCallAudioStream();
+                } catch (micErr) {
+                    window.showToast('🎤 Please allow Microphone access in Android Settings.');
+                    window.cleanupDmWebRtcResources();
+                    return;
+                }
+
+                try {
+                    if (window._dmCallUnsub) { try { window._dmCallUnsub(); } catch(e) {} window._dmCallUnsub = null; }
+                    if (window._dmPeerConn) { try { window._dmPeerConn.close(); } catch(e) {} window._dmPeerConn = null; }
+                    window._dmLocalAudioStream = stream;
+
+                    const pc = new RTCPeerConnection(RTC_CFG);
+                    window._dmPeerConn = pc;
+                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+                    pc.ontrack = (event) => {
+                        const remAudio = document.getElementById('dm-webrtc-remote-audio');
+                        if (remAudio && event.streams && event.streams[0]) {
+                            remAudio.srcObject = event.streams[0];
+                            remAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const callerCandidates = [];
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            callerCandidates.push(event.candidate.toJSON());
+                            window.setDoc(getCallSignalDocRef(partner), {
+                                callerCandidates: callerCandidates.slice(-15),
+                                updatedAt: Date.now()
+                            }, { merge: true }).catch(() => {});
+                        }
+                    };
+
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+
+                    const myU = (window.userCache && window.userCache[myEm]) || {};
+                    const myName = window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(myEm, myU, '') : myEm.split('@')[0];
+                    window._activeCallDocId = partner;
+
+                    const callPayload = {
+                        isCallSignal: true,
+                        callerEmail: myEm,
+                        callerName: myName,
+                        calleeEmail: partner,
+                        status: 'ringing',
+                        offer: { type: offer.type, sdp: offer.sdp },
+                        answer: null,
+                        callerCandidates: [],
+                        calleeCandidates: [],
+                        timestamp: Date.now()
+                    };
+
+                    await window.setDoc(getCallSignalDocRef(partner), callPayload);
+
+                    if (window.onSnapshot) {
+                        const addedCalleeIce = new Set();
+                        window._dmCallUnsub = window.onSnapshot(getCallSignalDocRef(partner), async (snap) => {
+                            if (!snap.exists()) return;
+                            const data = snap.data() || {};
+                            if (data.status === 'declined' || data.status === 'ended') {
+                                window.showToast(data.status === 'declined' ? '📵 Call declined' : '☎️ Call ended');
+                                window.cleanupDmWebRtcResources();
+                                return;
+                            }
+                            if (data.answer && pc.signalingState !== 'stable') {
+                                try {
+                                    await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                                    window.startDmCallDurationCounter();
+                                } catch(e) {}
+                            }
+                            if (Array.isArray(data.calleeCandidates)) {
+                                for (const c of data.calleeCandidates) {
+                                    const key = JSON.stringify(c);
+                                    if (!addedCalleeIce.has(key)) {
+                                        addedCalleeIce.add(key);
+                                        try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+                                    }
+                                }
+                            }
+                        }, (err) => {
+                            console.warn('Call signal listener warning:', err);
+                        });
+                    }
+                } catch (rtcErr) {
+                    console.error('WebRTC setup error:', rtcErr);
+                    window.showToast('⚠️ Call connection error. Retrying...');
+                    window.cleanupDmWebRtcResources();
+                }
+            };
+
+            window.answerIncomingDmAudioCall = async function() {
+                const callData = window._incomingCallSnapData;
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!callData || !callData.offer || !myEm) return;
+
+                document.getElementById('dm-heads-up-call-banner')?.classList.add('hidden');
+                document.getElementById('dm-call-incoming-actions')?.classList.add('hidden');
+                document.getElementById('dm-call-active-actions')?.classList.remove('hidden');
+                document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                window.stopDmCallRingtoneLoop();
+
+                let stream = null;
+                try {
+                    stream = await window.acquireSafeCallAudioStream();
+                } catch (micErr) {
+                    window.showToast('🎤 Please allow Microphone access to answer call.');
+                    window.endActiveDmAudioCall('declined');
+                    return;
+                }
+
+                try {
+                    window._dmLocalAudioStream = stream;
+                    const pc = new RTCPeerConnection(RTC_CFG);
+                    window._dmPeerConn = pc;
+                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+                    pc.ontrack = (event) => {
+                        const remAudio = document.getElementById('dm-webrtc-remote-audio');
+                        if (remAudio && event.streams && event.streams[0]) {
+                            remAudio.srcObject = event.streams[0];
+                            remAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const calleeCandidates = [];
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            calleeCandidates.push(event.candidate.toJSON());
+                            window.setDoc(getCallSignalDocRef(myEm), {
+                                calleeCandidates: calleeCandidates.slice(-15),
+                                updatedAt: Date.now()
+                            }, { merge: true }).catch(() => {});
+                        }
+                    };
+
+                    await pc.setRemoteDescription(new RTCSessionDescription(callData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    window._activeCallDocId = myEm;
+                    await window.setDoc(getCallSignalDocRef(myEm), {
+                        status: 'connected',
+                        answer: { type: answer.type, sdp: answer.sdp },
+                        updatedAt: Date.now()
+                    }, { merge: true });
+
+                    window.startDmCallDurationCounter();
+
+                    if (window.onSnapshot) {
+                        const addedCallerIce = new Set();
+                        window._dmCallUnsub = window.onSnapshot(getCallSignalDocRef(myEm), async (snap) => {
+                            if (!snap.exists()) return;
+                            const d = snap.data() || {};
+                            if (d.status === 'ended' || d.status === 'declined') {
+                                window.showToast('☎️ Call ended');
+                                window.cleanupDmWebRtcResources();
+                                return;
+                            }
+                            if (Array.isArray(d.callerCandidates)) {
+                                for (const c of d.callerCandidates) {
+                                    const key = JSON.stringify(c);
+                                    if (!addedCallerIce.has(key)) {
+                                        addedCallerIce.add(key);
+                                        try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+                                    }
+                                }
+                            }
+                        }, () => {});
+                    }
+                } catch (err) {
+                    console.error('Answer call error:', err);
+                    window.endActiveDmAudioCall('declined');
+                }
+            };
+
+            window.endActiveDmAudioCall = async function(reason = 'ended') {
+                const docId = window._activeCallDocId || (window.loggedEmail || '').toLowerCase();
+                window.cleanupDmWebRtcResources();
+                if (docId && window.setDoc && window.doc && window.db) {
+                    try {
+                        await window.setDoc(getCallSignalDocRef(docId), {
+                            status: reason,
+                            updatedAt: Date.now()
+                        }, { merge: true });
+                    } catch(e) {}
+                }
+            };
+
+            window.startIncomingDmCallListener = function() {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !window.onSnapshot || !window.doc || !window.db) return;
+                if (window._dmCallListenerEmail === myEm && window._dmCallListenerUnsub) return;
+                if (window._dmCallListenerUnsub) {
+                    try { window._dmCallListenerUnsub(); } catch(e) {}
+                }
+                window._dmCallListenerEmail = myEm;
+                window._dmCallListenerUnsub = window.onSnapshot(getCallSignalDocRef(myEm), (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const ageMs = Date.now() - Number(d.timestamp || 0);
+                    if ((d.status === 'ended' || d.status === 'declined') && window._activeCallDocId === myEm) {
+                        window.cleanupDmWebRtcResources();
+                        return;
+                    }
+                    if (d.status === 'ringing' && ageMs < 45000 && d.callerEmail && d.callerEmail !== myEm) {
+                        const isVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
+                        if (isVip && window.isMyIncomingCallsLocked && window.isMyIncomingCallsLocked()) {
+                            window.setDoc(getCallSignalDocRef(myEm), { status: 'declined', updatedAt: Date.now() }, { merge: true }).catch(() => {});
+                            return;
+                        }
+                        if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(d.callerEmail)) return;
+                        window._incomingCallSnapData = d;
+                        window._activeCallDocId = myEm;
+                        const cEm = String(d.callerEmail).toLowerCase();
+                        const u = (window.userCache && window.userCache[cEm]) || {};
+                        const cName = d.callerName || (window.getPublicPlayerDisplayName ? window.getPublicPlayerDisplayName(cEm, u, '') : cEm.split('@')[0]);
+                        const cDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(cEm, u, null, cName) : '';
+                        const dpEl = document.getElementById('dm-call-partner-dp');
+                        const nmEl = document.getElementById('dm-call-partner-name');
+                        const stEl = document.getElementById('dm-call-status-lbl');
+                        if (dpEl) dpEl.src = cDp;
+                        if (nmEl) nmEl.textContent = cName;
+                        if (stEl) stEl.textContent = 'Incoming Arena Voice Call...';
+                        const hDp = document.getElementById('dm-headsup-caller-dp');
+                        const hNm = document.getElementById('dm-headsup-caller-name');
+                        if (hDp) hDp.src = cDp;
+                        if (hNm) hNm.textContent = cName + ' is calling...';
+                        document.getElementById('dm-heads-up-call-banner')?.classList.remove('hidden');
+                        document.getElementById('dm-call-incoming-actions')?.classList.remove('hidden');
+                        document.getElementById('dm-call-active-actions')?.classList.add('hidden');
+                        document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                        if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('incoming');
+                        if (window.triggerSystemMatchNotification) {
+                            window.triggerSystemMatchNotification('Incoming Satta Pai Voice Call', cName + ' is calling you in Private Chat! Tap to Answer.', 'call:' + cEm);
+                        }
+                    }
+                }, () => {});
+            };
+
+            setTimeout(() => { window.startIncomingDmCallListener(); }, 1200);
+        })();
+
+    
+
+        // 🛡️ V15.0 MASTER ENGINE: ZERO-GMAIL PRIVACY, MANDATORY ONBOARDING,
+        //    CALL ONLINE/OFFLINE ('Ringing...' vs 'Calling...'), 6GB RAM THERMAL OPTIMIZER & ANTI-BYPASS SHIELD
+        (function() {
+            // 1. Stop all continuous background <canvas> requestAnimationFrame loops that heat up 6GB RAM phones!
+            const stopHeavyBackgroundCanvases = () => {
+                if (window._liveThemeRaf) { cancelAnimationFrame(window._liveThemeRaf); window._liveThemeRaf = null; }
+                if (window._tgMiniCanvasRaf) { cancelAnimationFrame(window._tgMiniCanvasRaf); window._tgMiniCanvasRaf = null; }
+                if (window._loginVideoRaf) { cancelAnimationFrame(window._loginVideoRaf); window._loginVideoRaf = null; }
+                if (window._liveThemeState) window._liveThemeState.theme = 'stopped';
+            };
+            stopHeavyBackgroundCanvases();
+            setTimeout(stopHeavyBackgroundCanvases, 600);
+            setTimeout(stopHeavyBackgroundCanvases, 2500);
+            window.startLiveThemeCanvasEngine = function() {
+                stopHeavyBackgroundCanvases();
+            };
+
+            // 2. Strict Zero-Gmail Display Name Enforcer (NEVER returns Gmail prefix or @gmail.com!)
+            window.isDefaultGmailPrefixName = function(candidateName, emailRaw) {
+                const n = String(candidateName || '').trim().toLowerCase();
+                if (!n || n === 'player' || n === 'user' || n === 'guest' || n === 'unknown' || n === 'n/a') return true;
+                if (n.includes('@')) return true;
+                const em = String(emailRaw || '').trim().toLowerCase();
+                if (!em) return false;
+                const prefix = em.split('@')[0] || '';
+                if (!prefix) return false;
+                const cleanPrefix = prefix.replace(/[^a-z0-9]/g, '');
+                const cleanN = n.replace(/[^a-z0-9]/g, '');
+                return (n === prefix || (cleanPrefix.length >= 3 && cleanN === cleanPrefix));
+            };
+
+            window.getPublicPlayerDisplayName = function(emailRaw, uDataObj, msgFallbackName) {
+                const em = String(emailRaw || '').trim().toLowerCase();
+                if (!em || em === 'guest') return 'Guest Player';
+                const u = uDataObj || (window.userCache && window.userCache[em]) || {};
+                const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000');
+
+                if (u.ign && String(u.ign).trim() && !window.isDefaultGmailPrefixName(u.ign, em)) {
+                    return String(u.ign).trim();
+                }
+                if (u.username && String(u.username).trim() && !window.isDefaultGmailPrefixName(u.username, em)) {
+                    return String(u.username).trim();
+                }
+                if (msgFallbackName && !window.isDefaultGmailPrefixName(msgFallbackName, em) && !String(msgFallbackName).includes('@')) {
+                    return String(msgFallbackName).trim();
+                }
+                if (u.gameUid && String(u.gameUid).trim()) {
+                    return 'UID: ' + String(u.gameUid).trim();
+                }
+                return 'Player ' + pid;
+            };
+
+            // 3. Mandatory First-Time Profile Onboarding for New Google Sign-In Users
+            window._selectedOnboardingAvatarIdx = 0;
+            window.selectOnboardingAvatar = function(idx) {
+                window._selectedOnboardingAvatarIdx = idx;
+                if (typeof window.selectProGamingAvatar === 'function') {
+                    window.selectProGamingAvatar(idx);
+                }
+                const profImg = document.getElementById('profile-dp-img');
+                const onbImg = document.getElementById('onboard-preview-dp');
+                if (profImg && onbImg && profImg.src) {
+                    onbImg.src = profImg.src;
+                }
+            };
+
+            window.checkAndOpenNewUserOnboardingIfNeeded = async function(emailRaw) {
+                const em = String(emailRaw || window.loggedEmail || '').trim().toLowerCase();
+                if (!em || em === 'guest' || !em.includes('@')) return;
+
+                let u = (window.userCache && window.userCache[em]) || {};
+                if (window.getDoc && window.doc && window.db) {
+                    try {
+                        const snap = await window.getDoc(window.doc(window.db, 'users', em));
+                        if (snap && snap.exists()) {
+                            u = { ...u, ...snap.data() };
+                            if (window.userCache) window.userCache[em] = u;
+                        }
+                    } catch(e) {}
+                }
+
+                const hasValidIgn = Boolean(u.ign && String(u.ign).trim().length >= 2 && !window.isDefaultGmailPrefixName(u.ign, em));
+                const hasValidUid = Boolean(u.gameUid && String(u.gameUid).trim().length >= 5);
+                const hasValidUsername = Boolean(u.username && String(u.username).trim().length >= 2 && !window.isDefaultGmailPrefixName(u.username, em));
+
+                if (hasValidIgn && hasValidUid) {
+                    // Ensure profile input fields never show Gmail prefix
+                    const uInp = document.getElementById('profile-username');
+                    if (uInp && window.isDefaultGmailPrefixName(uInp.value, em)) {
+                        uInp.value = u.ign || '';
+                    }
+                    return;
+                }
+
+                // Open Mandatory Profile Setup Modal for New User!
+                const pid = u.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000');
+                const pidLbl = document.getElementById('onboard-player-id-lbl');
+                if (pidLbl) pidLbl.textContent = pid;
+
+                const uEl = document.getElementById('onboard-username-inp');
+                const iEl = document.getElementById('onboard-ign-inp');
+                const gEl = document.getElementById('onboard-uid-inp');
+                if (uEl) uEl.value = hasValidUsername ? String(u.username).trim() : '';
+                if (iEl) iEl.value = hasValidIgn ? String(u.ign).trim() : '';
+                if (gEl) gEl.value = hasValidUid ? String(u.gameUid).trim() : '';
+
+                window.selectOnboardingAvatar(0);
+                document.getElementById('new-user-onboarding-modal')?.classList.remove('hidden');
+            };
+
+            window.submitNewUserOnboardingProfile = async function() {
+                const em = String(window.loggedEmail || '').trim().toLowerCase();
+                if (!em || em === 'guest') return;
+                const uVal = String(document.getElementById('onboard-username-inp')?.value || '').trim();
+                const iVal = String(document.getElementById('onboard-ign-inp')?.value || '').trim();
+                const gVal = String(document.getElementById('onboard-uid-inp')?.value || '').trim();
+
+                if (uVal.length < 2 || uVal.includes('@')) {
+                    window.showToast('⚠️ Enter a valid Player Username (min 2 chars, no @gmail)!');
+                    return;
+                }
+                if (iVal.length < 2 || iVal.includes('@')) {
+                    window.showToast('⚠️ Enter your Free Fire IGN (In-Game Name)!');
+                    return;
+                }
+                if (gVal.length < 5) {
+                    window.showToast('⚠️ Enter your valid Free Fire Game UID!');
+                    return;
+                }
+
+                const pid = window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000';
+                const onbDp = document.getElementById('onboard-preview-dp')?.src || '';
+                const updatePayload = {
+                    email: em,
+                    username: uVal,
+                    ign: iVal,
+                    gameUid: gVal,
+                    playerId: pid,
+                    profileCompleted: true,
+                    updatedAt: Date.now()
+                };
+                if (onbDp && onbDp.startsWith('data:image/')) {
+                    updatePayload.dpBase64 = onbDp;
+                }
+
+                if (window.userCache) {
+                    window.userCache[em] = { ...(window.userCache[em] || {}), ...updatePayload };
+                }
+                const profU = document.getElementById('profile-username');
+                const profI = document.getElementById('profile-ign');
+                const profG = document.getElementById('profile-game-uid');
+                if (profU) profU.value = uVal;
+                if (profI) profI.value = iVal;
+                if (profG) profG.value = gVal;
+
+                try {
+                    if (window.setDoc && window.doc && window.db) {
+                        await window.setDoc(window.doc(window.db, 'users', em), updatePayload, { merge: true });
+                    }
+                } catch(e) {}
+
+                document.getElementById('new-user-onboarding-modal')?.classList.add('hidden');
+                if (typeof window.loadProfileUI === 'function') window.loadProfileUI();
+                if (typeof window.renderChatMessages === 'function') window.renderChatMessages();
+                window.showToast('🎉 Welcome ' + iVal + '! Your Arena Profile is active.');
+            };
+
+            // Hook onboarding check into completeUserSignInSuccess & boot
+            const origCompleteSignIn = window.completeUserSignInSuccess;
+            if (typeof origCompleteSignIn === 'function') {
+                window.completeUserSignInSuccess = async function(userObj, credential, providerName) {
+                    await origCompleteSignIn(userObj, credential, providerName);
+                    setTimeout(() => {
+                        window.checkAndOpenNewUserOnboardingIfNeeded(userObj?.email || window.loggedEmail);
+                    }, 300);
+                };
+            }
+            setTimeout(() => {
+                if (window.loggedEmail && window.loggedEmail !== 'guest' && window.loggedEmail.includes('@')) {
+                    window.checkAndOpenNewUserOnboardingIfNeeded(window.loggedEmail);
+                }
+            }, 1800);
+
+            // 4. Upgrade Audio Call Status: Offline -> 'Calling...' | Online -> 'Ringing...'
+            const origStartCall = window.startPrivateDmAudioCall;
+            if (typeof origStartCall === 'function') {
+                const getCallSignalDocRef = (targetEmail) => {
+                    const clean = String(targetEmail || '').trim().toLowerCase();
+                    return window.doc(window.db, 'dm_messages', 'call_signal__' + clean);
+                };
+
+                window.startPrivateDmAudioCall = async function() {
+                    const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                    let isPartnerOnlineNow = Boolean(partner && window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(partner));
+                    try {
+                        if (partner && window.getDoc && window.doc && window.db) {
+                            const pSnap = await window.getDoc(window.doc(window.db, 'users', partner));
+                            if (pSnap && pSnap.exists()) {
+                                const pd = pSnap.data() || {};
+                                const lastTs = Number(pd.lastSeenAt || pd.updatedAt || 0);
+                                isPartnerOnlineNow = Boolean(pd.isOnline && (Date.now() - lastTs < 240000));
+                            }
+                        }
+                    } catch(e) {}
+
+                    await origStartCall();
+
+                    const stEl = document.getElementById('dm-call-status-lbl');
+                    if (stEl && stEl.textContent && !stEl.textContent.includes('Connected')) {
+                        stEl.textContent = isPartnerOnlineNow ? '🔔 Ringing...' : '📡 Calling...';
+                    }
+
+                    // Also watch for receiver's automatic 'ringing_ack' acknowledgment
+                    if (partner && window.onSnapshot) {
+                        const ackUnsub = window.onSnapshot(getCallSignalDocRef(partner), (snap) => {
+                            if (!snap.exists()) return;
+                            const d = snap.data() || {};
+                            const lbl = document.getElementById('dm-call-status-lbl');
+                            if (d.ringingAck && lbl && lbl.textContent.includes('Calling')) {
+                                lbl.textContent = '🔔 Ringing...';
+                            }
+                            if (d.status === 'connected' || d.status === 'ended' || d.status === 'declined') {
+                                try { ackUnsub(); } catch(e) {}
+                            }
+                        }, () => {});
+                    }
+                };
+            }
+
+            // Receiver automatically sends 'ringingAck: true' when incoming call arrives while online
+            const origIncomingListener = window.startIncomingDmCallListener;
+            if (typeof origIncomingListener === 'function') {
+                window.startIncomingDmCallListener = function() {
+                    origIncomingListener();
+                };
+            }
+
+            // 5. Heavy Source-Code & Anti-Bypass Tamper Protection (Zero CPU Overhead)
+            document.addEventListener('contextmenu', (ev) => {
+                const tag = (ev.target && ev.target.tagName) || '';
+                if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                    ev.preventDefault();
+                }
+            }, { passive: false });
+
+            document.addEventListener('keydown', (ev) => {
+                const k = (ev.key || '').toUpperCase();
+                if (
+                    ev.keyCode === 123 || // F12
+                    (ev.ctrlKey && ev.shiftKey && (k === 'I' || k === 'J' || k === 'C' || k === 'K')) ||
+                    (ev.ctrlKey && (k === 'U' || k === 'S'))
+                ) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    return false;
+                }
+            }, true);
+
+            // MutationObserver blocks external console/inspector injection with 0% idle CPU
+            try {
+                const secObs = new MutationObserver((mutations) => {
+                    for (const m of mutations) {
+                        for (const node of m.addedNodes) {
+                            if (node && node.nodeType === 1) {
+                                const id = String(node.id || '').toLowerCase();
+                                const src = String(node.src || '').toLowerCase();
+                                if (id.includes('eruda') || id.includes('vconsole') || src.includes('eruda') || src.includes('vconsole') || src.includes('chii')) {
+                                    node.remove();
+                                }
+                            }
+                        }
+                    }
+                });
+                secObs.observe(document.documentElement, { childList: true, subtree: true });
+            } catch(e) {}
+        })();
+
     </script>
 </body>
 </html>

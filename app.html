@@ -1557,6 +1557,374 @@ html.theme-ghost-live {
         }
 
     </style>
+
+    <!-- 📱 V13.0 NATIVE ANDROID ESPORTS APP UI ENGINE (100% MOBILE APP LOOK, FULL-WIDTH NAV & HOLOGRAPHIC CALL UI) -->
+    <style id="satta-pai-native-app-ui-engine">
+        /* Hide all browser scrollbars & web artifacts for authentic Native App feel */
+        *::-webkit-scrollbar {
+            width: 0px !important;
+            height: 0px !important;
+            display: none !important;
+        }
+        * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+        }
+        html, body {
+            overscroll-behavior-y: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding-bottom: calc(112px + env(safe-area-inset-bottom, 12px)) !important;
+        }
+        input, textarea, select, [contenteditable="true"], .allow-select, .font-mono {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+        img, a, button {
+            -webkit-user-drag: none !important;
+        }
+
+        /* Native Mobile App Viewport Container with Generous Bottom Clearance */
+        main {
+            max-width: 520px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+            padding-top: 10px !important;
+            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px)) !important;
+        }
+        main > section {
+            padding-bottom: 32px !important;
+        }
+        header > div {
+            max-width: 520px !important;
+        }
+
+        /* Native App Top ActionBar */
+        header.native-app-topbar {
+            height: 58px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+        }
+        html:not(.dark) header.native-app-topbar {
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        /* Native App Elevated Cards */
+        .cyber-card {
+            border-radius: 18px !important;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+        }
+        html:not(.dark) .cyber-card {
+            border: 1px solid rgba(15, 23, 42, 0.09) !important;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        /* High-Contrast Toast Notification Pill (Never White-on-White in Light Mode!) */
+        #toast {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(52, 211, 153, 0.6) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5) !important;
+            bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+            left: 16px !important;
+            right: 16px !important;
+            max-width: 380px !important;
+            margin: 0 auto !important;
+            text-align: center !important;
+        }
+        #toast #toast-text {
+            color: #ffffff !important;
+            font-weight: 800 !important;
+        }
+
+        /* Light Mode Contrast & Surface Fixes */
+        html:not(.dark) .native-hero-card {
+            background: linear-gradient(145deg, #ecfdf5 0%, #ffffff 55%, #fffbeb 100%) !important;
+            border-color: rgba(16, 185, 129, 0.35) !important;
+        }
+        html:not(.dark) .native-profile-hero-card {
+            background: linear-gradient(145deg, #ecfdf5 0%, #ffffff 70%) !important;
+            border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+        html:not(.dark) .native-stat-chip,
+        html:not(.dark) #profile-career-tier-box {
+            background-color: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html:not(.dark) .cyber-card .text-amber-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-amber-400:not([class*="bg-"]) {
+            color: #b45309 !important;
+        }
+        html:not(.dark) .cyber-card .text-emerald-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-emerald-400:not([class*="bg-"]) {
+            color: #047857 !important;
+        }
+        html:not(.dark) .cyber-card .text-cyan-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-cyan-400:not([class*="bg-"]) {
+            color: #0e7490 !important;
+        }
+        html:not(.dark) .cyber-card .text-rose-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-rose-400:not([class*="bg-"]) {
+            color: #be123c !important;
+        }
+        html:not(.dark) .cyber-card .text-purple-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-purple-400:not([class*="bg-"]) {
+            color: #6d28d9 !important;
+        }
+        html:not(.dark) .cyber-card .text-pink-300:not([class*="bg-"]),
+        html:not(.dark) .cyber-card .text-pink-400:not([class*="bg-"]) {
+            color: #be185d !important;
+        }
+        /* Light Mode Chat Wallpaper */
+        html:not(.dark) .chat-messages,
+        html:not(.dark) #chat-messages,
+        html:not(.dark) #dm-messages-scroll-box {
+            background-color: #eef2f6 !important;
+            background-image:
+                radial-gradient(circle at 50% 15%, rgba(16, 185, 129, 0.08) 0%, transparent 65%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.06) 0%, transparent 60%) !important;
+        }
+        html:not(.dark) #chat-sfx-bar button {
+            color: #0f172a !important;
+        }
+
+        /* Floating AI Bot Button — Lifted cleanly above Bottom Nav Bar */
+        #ai-bot-trigger, .ai-bot-fab {
+            bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+            right: 12px !important;
+            transform: scale(0.88) !important;
+            transform-origin: bottom right !important;
+        }
+
+        /* Native Tactile Button Press Effect */
+        button:active, .quick-action-card:active, .native-app-tile:active, .native-dock-item:active {
+            transform: scale(0.96) !important;
+            transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1) !important;
+        }
+
+        /* ✅ FIXED FULL-WIDTH 5-COLUMN NATIVE BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            transform: none !important;
+            height: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+            align-items: center !important;
+            gap: 2px !important;
+            padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.09) !important;
+            box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.55) !important;
+            border-radius: 20px 20px 0 0 !important;
+            z-index: 900 !important;
+        }
+        html:not(.dark) .bottom-nav {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border-top: 1px solid rgba(15, 23, 42, 0.1) !important;
+            box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.09) !important;
+        }
+        .bottom-nav-item {
+            width: 100% !important;
+            min-width: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            gap: 2px !important;
+            padding: 4px 2px !important;
+            border-radius: 14px !important;
+            overflow: hidden !important;
+        }
+        .bottom-nav-item span {
+            display: block !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            line-height: 1.15 !important;
+        }
+        .bottom-nav-item svg {
+            width: 21px !important;
+            height: 21px !important;
+            padding: 3px 12px !important;
+            box-sizing: content-box !important;
+            border-radius: 999px !important;
+            margin-bottom: 1px !important;
+            transition: background-color 0.18s ease, transform 0.15s ease !important;
+        }
+        .bottom-nav-item.active svg {
+            background: var(--accent-glow) !important;
+            color: var(--accent-primary) !important;
+            transform: translateY(-1px) scale(1.05) !important;
+        }
+        .bottom-nav-item.active span {
+            color: var(--accent-primary) !important;
+            font-weight: 800 !important;
+        }
+
+        /* Native Screen Switch Animation */
+        @keyframes nativeScreenFadeIn {
+            from { opacity: 0.45; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        main > section:not(.hidden) {
+            animation: nativeScreenFadeIn 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Native Mobile Bottom-Sheet Modals on Phone Viewport */
+        @media (max-width: 640px) {
+            .modal-backdrop {
+                align-items: flex-end !important;
+                padding: 0 !important;
+            }
+            .modal-backdrop > .cyber-card {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 24px 24px 0 0 !important;
+                border-bottom: none !important;
+                border-left: none !important;
+                border-right: none !important;
+                padding-bottom: calc(22px + env(safe-area-inset-bottom, 8px)) !important;
+                max-height: 91vh !important;
+                animation: nativeSheetSlideUp 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .modal-backdrop > .cyber-card::before {
+                content: "";
+                display: block;
+                width: 38px;
+                height: 4px;
+                border-radius: 999px;
+                background: rgba(148, 163, 184, 0.35);
+                margin: -4px auto 10px auto;
+            }
+        }
+        @keyframes nativeSheetSlideUp {
+            from { transform: translateY(28px); opacity: 0.6; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Native App Quick Icon Squircle */
+        .native-icon-squircle {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.25), 0 4px 10px rgba(0,0,0,0.22);
+        }
+        .native-icon-squircle svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Native Segmented Sub-Tab Pill Bar */
+        .native-segmented-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            padding: 4px;
+            border-radius: 14px;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        html:not(.dark) .native-segmented-bar {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        .native-seg-btn {
+            padding: 7px 4px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 800;
+            text-align: center;
+            color: #94a3b8;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        html:not(.dark) .native-seg-btn {
+            color: #475569;
+        }
+        .native-seg-btn.active {
+            background: var(--btn-bg);
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* 📞 UNIQUE SATTA PAI HOLOGRAPHIC CYBER-PULSE CALL UI & ANIMATIONS */
+        @keyframes spCallSonarRing {
+            0% { transform: scale(0.95); opacity: 0.85; }
+            70% { transform: scale(1.65); opacity: 0; }
+            100% { transform: scale(1.75); opacity: 0; }
+        }
+        .sp-call-ring-1, .sp-call-ring-2, .sp-call-ring-3 {
+            position: absolute;
+            inset: -6px;
+            border-radius: 999px;
+            border: 2px solid rgba(16, 185, 129, 0.55);
+            pointer-events: none;
+            animation: spCallSonarRing 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+        .sp-call-ring-2 {
+            animation-delay: 0.75s;
+            border-color: rgba(6, 182, 212, 0.45);
+        }
+        .sp-call-ring-3 {
+            animation-delay: 1.5s;
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+        @keyframes spVoiceWaveBounce {
+            0%, 100% { height: 6px; opacity: 0.55; }
+            50% { height: 26px; opacity: 1; }
+        }
+        .sp-voice-bar {
+            width: 4px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #34d399 0%, #06b6d4 100%);
+            animation: spVoiceWaveBounce 0.85s ease-in-out infinite;
+        }
+        .sp-voice-bar:nth-child(1) { animation-delay: 0.0s; }
+        .sp-voice-bar:nth-child(2) { animation-delay: 0.12s; }
+        .sp-voice-bar:nth-child(3) { animation-delay: 0.24s; }
+        .sp-voice-bar:nth-child(4) { animation-delay: 0.08s; }
+        .sp-voice-bar:nth-child(5) { animation-delay: 0.30s; }
+        .sp-voice-bar:nth-child(6) { animation-delay: 0.18s; }
+        .sp-voice-bar:nth-child(7) { animation-delay: 0.05s; }
+        .sp-voice-bar:nth-child(8) { animation-delay: 0.22s; }
+        .sp-voice-bar:nth-child(9) { animation-delay: 0.14s; }
+
+        @keyframes spHeadsUpDropIn {
+            from { transform: translateY(-120%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        #dm-heads-up-call-banner:not(.hidden) {
+            animation: spHeadsUpDropIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+    </style>
+
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
 
@@ -2061,7 +2429,7 @@ html.theme-ghost-live {
                         <div class="text-center font-bold text-yellow-300 uppercase text-[9px]">👑 Pro+</div>
                     </div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 border-b border-white/5 items-center text-[9.5px]"><div class="truncate">Paid Match Discount</div><div class="text-center text-rose-400">0%</div><div class="text-center text-emerald-400 font-bold"><span id="vip-perk-discount-lbl">10</span>% OFF</div><div class="text-center text-yellow-300 font-extrabold"><span id="vip-perk-plus-discount-lbl">25</span>% OFF</div></div>
-                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Global Chat Cooldown</div><div class="text-center text-amber-400">15s</div><div class="text-center text-emerald-400 font-bold">5s</div><div class="text-center text-yellow-300 font-extrabold">0s No Wait ⚡</div></div>
+                    <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Global Chat Cooldown</div><div class="text-center text-amber-400">10s</div><div class="text-center text-emerald-400 font-bold">5s</div><div class="text-center text-yellow-300 font-extrabold">0s Unlimited ⚡</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Private DM Security (App)</div><div class="text-center text-slate-300">Normal</div><div class="text-center text-emerald-400 font-bold">🔒 Stealth</div><div class="text-center text-yellow-300 font-extrabold">🛡️ E2E Vault</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>Hide Last Seen & Blue ✓✓</div><div class="text-center text-slate-300">Basic</div><div class="text-center text-emerald-400 font-bold">✓ Ghost</div><div class="text-center text-yellow-300 font-extrabold">👻 Pro Cloak</div></div>
                     <div class="grid grid-cols-[1fr_46px_58px_68px] gap-1 py-1 text-[9.5px] border-b border-white/5 items-center"><div>DP Photo Change</div><div class="text-center text-amber-400">6 Days</div><div class="text-center text-emerald-400 font-bold">2 Days</div><div class="text-center text-yellow-300 font-extrabold">Unlimited ⚡</div></div>
@@ -2824,7 +3192,7 @@ html.theme-ghost-live {
         </div>
     </div>
 
-    <header class="sticky top-0 z-50 px-3.5 py-2.5 border-b backdrop-blur-md shadow-sm" style="background: var(--header-bg); border-color: var(--border-color);">
+    <header class="native-app-topbar sticky top-0 z-50 border-b" style="background: var(--header-bg); border-color: var(--border-color);">
         <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 cursor-pointer min-w-0 flex-1" onclick="if(typeof window.playAppLogoSoundEffect === 'function') window.playAppLogoSoundEffect(); switchTab('home')">
                 <div id="brand-logo-container" class="w-9 h-9 rounded-xl shrink-0 flex flex-col items-center justify-center overflow-hidden border-2 shadow-lg relative brand-logo-dynamic-bg">
@@ -2836,7 +3204,7 @@ html.theme-ghost-live {
                 </div>
                 <div class="min-w-0 flex flex-col justify-center flex-1 overflow-hidden">
                     <span id="display-brand-name" class="gaming-brand-title text-[13px] sm:text-base font-black tracking-tight truncate leading-tight">Satta Pai</span>
-                    <span class="gaming-brand-subtitle text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider truncate" style="color: var(--accent-primary);">🏆 Esports Hub</span>
+                    <span id="app-native-screen-subtitle" class="gaming-brand-subtitle text-[8.5px] font-extrabold uppercase tracking-wider truncate flex items-center gap-1" style="color: var(--accent-primary);"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block"></span><span id="app-native-screen-subtitle-txt">Arena Lobby</span></span>
                 </div>
             </div>
             <div class="flex items-center gap-1.5 shrink-0">
@@ -2844,15 +3212,18 @@ html.theme-ghost-live {
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span id="live-users-count">0 Online</span>
                 </div>
-                <button type="button" id="header-guest-login-btn" onclick="openLoginScreenModal()" class="hidden px-2 py-1 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-[10.5px] items-center gap-1 cursor-pointer shadow-md hover:brightness-110 transition-all shrink-0">
-                    <span>🔐</span><span>Login</span>
+                <button type="button" id="header-guest-login-btn" onclick="openLoginScreenModal()" class="hidden px-2.5 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-extrabold text-[10.5px] items-center gap-1 cursor-pointer shadow-md hover:brightness-110 transition-all shrink-0">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    <span>Login</span>
                 </button>
-                <button type="button" id="header-top-coins-pill" onclick="openSpinWheelModal()" class="px-2 py-1.5 rounded-xl cyber-card flex items-center gap-1 text-[11px] font-extrabold text-amber-400 border border-amber-400/40 cursor-pointer hover:border-amber-400 transition-all" title="SP Coins & 24h Lucky Spin">
-                    <span>🪙</span><span id="header-top-coins-val">0</span>
+                <button type="button" id="header-top-coins-pill" onclick="openSpinWheelModal()" class="px-2.5 py-1 rounded-full bg-amber-500/15 flex items-center gap-1 text-[11px] font-black text-amber-500 dark:text-amber-300 border border-amber-400/50 cursor-pointer shadow-inner" title="SP Coins Wallet & Lucky Spin">
+                    <svg class="w-3.5 h-3.5 fill-amber-400 shrink-0" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f59e0b"/><path d="M12 6l1.8 3.8 4.2.6-3 2.9.7 4.1-3.7-1.9-3.7 1.9.7-4.1-3-2.9 4.2-.6L12 6z" fill="#fffbeb"/></svg>
+                    <span id="header-top-coins-val">0</span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-amber-400 text-black text-[9px] font-black inline-flex items-center justify-center ml-0.5">+</span>
                 </button>
-                <!-- 📬 Free Fire Style In-Site Mail & Gift Claim Box -->
-                <button type="button" id="header-mail-btn" onclick="openInSiteMailModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg cyber-card flex items-center justify-center shrink-0 cursor-pointer relative border border-amber-400/40 hover:border-amber-400 transition-all shadow-sm" title="Arena Mail Box & Claimable Gifts">
-                    <span class="text-xs sm:text-sm">📬</span>
+                <!-- 📬 Native In-App Inbox & Gift Claim Bell -->
+                <button type="button" id="header-mail-btn" onclick="openInSiteMailModal()" class="w-8 h-8 rounded-xl cyber-card flex items-center justify-center shrink-0 cursor-pointer relative border border-amber-400/40 hover:border-amber-400 transition-all shadow-sm" title="Arena Mail Box & Claimable Gifts">
+                    <svg class="w-4 h-4 fill-amber-400" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
                     <span id="header-mail-badge" class="hidden absolute -top-1.5 -right-1.5 min-w-[15px] h-[15px] px-1 rounded-full bg-rose-600 text-white text-[8.5px] font-black flex items-center justify-center shadow ring-1 ring-black animate-bounce">0</span>
                 </button>
                 <!-- 📲 Web-Only Direct APK Download Button -->
@@ -3112,244 +3483,218 @@ html.theme-ghost-live {
 
 
     <main class="max-w-4xl mx-auto px-4 pt-4 space-y-4">
-        <section id="section-home" class="space-y-4">
-            <!-- 📢 Live Tournament Announcement Ticker -->
-            <div id="live-announcement-bar" class="cyber-card px-3 py-2 flex items-center gap-2 overflow-hidden border" style="border-color: var(--accent-primary); background: var(--bg-card);">
-                <span class="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase shrink-0 text-white shadow" style="background: var(--btn-bg);">📢 LIVE</span>
-                <div class="overflow-hidden flex-1 text-xs font-semibold">
-                    <div id="display-announcement-text" class="announcement-marquee">🔥 Welcome to Satta Pai Esports Arena! Join daily BR & CS Custom Tournaments • Collect Daily SP Coins & Spin to unlock Arena Prestige Titles Pass! 🏆</div>
+        <section id="section-home" class="space-y-3">
+            <!-- 📢 Native App Live Ticker Pill -->
+            <div id="live-announcement-bar" class="cyber-card px-2.5 py-1.5 flex items-center gap-2 overflow-hidden border" style="border-color: var(--accent-primary); background: var(--bg-card); border-radius: 999px !important;">
+                <span class="px-2 py-0.5 rounded-full text-[8.5px] font-black uppercase shrink-0 text-white shadow flex items-center gap-1" style="background: var(--btn-bg);"><span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>LIVE</span>
+                <div class="overflow-hidden flex-1 text-[11px] font-semibold">
+                    <div id="display-announcement-text" class="announcement-marquee">Welcome to Satta Pai Esports Arena! Join daily BR & CS Custom Tournaments • Collect Daily SP Coins & Spin to unlock Arena Prestige Titles Pass!</div>
                 </div>
             </div>
 
-            <!-- ⏰ 3-Day Premium Expiry Warning Banner (Shown only when Premium has <= 3 days left) -->
-            <div id="vip-expiry-alert-banner" class="hidden cyber-card p-3 border-2 border-amber-400 bg-amber-500/15 flex items-center justify-between gap-2">
+            <!-- ⏰ 3-Day Premium Expiry Warning Banner -->
+            <div id="vip-expiry-alert-banner" class="hidden cyber-card p-2.5 border-2 border-amber-400 bg-amber-500/15 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2 text-xs">
-                    <span class="text-lg">⚠️</span>
+                    <svg class="w-5 h-5 fill-amber-400 shrink-0" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
                     <div>
-                        <div id="vip-expiry-alert-title" class="font-extrabold text-amber-300">Your Premium Pass expires in 3 days!</div>
-                        <div class="text-[10px] text-slate-300">Renew now to maintain uninterrupted VIP tournament perks.</div>
+                        <div id="vip-expiry-alert-title" class="font-extrabold text-amber-400 text-[11px]">Your Premium Pass expires in 3 days!</div>
+                        <div class="text-[9.5px] text-slate-300">Renew now to keep your VIP perks active.</div>
                     </div>
                 </div>
-                <button type="button" onclick="openVipPassModal()" class="btn-theme px-3 py-1.5 text-[10px] font-extrabold shrink-0 cursor-pointer">⚡ Renew</button>
+                <button type="button" onclick="openVipPassModal()" class="btn-theme px-2.5 py-1 text-[10px] font-extrabold shrink-0 cursor-pointer">Renew</button>
             </div>
 
-            <div class="cyber-card p-5 text-center space-y-2.5">
-                <div class="flex items-center justify-center gap-1.5 flex-wrap pb-0.5">
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>SEASON 1 LIVE</span>
-                    <span id="display-hero-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-extrabold" style="background-color: var(--accent-glow); color: var(--accent-primary);">👑 ELITE BATTLEGROUND</span>
-                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-500/15 text-amber-400 border border-amber-500/30">🛡️ ANTI-CHEAT</span>
-                </div>
-                <h1 id="display-hero-title" class="text-2xl sm:text-4xl font-bold tracking-tight uppercase">BOOYAH TOURNAMENT</h1>
-                <p id="display-hero-subtitle" class="text-xs sm:text-sm font-semibold uppercase" style="color: var(--accent-primary);">BR / CS CUSTOM ARENA</p>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    <div class="cyber-card p-3 text-center"><div id="display-f1-text" class="text-xs font-bold">🎯 BR/CS</div></div>
-                    <div class="cyber-card p-3 text-center"><div id="display-f2-text" class="text-xs font-bold">👥 4 SQUAD</div></div>
-                    <div class="cyber-card p-3 text-center"><div id="display-f3-text" class="text-xs font-bold" style="color: var(--accent-primary);">🏆 PRIZES</div></div>
-                    <div class="cyber-card p-3 text-center"><div id="display-f4-text" class="text-xs font-bold">⚡ UPI</div></div>
+            <!-- 🎮 NATIVE MOBILE GAME LOBBY HERO CARD (App Dashboard Card) -->
+            <div class="native-hero-card cyber-card p-3.5 space-y-3 relative overflow-hidden" style="background: linear-gradient(145deg, rgba(16, 185, 129, 0.14) 0%, rgba(9, 13, 22, 0.96) 55%, rgba(245, 158, 11, 0.10) 100%); border-color: rgba(16, 185, 129, 0.35);">
+                <div class="flex items-center justify-between gap-1.5 flex-wrap">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>SEASON 1</span>
+                        <span id="display-hero-badge" class="inline-block px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold" style="background-color: var(--accent-glow); color: var(--accent-primary);">ELITE ARENA</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[8.5px] font-extrabold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                        <svg class="w-2.5 h-2.5 fill-current" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                        <span>ANTI-CHEAT</span>
+                    </span>
                 </div>
 
-                <div class="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    <button type="button" onclick="switchTab('matches')" class="btn-theme px-3.5 py-2.5 text-xs uppercase font-extrabold cursor-pointer flex items-center justify-center gap-1.5"><span>🎮</span><span>Join Match</span></button>
-                    <button type="button" onclick="switchTab('roadmap')" class="cyber-card px-3.5 py-2.5 text-xs font-extrabold uppercase cursor-pointer flex items-center justify-center gap-1.5 hover:border-emerald-400/50"><span>🏆</span><span>Results</span></button>
-                    <button type="button" onclick="openArenaHubModal('clash')" class="cyber-card px-3.5 py-2.5 text-xs font-extrabold uppercase cursor-pointer border border-amber-400/40 text-amber-300 flex items-center justify-center gap-1.5"><span>⚔️</span><span>1v1 & Squads</span></button>
-                    <button type="button" onclick="openInSiteMailModal()" class="cyber-card px-3.5 py-2.5 text-xs font-extrabold uppercase cursor-pointer border border-cyan-400/40 text-cyan-300 flex items-center justify-center gap-1.5"><span>📬</span><span>Inbox Gifts</span></button>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1 text-left">
+                        <h1 id="display-hero-title" class="text-xl font-black tracking-tight uppercase leading-tight truncate">BOOYAH TOURNAMENT</h1>
+                        <p id="display-hero-subtitle" class="text-[11px] font-extrabold uppercase tracking-wide mt-0.5" style="color: var(--accent-primary);">BR / CS CUSTOM ARENA</p>
+                    </div>
+                    <button type="button" onclick="openInSiteMailModal()" class="px-3 py-2 rounded-2xl bg-cyan-500/15 border border-cyan-400/40 text-cyan-400 flex flex-col items-center justify-center shrink-0 cursor-pointer shadow-sm">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+                        <span class="text-[8.5px] font-black uppercase mt-0.5">Gifts</span>
+                    </button>
+                </div>
+
+                <!-- Compact 4-Chip Native Stat Strip -->
+                <div class="grid grid-cols-4 gap-1.5">
+                    <div class="native-stat-chip py-1.5 px-1 rounded-xl bg-black/35 border border-white/10 text-center"><div id="display-f1-text" class="text-[10px] font-extrabold truncate">BR / CS</div></div>
+                    <div class="native-stat-chip py-1.5 px-1 rounded-xl bg-black/35 border border-white/10 text-center"><div id="display-f2-text" class="text-[10px] font-extrabold truncate">4 SQUAD</div></div>
+                    <div class="native-stat-chip py-1.5 px-1 rounded-xl bg-black/35 border border-white/10 text-center"><div id="display-f3-text" class="text-[10px] font-extrabold truncate" style="color: var(--accent-primary);">PRIZES</div></div>
+                    <div class="native-stat-chip py-1.5 px-1 rounded-xl bg-black/35 border border-white/10 text-center"><div id="display-f4-text" class="text-[10px] font-extrabold truncate">FAST UPI</div></div>
+                </div>
+
+                <!-- Primary Native Game Lobby Actions -->
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                    <button type="button" onclick="switchTab('matches')" class="btn-theme py-2.5 px-3 rounded-xl text-xs uppercase font-black cursor-pointer flex items-center justify-center gap-1.5 shadow-lg">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <span>JOIN MATCH</span>
+                    </button>
+                    <button type="button" onclick="openArenaHubModal('clash')" class="cyber-card py-2.5 px-3 rounded-xl text-xs font-black uppercase cursor-pointer border border-amber-400/50 bg-amber-500/15 text-amber-400 flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24"><path d="M6.92 5H5l9 9 1-.94m4.96 6.06l-.84.84c-.39.39-1.02.39-1.41 0l-3.12-3.12-2.68 2.66-1.41-1.41 1.42-1.42L3 7.75V3h4.75l8.92 8.92 1.42-1.42 1.41 1.41-2.67 2.67 3.12 3.12c.4.4.4 1.03.01 1.42z"/></svg>
+                        <span>1V1 & CLASH</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- ⚡ Quick Esports Utility Bar (Clean 1-Tap Tools — Install App Removed & VIP Auto-Hidden for Active VIPs) -->
-            <div id="home-quick-utility-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <button type="button" onclick="openMyRoomKeysModal()" class="quick-action-card p-2.5 text-center flex flex-col items-center justify-center gap-1 cursor-pointer border border-emerald-500/40">
-                    <span class="text-xl">🔑</span>
-                    <span class="text-xs font-bold uppercase tracking-tight text-emerald-300">My Room Keys</span>
-                    <span class="text-[9px] text-slate-300 font-semibold">1-Tap ID & Pass</span>
+            <!-- ⚡ NATIVE 4-ICON QUICK LAUNCHER DOCK (Custom Vector SVG Squircles) -->
+            <div id="home-quick-utility-grid" class="cyber-card p-2.5 grid grid-cols-4 gap-1.5 text-center">
+                <button type="button" onclick="openMyRoomKeysModal()" class="native-dock-item p-1.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-white/5">
+                    <div class="native-icon-squircle bg-gradient-to-br from-emerald-500/25 to-teal-600/25 border border-emerald-400/50 text-emerald-400">
+                        <svg class="fill-current" viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                    </div>
+                    <span class="text-[10px] font-extrabold tracking-tight leading-tight">Room Keys</span>
                 </button>
-                <button type="button" onclick="openSaveSquadModal()" class="quick-action-card p-2.5 text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                    <span class="text-xl">⚡</span>
-                    <span class="text-xs font-bold uppercase tracking-tight">Squad Preset</span>
-                    <span class="text-[9px] text-cyan-400 font-semibold">Auto-Fill 4 UIDs</span>
+                <button type="button" onclick="openSaveSquadModal()" class="native-dock-item p-1.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-white/5">
+                    <div class="native-icon-squircle bg-gradient-to-br from-cyan-500/25 to-blue-600/25 border border-cyan-400/50 text-cyan-400">
+                        <svg class="fill-current" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <span class="text-[10px] font-extrabold tracking-tight leading-tight">My Squad</span>
                 </button>
-                <button type="button" onclick="openTacticalRadarModal('Bermuda')" class="quick-action-card p-2.5 text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                    <span class="text-xl">🎯</span>
-                    <span class="text-xs font-bold uppercase tracking-tight">Drop Radar</span>
-                    <span class="text-[9px] text-amber-400 font-semibold">Map Strategy</span>
+                <button type="button" onclick="openTacticalRadarModal('Bermuda')" class="native-dock-item p-1.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-white/5">
+                    <div class="native-icon-squircle bg-gradient-to-br from-amber-500/25 to-orange-600/25 border border-amber-400/50 text-amber-400">
+                        <svg class="fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    </div>
+                    <span class="text-[10px] font-extrabold tracking-tight leading-tight">Drop Map</span>
                 </button>
-                <button type="button" id="home-quick-vip-card" onclick="openVipPassModal()" class="quick-action-card p-2.5 text-center flex flex-col items-center justify-center gap-1 cursor-pointer">
-                    <span class="text-xl">👑</span>
-                    <span class="text-xs font-bold uppercase tracking-tight">VIP Pass</span>
-                    <span class="text-[9px] text-pink-400 font-semibold">Live Themes & OFF</span>
+                <button type="button" id="home-quick-vip-card" onclick="openVipPassModal()" class="native-dock-item p-1.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-white/5">
+                    <div class="native-icon-squircle bg-gradient-to-br from-pink-500/25 to-purple-600/25 border border-pink-400/50 text-pink-400">
+                        <svg class="fill-current" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+                    </div>
+                    <span class="text-[10px] font-extrabold tracking-tight leading-tight">VIP Pass</span>
                 </button>
             </div>
 
-            <!-- 🎯 My Live Registered Tournament Status Banner -->
-            <div id="home-my-registration-banner" class="cyber-card p-4 space-y-2 border-2 border-emerald-500/40 bg-zinc-950/80">
+            <!-- 🎯 My Live Registered Tournament Status Widget -->
+            <div id="home-my-registration-banner" class="cyber-card p-3 space-y-2 border border-emerald-500/40 bg-zinc-950/80">
                 <!-- Dynamically populated by updateHomeRegistrationBanner() -->
             </div>
 
-
-            <!-- 🔔 Simple Room ID Sound Alert Bar -->
-            <div class="cyber-card p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 border border-amber-400/40">
-                <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-amber-500/20 border border-amber-400/50 text-lg shrink-0">🔔</div>
-                    <div class="min-w-0">
-                        <div class="text-xs font-extrabold flex items-center gap-1.5 flex-wrap">
-                            <span>Room ID Sound Alert</span>
-                            <span id="home-countdown-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px]">AUTO</span>
+            <!-- 🔔 Native Compact Room ID Voice Alarm Strip -->
+            <div class="cyber-card px-3 py-2.5 flex items-center justify-between gap-2 border border-amber-400/35">
+                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-amber-500/20 border border-amber-400/50 text-amber-400 shrink-0">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-[11px] font-extrabold flex items-center gap-1.5">
+                            <span class="truncate">Room ID Voice Alarm</span>
+                            <span id="home-countdown-badge" class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[8.5px] shrink-0">AUTO</span>
                         </div>
-                        <p id="home-next-match-timer-txt" class="text-[10px] leading-snug" style="color: var(--text-muted);">Plays a voice alarm 10 mins before match when Room ID & Password arrive!</p>
+                        <p id="home-next-match-timer-txt" class="text-[9.5px] truncate" style="color: var(--text-muted);">10-min pre-match Room ID siren</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end shrink-0">
-                    <button type="button" id="siren-alert-toggle-btn" onclick="toggleMatchSirenAlert()" class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-[10px] font-extrabold cursor-pointer shadow">🔔 Sound: ON</button>
-                    <button type="button" onclick="openMvpAndAlertModal()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-[10px] font-extrabold cursor-pointer shadow">🔥 Vote Best Player</button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" id="siren-alert-toggle-btn" onclick="toggleMatchSirenAlert()" class="px-2.5 py-1.5 rounded-xl bg-emerald-600 text-white text-[10px] font-extrabold cursor-pointer shadow">ON</button>
+                    <button type="button" onclick="openMvpAndAlertModal()" class="px-2.5 py-1.5 rounded-xl bg-amber-500 text-black text-[10px] font-extrabold cursor-pointer shadow">Vote MVP</button>
                 </div>
             </div>
 
-            <!-- 🎮 Easy-to-Understand 6 Player Features Grid (Fits cleanly on all Phones & PCs) -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                <button type="button" onclick="openSpinWheelModal()" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-amber-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🎰</span>
-                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">FREE SPIN</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug">Free Spin & Coins</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Win Free Coins & VIP Pass</div>
-                    </div>
-                </button>
-                <button type="button" onclick="openClanHubModal()" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-cyan-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🛡️</span>
-                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300">GUILD</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug">Join / Create Guild</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Team Up with Clan Friends</div>
-                    </div>
-                </button>
-                <button type="button" onclick="openBattlePassModal()" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-purple-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🎁</span>
-                        <span id="home-bp-tier-pill" class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">REWARDS</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug">Level Up Rewards</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Free Coins & Name Badges</div>
-                    </div>
-                </button>
-                <button type="button" onclick="openArenaHubModal('recruit')" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-emerald-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🤝</span>
-                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">1v1 / TEAM</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug">1v1 & Find Players</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Play 1v1 or Add Teammates</div>
-                    </div>
-                </button>
-                <button type="button" onclick="window.openProfileInventorySection()" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-amber-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🎒</span>
-                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">INVENTORY</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug text-amber-300">My Inventory</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Equip or Remove Armory Titles</div>
-                    </div>
-                </button>
-                <button type="button" onclick="openCheatReportModal()" class="cyber-card p-3 text-left flex flex-col justify-between gap-2 cursor-pointer hover:border-rose-400 transition-all">
-                    <div class="flex items-center justify-between w-full">
-                        <span class="text-xl">🚨</span>
-                        <span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">REPORT</span>
-                    </div>
-                    <div>
-                        <div class="text-xs font-extrabold leading-snug">Report Hacker</div>
-                        <div class="text-[10px] leading-tight mt-0.5" style="color: var(--text-muted);">Report Cheaters to Admin</div>
-                    </div>
-                </button>
+            <!-- 🔥 Live Tournaments Quick Preview on Home App Dashboard -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 fill-amber-400 shrink-0" viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
+                        <span>Live & Upcoming Battles</span>
+                    </h3>
+                    <button type="button" onclick="switchTab('matches')" class="text-[10.5px] font-extrabold cursor-pointer flex items-center gap-0.5" style="color: var(--accent-primary);">
+                        <span>View All</span><span>›</span>
+                    </button>
+                </div>
+                <div id="home-featured-matches-preview" class="space-y-2">
+                    <div class="cyber-card p-3.5 text-center text-xs text-slate-400">Loading active tournaments...</div>
+                </div>
             </div>
 
-            <div class="cyber-card p-5 space-y-3">
-                <h3 class="text-sm font-bold flex items-center gap-2" style="color: var(--accent-primary);"><span>⚔️</span> Tournament Rules & Points System</h3>
-                <div id="display-rules-content" class="text-xs space-y-2 leading-relaxed" style="color: var(--text-muted);">
-                    <p>⚡ <strong style="color: var(--text-main);">Standard Free Fire Tournament Rules</strong> apply.</p>
-                    <p>💀 <strong style="color: var(--accent-primary);">+3 Points</strong> per Kill.</p>
-                    <p>📍 <strong style="color: var(--accent-primary);">In-map Placement</strong> points active for top positions.</p>
+            <!-- 🎮 Native App Modes & Perks Grid (Custom SVG Vector Icons) -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <svg class="w-4 h-4 fill-emerald-400 shrink-0" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                        <span>Arena Modes & Perks</span>
+                    </h3>
+                    <span class="text-[9.5px] font-mono text-slate-400">1-Tap Access</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="openSpinWheelModal()" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-amber-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-12.5c-2.49 0-4.5 2.01-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.01 4.5-4.5-2.01-4.5-4.5-4.5zm0 5.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">Lucky Spin</div>
+                            <div class="text-[9.5px] text-amber-400 font-bold truncate">Free Coins & VIP</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="openClanHubModal()" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-cyan-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">Clan Guilds</div>
+                            <div class="text-[9.5px] text-cyan-400 font-bold truncate">Join or Create</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="openBattlePassModal()" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-purple-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-400/40 text-purple-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">Level Rewards</div>
+                            <div id="home-bp-tier-pill" class="text-[9.5px] text-purple-400 font-bold truncate">Claim Pass XP</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="openArenaHubModal('recruit')" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-emerald-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">Find Players</div>
+                            <div class="text-[9.5px] text-emerald-400 font-bold truncate">1v1 & Squad Chat</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="window.openProfileInventorySection()" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-amber-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">My Locker</div>
+                            <div class="text-[9.5px] text-amber-400 font-bold truncate">Equip Titles</div>
+                        </div>
+                    </button>
+                    <button type="button" onclick="openCheatReportModal()" class="native-app-tile cyber-card p-2.5 text-left flex items-center gap-2.5 cursor-pointer border border-rose-500/30">
+                        <div class="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-400/40 text-rose-400 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[11.5px] font-extrabold truncate">Report Cheat</div>
+                            <div class="text-[9.5px] text-rose-400 font-bold truncate">Anti-Hack Desk</div>
+                        </div>
+                    </button>
                 </div>
             </div>
-            <!-- ❓ Tournament Player FAQ & Help Accordion -->
-            <div class="cyber-card p-5 space-y-3">
-                <h3 class="text-sm font-bold flex items-center gap-2" style="color: var(--accent-primary);"><span>❓</span> Frequently Asked Questions (FAQ)</h3>
-                <div class="space-y-2 text-xs">
-                    <details class="cyber-card p-3 rounded-xl cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between text-white">
-                            <span>🔑 When do I receive the Room ID & Password?</span>
-                            <span class="text-xs text-amber-400 font-mono">▼</span>
-                        </summary>
-                        <p class="mt-2 text-slate-300 leading-relaxed text-[11px]">Room ID & Password are published 10 to 15 minutes before match start time. You will hear an automatic voice siren alarm inside the app, and you can copy them instantly with 1 tap from the <b>My Room Keys</b> button!</p>
-                    </details>
-                    <details class="cyber-card p-3 rounded-xl cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between text-white">
-                            <span>💰 How are cash prizes paid to winners?</span>
-                            <span class="text-xs text-amber-400 font-mono">▼</span>
-                        </summary>
-                        <p class="mt-2 text-slate-300 leading-relaxed text-[11px]">Once match results are officially verified by the Official Admin & Match Host, winning amounts are transferred directly to your registered UPI ID within 15–30 minutes. You can also track proof in the Results tab!</p>
-                    </details>
-                    <details class="cyber-card p-3 rounded-xl cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between text-white">
-                            <span>🛡️ Are emulators, PC players, or cheats allowed?</span>
-                            <span class="text-xs text-amber-400 font-mono">▼</span>
-                        </summary>
-                        <p class="mt-2 text-slate-300 leading-relaxed text-[11px]">Strictly Mobile Only! Any squad detected using emulators, scripts, or unfair third-party tools will be permanently disqualified and banned by our real-time anti-cheat forensics system.</p>
-                    </details>
-                    <details class="cyber-card p-3 rounded-xl cursor-pointer">
-                        <summary class="font-bold flex items-center justify-between text-white">
-                            <span>📧 How do I contact Satta Pai Help & Customer Support?</span>
-                            <span class="text-xs text-amber-400 font-mono">▼</span>
-                        </summary>
-                        <p class="mt-2 text-slate-300 leading-relaxed text-[11px]">For match queries, UTR verification, prize claims, or ban appeals, email our official support desk at <a href="mailto:satta0pai@gmail.com" class="text-amber-300 font-bold underline">satta0pai@gmail.com</a> or reach us on Telegram (<a href="https://t.me/CHELLAM_STORE" target="_blank" rel="noopener noreferrer" class="text-sky-400 font-bold underline">@CHELLAM_STORE</a>).</p>
-                    </details>
-                </div>
-            </div>
-            <!-- ⚖️ COPYRIGHT, LEGAL & COMPLIANCE FOOTER -->
-            <footer class="cyber-card p-5 text-center space-y-3 text-[10px] mt-8 mb-6 border border-emerald-500/20 bg-zinc-950/70" style="color: var(--text-muted); border-color: var(--border-color);">
-                <div class="flex flex-wrap justify-center items-center gap-2 font-bold text-slate-200 text-xs">
-                    <span class="w-6 h-6 rounded-lg inline-flex flex-col items-center justify-center overflow-hidden border border-amber-400 relative shrink-0" style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);">
-                        <img id="footer-custom-logo" src="" class="absolute inset-0 w-full h-full object-cover z-10 hidden" alt="Logo">
-                        <span id="footer-default-emblem" class="flex items-center justify-center text-[8px] font-black text-amber-300">👑</span>
-                    </span>
-                    <span>Copyright © 2024–2026 Satta Pai Official Esports Arena.</span>
-                    <span class="text-emerald-400 font-extrabold">All Rights Reserved.</span>
-                </div>
-                <p class="leading-relaxed text-[10px] max-w-xl mx-auto text-slate-400">
-                    <strong>Official Copyright & IP Claim (2026):</strong> All platform source code, custom tournament brackets, Multi-Gift System Inbox architecture, AI Tactical Sensitivity Core, and brand visuals are the exclusive intellectual property of <b>Satta Pai Official Esports Arena</b>, protected under the Indian Copyright Act, 1957 & Information Technology Act, 2000. Unauthorized copying, cloning, or redistribution is strictly prohibited. Garena Free Fire, Free Fire MAX, and Free Fire India are registered trademarks of Garena International I Private Limited.
-                </p>
-                <div class="flex flex-wrap justify-center items-center gap-3 font-semibold pt-1 text-[11px]">
-                    <a href="javascript:void(0)" onclick="openPolicyModal('terms')" class="hover:text-emerald-400 underline transition-colors">Terms of Service</a>
-                    <span class="text-zinc-600">•</span>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('privacy')" class="hover:text-emerald-400 underline transition-colors">Privacy Policy</a>
-                    <span class="text-zinc-600">•</span>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('copyright')" class="hover:text-emerald-400 underline transition-colors">Copyright Claim (2026)</a>
-                    <span class="text-zinc-600">•</span>
-                    <a href="javascript:void(0)" onclick="openPolicyModal('refund')" class="hover:text-emerald-400 underline transition-colors">Fair Play & Refund Policy</a>
-                    <span class="text-zinc-600">•</span>
-                    <a href="javascript:void(0)" onclick="openCustomerSupportModal()" class="text-amber-300 hover:text-amber-200 underline transition-colors">Help & Support</a>
-                </div>
-                <div class="text-[9.5px] text-zinc-400 pt-1 flex flex-wrap items-center justify-center gap-2">
-                    <span>📧 Official Support Email: <a href="mailto:satta0pai@gmail.com" class="text-amber-300 font-mono font-bold underline">satta0pai@gmail.com</a></span>
-                    <span>•</span>
-                    <span>✈️ Telegram: <a href="https://t.me/CHELLAM_STORE" target="_blank" rel="noopener noreferrer" class="text-emerald-400 font-mono font-bold underline">@CHELLAM_STORE</a></span>
-                    <span>•</span>
-                    <span>Coimbatore, Tamil Nadu, India</span>
-                </div>
-            </footer>
         </section>
 
         <section id="section-matches" hidden aria-hidden="true" inert class="hidden space-y-3">
-            <div class="flex items-center justify-between">
-                <button onclick="switchTab('home')" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back</button>
+            <div class="flex items-center justify-between px-0.5 pt-0.5">
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-wide flex items-center gap-1.5"><span>🎮</span><span>Battleground Lobby</span></h2>
+                    <p class="text-[10px]" style="color: var(--text-muted);">Select a BR or CS room & register your squad</p>
+                </div>
                 <div class="flex items-center gap-1.5">
-                    <button type="button" onclick="openLiveKillsLeaderboardModal()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-300 text-[10px] font-extrabold cursor-pointer shadow flex items-center gap-1">
-                        <span>📊</span><span>Live Kills Table</span>
+                    <button type="button" onclick="openLiveKillsLeaderboardModal()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-400/50 text-amber-300 text-[10px] font-extrabold cursor-pointer shadow flex items-center gap-1">
+                        <span>📊</span><span>Kills Table</span>
                     </button>
                     <button type="button" id="host-post-kill-btn" onclick="openPostKillModal()" class="hidden px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-rose-600 to-red-700 text-white text-[10px] font-extrabold cursor-pointer shadow flex items-center gap-1">
                         <span>➕</span><span>Post Kill</span>
@@ -3402,7 +3747,13 @@ html.theme-ghost-live {
         </section>
 
         <section id="section-roadmap" hidden aria-hidden="true" inert class="hidden space-y-3">
-            <button onclick="switchTab('home')" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back</button>
+            <div class="flex items-center justify-between px-0.5 pt-0.5">
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-wide flex items-center gap-1.5"><span>🏆</span><span>Results & Rankings</span></h2>
+                    <p class="text-[10px]" style="color: var(--text-muted);">Official scoreboards, winners & points calculator</p>
+                </div>
+                <button type="button" onclick="openLiveKillsLeaderboardModal()" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-[10px] font-extrabold cursor-pointer">📊 Live Kills</button>
+            </div>
             <div class="cyber-card p-4 space-y-2.5 border border-amber-500/40">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5"><span>🏆</span><span>Season Hall of Fame • Top Squads</span></h3>
@@ -3442,77 +3793,153 @@ html.theme-ghost-live {
                     <div class="text-[10px] text-slate-400 font-mono">Official Rule Formula: Placement Points + (Total Squad Kills × 3 Pts).</div>
                 </div>
             </details>
-            </div>
-            <h2 class="text-base font-bold pt-1">Match Scoreboards & Results</h2>
+            <h2 class="text-xs font-black uppercase tracking-wider pt-1 px-0.5">📊 Official Match Scoreboards</h2>
             <div id="roadmap-container" class="space-y-3"></div>
         </section>
 
-        <section id="section-profile" hidden aria-hidden="true" inert class="hidden space-y-4">
-            <button onclick="switchTab('home')" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Back</button>
-            <div class="flex items-center justify-between max-w-sm mx-auto">
-                <h2 class="text-base font-bold">My Profile</h2>
-                <span id="profile-top-pro-badge" class="hidden px-2.5 py-1 rounded-full text-[11px] font-black bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 text-black shadow-lg">⭐ PRO MEMBER</span>
-            </div>
-            <div class="cyber-card p-5 max-w-sm mx-auto space-y-4 text-center">
-                <div class="relative w-24 h-24 mx-auto">
-                    <img id="profile-dp-img" onclick="window.openInAppSmartFileStudio('profile-dp-input', 'dp')" style="cursor:pointer;" title="Tap to Change DP" src="https://ui-avatars.com/api/?name=User&background=random" class="w-24 h-24 rounded-full object-cover border-2 border-emerald-500">
-                    <span id="profile-dp-pro-pill" class="hidden absolute -top-1 -left-2 px-2 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-md ring-2 ring-black">⭐ PRO</span>
-                    <label onclick="if(window.IS_SATTA_PAI_APP_BUILD||window.SattaPaiNativeAuth){event.preventDefault();window.openInAppSmartFileStudio('profile-dp-input', 'dp');}" class="absolute bottom-0 right-0 bg-emerald-600 p-1.5 rounded-full cursor-pointer hover:bg-emerald-700 shadow-lg"><svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><input type="file" id="profile-dp-input" accept="image/*" class="hidden" onchange="previewDP(event)"></label>
-                </div>
-                <div id="profile-career-tier-box" class="cyber-card p-2.5 bg-zinc-900/60 border border-cyan-500/30 space-y-1.5">
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="font-extrabold text-cyan-300" id="profile-tier-name">🥉 Bronze I</span>
-                        <span class="text-[10px] font-mono text-amber-400" id="profile-armory-tag">🎖️ Tournament Contender</span>
+        <section id="section-profile" hidden aria-hidden="true" inert class="hidden space-y-3">
+            <!-- 👤 Native App Profile Identity Card -->
+            <div class="native-profile-hero-card cyber-card p-3.5 space-y-3 relative overflow-hidden" style="background: linear-gradient(145deg, rgba(16, 185, 129, 0.12) 0%, rgba(9, 13, 22, 0.95) 65%);">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-sm">👤</span>
+                        <h2 class="text-xs font-black uppercase tracking-wider">Player Locker & Profile</h2>
                     </div>
-                    <div class="grid grid-cols-3 gap-1 text-[10px] font-mono pt-1 border-t border-white/10">
-                        <div class="text-slate-300">🎮 <b id="prof-stat-matches" class="text-white">0</b> Matches</div>
-                        <div class="text-rose-400">💀 <b id="prof-stat-kills" class="text-white">0</b> Kills</div>
-                        <div class="text-amber-400">🏆 <b id="prof-stat-wins" class="text-white">0</b> Booyah</div>
-                    </div>
+                    <span id="profile-top-pro-badge" class="hidden px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 text-black shadow-lg">⭐ PRO MEMBER</span>
                 </div>
-                <!-- 🎮 NEW UPDATE 3: 1-Click Free Fire Pro Gaming Avatar Picker -->
-                <div class="space-y-1.5 pt-1">
-                    <div class="text-[10px] font-extrabold uppercase text-emerald-400 tracking-wider">🎮 1-Click Pro Gaming Avatars</div>
-                    <div class="grid grid-cols-6 gap-1.5">
-                        <button type="button" onclick="selectProGamingAvatar(0)" class="p-1 rounded-lg bg-zinc-900 border border-orange-500/40 hover:border-orange-400 text-center cursor-pointer transition-transform active:scale-95" title="Crimson Rusher">
-                            <div class="text-base">🔥</div><div class="text-[8px] font-bold text-orange-300 truncate">Rusher</div>
-                        </button>
-                        <button type="button" onclick="selectProGamingAvatar(1)" class="p-1 rounded-lg bg-zinc-900 border border-rose-500/40 hover:border-rose-400 text-center cursor-pointer transition-transform active:scale-95" title="Skull Sniper">
-                            <div class="text-base">💀</div><div class="text-[8px] font-bold text-rose-300 truncate">Sniper</div>
-                        </button>
-                        <button type="button" onclick="selectProGamingAvatar(2)" class="p-1 rounded-lg bg-zinc-900 border border-amber-500/40 hover:border-amber-400 text-center cursor-pointer transition-transform active:scale-95" title="Booyah King">
-                            <div class="text-base">👑</div><div class="text-[8px] font-bold text-amber-300 truncate">King</div>
-                        </button>
-                        <button type="button" onclick="selectProGamingAvatar(3)" class="p-1 rounded-lg bg-zinc-900 border border-cyan-500/40 hover:border-cyan-400 text-center cursor-pointer transition-transform active:scale-95" title="Cyber Ninja">
-                            <div class="text-base">⚡</div><div class="text-[8px] font-bold text-cyan-300 truncate">Ninja</div>
-                        </button>
-                        <button type="button" onclick="selectProGamingAvatar(4)" class="p-1 rounded-lg bg-zinc-900 border border-red-600/50 hover:border-red-500 text-center cursor-pointer transition-transform active:scale-95" title="Ghost Reaper">
-                            <div class="text-base">👻</div><div class="text-[8px] font-bold text-red-400 truncate">Ghost</div>
-                        </button>
-                        <button type="button" onclick="selectProGamingAvatar(5)" class="p-1 rounded-lg bg-zinc-900 border border-emerald-500/40 hover:border-emerald-400 text-center cursor-pointer transition-transform active:scale-95" title="Dragon IGL">
-                            <div class="text-base">🐉</div><div class="text-[8px] font-bold text-emerald-300 truncate">Dragon</div>
-                        </button>
-                    </div>
-                </div>
-                <p class="text-[10px] text-emerald-400 font-semibold" id="dp-cooldown-text">✨ Instant DP & Gaming Avatar Switcher Unlocked!</p>
-                <div class="text-left"><label class="block font-bold text-xs mb-1">Player ID</label><input type="text" id="profile-player-id" readonly class="cyber-input w-full px-3 py-2 text-xs font-mono bg-zinc-800 cursor-not-allowed"></div>
-                <p class="text-[10px] text-cyan-300 font-semibold" id="profile-text-cooldown-text">⏱️ Profile Edit Rule: Free = 24h | ⭐ PRO = 6h | 👑 PRO+ = Unlimited</p>
 
-                <div class="text-left"><label class="block font-bold text-xs mb-1">Username *</label><input type="text" id="profile-username" class="cyber-input w-full px-3 py-2 text-xs" placeholder="Unique Name"></div>
-                <div class="text-left"><label class="block font-bold text-xs mb-1">IGN *</label><input type="text" id="profile-ign" class="cyber-input w-full px-3 py-2 text-xs" placeholder="FF Name"></div>
-                <div class="text-left"><label class="block font-bold text-xs mb-1">Game UID *</label><input type="text" id="profile-game-uid" class="cyber-input w-full px-3 py-2 text-xs font-mono" placeholder="123456789"></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button type="button" onclick="saveProfile()" class="btn-theme w-full py-2.5 text-xs font-bold uppercase cursor-pointer">💾 Save Profile</button>
-                    <button type="button" onclick="window.copyMyFullPlayerCardText()" class="cyber-card w-full py-2.5 text-xs font-extrabold uppercase cursor-pointer border border-cyan-400/40 text-cyan-300 flex items-center justify-center gap-1">📋 Copy My IGN & UID</button>
+                <div class="flex items-center gap-3.5">
+                    <div class="relative w-20 h-20 shrink-0">
+                        <img id="profile-dp-img" onclick="window.openInAppSmartFileStudio('profile-dp-input', 'dp')" style="cursor:pointer;" title="Tap to Change DP" src="https://ui-avatars.com/api/?name=User&background=random" class="w-20 h-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-lg">
+                        <span id="profile-dp-pro-pill" class="hidden absolute -top-1.5 -left-1.5 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow ring-2 ring-black">⭐ PRO</span>
+                        <label onclick="if(window.IS_SATTA_PAI_APP_BUILD||window.SattaPaiNativeAuth){event.preventDefault();window.openInAppSmartFileStudio('profile-dp-input', 'dp');}" class="absolute -bottom-1 -right-1 bg-emerald-600 p-1.5 rounded-xl cursor-pointer hover:bg-emerald-700 shadow-lg border border-black/40"><svg class="w-3.5 h-3.5 text-white fill-current" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><input type="file" id="profile-dp-input" accept="image/*" class="hidden" onchange="previewDP(event)"></label>
+                    </div>
+
+                    <div id="profile-career-tier-box" class="flex-1 min-w-0 p-2.5 rounded-2xl bg-black/40 border border-cyan-500/30 space-y-1.5">
+                        <div class="flex items-center justify-between gap-1 text-xs">
+                            <span class="font-extrabold text-cyan-300 truncate" id="profile-tier-name">🥉 Bronze I</span>
+                            <span class="text-[9.5px] font-mono text-amber-400 truncate" id="profile-armory-tag">🎖️ Contender</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-[10px] font-mono pt-1 border-t border-white/10 text-center">
+                            <div class="text-slate-300"><b id="prof-stat-matches" class="text-white block text-xs">0</b>Matches</div>
+                            <div class="text-rose-400"><b id="prof-stat-kills" class="text-white block text-xs">0</b>Kills</div>
+                            <div class="text-amber-400"><b id="prof-stat-wins" class="text-white block text-xs">0</b>Booyah</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 gap-1.5 pt-1">
+
+                <!-- Quick Player Card Actions -->
+                <div class="grid grid-cols-3 gap-1.5 pt-0.5">
                     <button type="button" onclick="downloadProPlayerCardPNG()" class="py-2 px-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-black font-extrabold text-[10px] shadow flex items-center justify-center gap-1 cursor-pointer">🎴 Stats Card</button>
                     <button type="button" onclick="downloadMyEsportsCertificatePNG()" class="py-2 px-2 rounded-xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 font-extrabold text-[10px] flex items-center justify-center gap-1 cursor-pointer">🏅 Certificate</button>
                     <button type="button" onclick="openClanHubModal()" class="py-2 px-2 rounded-xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-extrabold text-[10px] flex items-center justify-center gap-1 cursor-pointer">🛡️ <span id="prof-clan-btn-lbl">My Clan</span></button>
                 </div>
             </div>
 
-            <!-- 📱 APP-ONLY: VIP CUSTOM APP LAUNCHER ICON SWITCHER (4 EXCLUSIVE சTTA பAI ICONS) -->
+            <!-- 📱 Native 4-Segment Sub-Tab Switcher -->
+            <div class="native-segmented-bar">
+                <button type="button" id="prof-subtab-btn-account" onclick="window.switchProfileSubTab('account')" class="native-seg-btn active">👤 Account</button>
+                <button type="button" id="prof-subtab-btn-locker" onclick="window.switchProfileSubTab('locker')" class="native-seg-btn">🎒 Locker & VIP</button>
+                <button type="button" id="prof-subtab-btn-squad" onclick="window.switchProfileSubTab('squad')" class="native-seg-btn">⚡ My Squad</button>
+                <button type="button" id="prof-subtab-btn-more" onclick="window.switchProfileSubTab('more')" class="native-seg-btn">ℹ️ Rules & Info</button>
+            </div>
+
+            <!-- SUB-PANEL 1: ACCOUNT & EDIT PROFILE -->
+            <div id="prof-subpanel-account" class="space-y-3">
+                <div class="cyber-card p-4 space-y-3 text-center">
+                    <div class="space-y-1.5">
+                        <div class="text-[10px] font-extrabold uppercase text-emerald-400 tracking-wider">🎮 1-Click Pro Gaming Avatars</div>
+                        <div class="grid grid-cols-6 gap-1.5">
+                            <button type="button" onclick="selectProGamingAvatar(0)" class="p-1.5 rounded-xl bg-zinc-900 border border-orange-500/40 text-center cursor-pointer" title="Crimson Rusher">
+                                <div class="text-base">🔥</div><div class="text-[8px] font-bold text-orange-300 truncate">Rusher</div>
+                            </button>
+                            <button type="button" onclick="selectProGamingAvatar(1)" class="p-1.5 rounded-xl bg-zinc-900 border border-rose-500/40 text-center cursor-pointer" title="Skull Sniper">
+                                <div class="text-base">💀</div><div class="text-[8px] font-bold text-rose-300 truncate">Sniper</div>
+                            </button>
+                            <button type="button" onclick="selectProGamingAvatar(2)" class="p-1.5 rounded-xl bg-zinc-900 border border-amber-500/40 text-center cursor-pointer" title="Booyah King">
+                                <div class="text-base">👑</div><div class="text-[8px] font-bold text-amber-300 truncate">King</div>
+                            </button>
+                            <button type="button" onclick="selectProGamingAvatar(3)" class="p-1.5 rounded-xl bg-zinc-900 border border-cyan-500/40 text-center cursor-pointer" title="Cyber Ninja">
+                                <div class="text-base">⚡</div><div class="text-[8px] font-bold text-cyan-300 truncate">Ninja</div>
+                            </button>
+                            <button type="button" onclick="selectProGamingAvatar(4)" class="p-1.5 rounded-xl bg-zinc-900 border border-red-600/50 text-center cursor-pointer" title="Ghost Reaper">
+                                <div class="text-base">👻</div><div class="text-[8px] font-bold text-red-400 truncate">Ghost</div>
+                            </button>
+                            <button type="button" onclick="selectProGamingAvatar(5)" class="p-1.5 rounded-xl bg-zinc-900 border border-emerald-500/40 text-center cursor-pointer" title="Dragon IGL">
+                                <div class="text-base">🐉</div><div class="text-[8px] font-bold text-emerald-300 truncate">Dragon</div>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-emerald-400 font-semibold" id="dp-cooldown-text">✨ Instant DP & Gaming Avatar Switcher Unlocked!</p>
+                    <div class="text-left"><label class="block font-bold text-xs mb-1">Player ID</label><input type="text" id="profile-player-id" readonly class="cyber-input w-full px-3 py-2 text-xs font-mono bg-zinc-800 cursor-not-allowed"></div>
+                    <p class="text-[10px] text-cyan-300 font-semibold" id="profile-text-cooldown-text">⏱️ Profile Edit Rule: Free = 24h | ⭐ PRO = 6h | 👑 PRO+ = Unlimited</p>
+
+                    <div class="text-left"><label class="block font-bold text-xs mb-1">Username *</label><input type="text" id="profile-username" class="cyber-input w-full px-3 py-2 text-xs" placeholder="Unique Name"></div>
+                    <div class="text-left"><label class="block font-bold text-xs mb-1">IGN (Free Fire Name) *</label><input type="text" id="profile-ign" class="cyber-input w-full px-3 py-2 text-xs" placeholder="FF Name"></div>
+                    <div class="text-left"><label class="block font-bold text-xs mb-1">Game UID *</label><input type="text" id="profile-game-uid" class="cyber-input w-full px-3 py-2 text-xs font-mono" placeholder="123456789"></div>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="saveProfile()" class="btn-theme w-full py-2.5 text-xs font-bold uppercase cursor-pointer">💾 Save Profile</button>
+                        <button type="button" onclick="window.copyMyFullPlayerCardText()" class="cyber-card w-full py-2.5 text-xs font-extrabold uppercase cursor-pointer border border-cyan-400/40 text-cyan-300 flex items-center justify-center gap-1">📋 Copy IGN & UID</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 2: LOCKER, INVENTORY, VIP & CUSTOM APP ICONS -->
+            <div id="prof-subpanel-locker" class="hidden space-y-3">
+                <!-- 🎒 PLAYER INVENTORY (EQUIP OR REMOVE ARMORY TITLES & BADGES) -->
+                <div id="profile-inventory-card-box" class="cyber-card p-4 space-y-3 border border-cyan-500/40 bg-zinc-950/75">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-lg shrink-0">🎒</div>
+                            <div class="text-left">
+                                <h3 class="text-xs font-extrabold uppercase text-cyan-300">My Inventory & Titles</h3>
+                                <p class="text-[10px] text-slate-400">Equip or Remove your unlocked Armory Titles</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="openSpinWheelModal()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-extrabold cursor-pointer">🛒 Armory</button>
+                    </div>
+
+                    <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center justify-between gap-2 text-xs">
+                        <div class="text-left min-w-0">
+                            <div class="text-[9.5px] text-slate-400 font-bold uppercase">Equipped Title:</div>
+                            <div id="inventory-active-title-lbl" class="font-extrabold text-amber-300 truncate mt-0.5">None Equipped</div>
+                        </div>
+                        <button type="button" id="inventory-unequip-btn" onclick="window.unequipMyArmoryTitle()" class="hidden px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-[10px] cursor-pointer shrink-0">✖ Remove Title</button>
+                    </div>
+
+                    <div class="space-y-1.5 text-left">
+                        <div class="text-[10px] font-bold text-slate-300 uppercase">Unlocked Titles in Bag (<span id="inventory-unlocked-count">0</span>):</div>
+                        <div id="profile-inventory-titles-list" class="grid grid-cols-1 gap-1.5"></div>
+                    </div>
+                </div>
+
+                <!-- ⭐ ROYAL PREMIUM MEMBERSHIP CARD -->
+                <div id="profile-vip-card-box" class="cyber-card p-4 space-y-3 border border-amber-400/40">
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 text-white shadow-md shrink-0">
+                                <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2l2.9 6.9L22 9.2l-5.4 4.7 1.7 7.1L12 17.6 5.7 21l1.7-7.1L2 9.2l7.1-.3L12 2z"/></svg>
+                            </div>
+                            <div>
+                                <div class="text-xs font-extrabold uppercase text-amber-400">Royal Premium Membership</div>
+                                <div id="profile-vip-status-badge" class="text-[10px] font-bold text-slate-400">Status: Free Player</div>
+                            </div>
+                        </div>
+                        <button type="button" id="profile-vip-buy-btn" onclick="openVipPassModal()" class="btn-theme px-3 py-1.5 text-[11px] font-bold cursor-pointer shrink-0">⭐ Get VIP</button>
+                        <span id="profile-vip-active-pill" class="hidden px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">✓ ACTIVE</span>
+                    </div>
+                    <div id="profile-vip-redeem-row" class="flex gap-1.5 pt-1">
+                        <input type="text" id="profile-quick-vip-code" placeholder="Have a Premium Key? Enter here..." class="cyber-input flex-1 px-2.5 py-1.5 text-xs font-mono uppercase">
+                        <button type="button" onclick="redeemVipCodeFromProfile()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-lg text-xs cursor-pointer">Claim</button>
+                    </div>
+                    <div id="profile-vip-active-perks" class="hidden grid grid-cols-3 gap-1.5 pt-1 text-[9.5px] font-extrabold text-center">
+                        <div class="p-1.5 rounded-lg bg-pink-500/15 border border-pink-500/30 text-pink-300">🎨 7 Live Themes</div>
+                        <div class="p-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">💰 Fee Discount</div>
+                        <div class="p-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300">⚡ Fast Chat & DP</div>
+                    </div>
+                </div>
+
+                <!-- 📱 APP-ONLY: VIP CUSTOM APP LAUNCHER ICON SWITCHER (4 EXCLUSIVE சTTA பAI ICONS) -->
             <div id="profile-app-icon-switcher-card" class="app-only-feature hidden cyber-card p-5 max-w-sm mx-auto space-y-3 border-2 border-amber-400/50 bg-zinc-950/85">
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
@@ -3544,101 +3971,111 @@ html.theme-ghost-live {
                 </div>
                 <div id="vip-app-icon-status-lbl" class="text-[10px] font-mono text-emerald-400 text-center">✨ Active Icon: Default Cyber Blue</div>
             </div>
-
-            <!-- 🎒 NEW: PLAYER INVENTORY (EQUIP OR REMOVE ARMORY TITLES & BADGES) -->
-            <div id="profile-inventory-card-box" class="cyber-card p-5 max-w-sm mx-auto space-y-3 border border-cyan-500/40 bg-zinc-950/75">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 text-white text-lg shrink-0">🎒</div>
-                        <div class="text-left">
-                            <h3 class="text-xs font-extrabold uppercase text-cyan-300">My Inventory & Titles</h3>
-                            <p class="text-[10px] text-slate-400">Equip or Remove your unlocked Armory Titles</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="openSpinWheelModal()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[10px] font-extrabold cursor-pointer">🛒 Armory</button>
-                </div>
-
-                <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center justify-between gap-2 text-xs">
-                    <div class="text-left min-w-0">
-                        <div class="text-[9.5px] text-slate-400 font-bold uppercase">Equipped Title:</div>
-                        <div id="inventory-active-title-lbl" class="font-extrabold text-amber-300 truncate mt-0.5">None Equipped</div>
-                    </div>
-                    <button type="button" id="inventory-unequip-btn" onclick="window.unequipMyArmoryTitle()" class="hidden px-2.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-[10px] cursor-pointer shrink-0">✖ Remove Title</button>
-                </div>
-
-                <div class="space-y-1.5 text-left">
-                    <div class="text-[10px] font-bold text-slate-300 uppercase">Unlocked Titles in Bag (<span id="inventory-unlocked-count">0</span>):</div>
-                    <div id="profile-inventory-titles-list" class="grid grid-cols-1 gap-1.5"></div>
-                </div>
             </div>
 
-            <div id="profile-vip-card-box" class="cyber-card p-5 max-w-sm mx-auto space-y-3 border border-amber-400/40">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 text-white shadow-md shrink-0">
-                            <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2l2.9 6.9L22 9.2l-5.4 4.7 1.7 7.1L12 17.6 5.7 21l1.7-7.1L2 9.2l7.1-.3L12 2z"/></svg>
-                        </div>
+            <!-- SUB-PANEL 3: MY SAVED SQUAD (1-CLICK AUTO-FILL) -->
+            <div id="prof-subpanel-squad" class="hidden space-y-3">
+                <div class="cyber-card p-4 space-y-3 border border-emerald-500/30">
+                    <div class="flex items-center justify-between">
                         <div>
-                            <div class="text-xs font-extrabold uppercase text-amber-400">Royal Premium Membership</div>
-                            <div id="profile-vip-status-badge" class="text-[10px] font-bold text-slate-400">Status: Free Player</div>
+                            <h3 class="text-xs font-extrabold uppercase text-emerald-400">⚡ My Saved Squad (1-Click Join)</h3>
+                            <p class="text-[10px]" style="color: var(--text-muted);">Save your 4 player UIDs once & auto-fill in any match!</p>
                         </div>
                     </div>
-                    <button type="button" id="profile-vip-buy-btn" onclick="openVipPassModal()" class="btn-theme px-3 py-1.5 text-[11px] font-bold cursor-pointer shrink-0">⭐ Get VIP</button>
-                    <span id="profile-vip-active-pill" class="hidden px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shrink-0">✓ ACTIVE</span>
-                </div>
-                <div id="profile-vip-redeem-row" class="flex gap-1.5 pt-1">
-                    <input type="text" id="profile-quick-vip-code" placeholder="Have a Premium Key? Enter here..." class="cyber-input flex-1 px-2.5 py-1.5 text-xs font-mono uppercase">
-                    <button type="button" onclick="redeemVipCodeFromProfile()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-black font-extrabold rounded-lg text-xs cursor-pointer">Claim</button>
-                </div>
-                <div id="profile-vip-active-perks" class="hidden grid grid-cols-3 gap-1.5 pt-1 text-[9.5px] font-extrabold text-center">
-                    <div class="p-1.5 rounded-lg bg-pink-500/15 border border-pink-500/30 text-pink-300">🎨 7 Live Themes</div>
-                    <div class="p-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">💰 Fee Discount</div>
-                    <div class="p-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300">⚡ Fast Chat & DP</div>
+                    <div class="space-y-2 text-xs">
+                        <input type="text" id="sq-teamName" placeholder="Default Team Name" class="cyber-input w-full px-3 py-2 uppercase">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="sq-leaderName" placeholder="Leader IGN" class="cyber-input w-full px-2.5 py-2">
+                            <input type="text" id="sq-hometown" placeholder="City" class="cyber-input w-full px-2.5 py-2">
+                        </div>
+                        <input type="tel" id="sq-phoneNumber" maxlength="10" placeholder="10-Digit WhatsApp Phone" class="cyber-input w-full px-3 py-2 font-mono">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="sq-gameUid" placeholder="Leader UID" class="cyber-input w-full px-2.5 py-2 font-mono">
+                            <input type="text" id="sq-member2Uid" placeholder="Player 2 UID" class="cyber-input w-full px-2.5 py-2 font-mono">
+                            <input type="text" id="sq-member3Uid" placeholder="Player 3 UID" class="cyber-input w-full px-2.5 py-2 font-mono">
+                            <input type="text" id="sq-member4Uid" placeholder="Player 4 UID" class="cyber-input w-full px-2.5 py-2 font-mono">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="sq-sub1Uid" placeholder="Sub 1 UID (Opt)" class="cyber-input w-full px-2.5 py-2 font-mono">
+                            <input type="text" id="sq-sub2Uid" placeholder="Sub 2 UID (Opt)" class="cyber-input w-full px-2.5 py-2 font-mono">
+                        </div>
+                        <button type="button" onclick="saveMySquadPreset()" class="btn-theme w-full py-2.5 text-xs font-bold uppercase cursor-pointer">💾 Save Squad Preset</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="cyber-card p-5 max-w-sm mx-auto space-y-3 border border-emerald-500/30">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-xs font-extrabold uppercase text-emerald-400">⚡ My Saved Squad (1-Click Join)</h3>
-                        <p class="text-[10px]" style="color: var(--text-muted);">Save your 4 player UIDs once & auto-fill in any match!</p>
+            <!-- SUB-PANEL 4: TOURNAMENT RULES, FAQ, SUPPORT & ACCOUNT MANAGEMENT -->
+            <div id="prof-subpanel-more" class="hidden space-y-3">
+                <div class="cyber-card p-4 space-y-2.5">
+                    <h3 class="text-xs font-black uppercase tracking-wider flex items-center gap-1.5" style="color: var(--accent-primary);"><span>⚔️</span><span>Tournament Rules & Points System</span></h3>
+                    <div id="display-rules-content" class="text-xs space-y-1.5 leading-relaxed" style="color: var(--text-muted);">
+                        <p>⚡ <strong style="color: var(--text-main);">Standard Free Fire Tournament Rules</strong> apply.</p>
+                        <p>💀 <strong style="color: var(--accent-primary);">+3 Points</strong> per Kill.</p>
+                        <p>📍 <strong style="color: var(--accent-primary);">In-map Placement</strong> points active for top positions.</p>
                     </div>
                 </div>
-                <div class="space-y-2 text-xs">
-                    <input type="text" id="sq-teamName" placeholder="Default Team Name" class="cyber-input w-full px-3 py-1.5 uppercase">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="sq-leaderName" placeholder="Leader IGN" class="cyber-input w-full px-2.5 py-1.5">
-                        <input type="text" id="sq-hometown" placeholder="City" class="cyber-input w-full px-2.5 py-1.5">
-                    </div>
-                    <input type="tel" id="sq-phoneNumber" maxlength="10" placeholder="10-Digit WhatsApp Phone" class="cyber-input w-full px-3 py-1.5 font-mono">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="sq-gameUid" placeholder="Leader UID" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                        <input type="text" id="sq-member2Uid" placeholder="Player 2 UID" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                        <input type="text" id="sq-member3Uid" placeholder="Player 3 UID" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                        <input type="text" id="sq-member4Uid" placeholder="Player 4 UID" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="sq-sub1Uid" placeholder="Sub 1 UID (Opt)" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                        <input type="text" id="sq-sub2Uid" placeholder="Sub 2 UID (Opt)" class="cyber-input w-full px-2.5 py-1.5 font-mono">
-                    </div>
-                    <button type="button" onclick="saveMySquadPreset()" class="btn-theme w-full py-2 text-xs font-bold uppercase cursor-pointer">💾 Save Squad Preset</button>
-                </div>
-            </div>
 
-            <!-- 🗑️ User Account & Data Deletion Request Card (Sent to Admin for Confirmation) -->
-            <div class="cyber-card p-4 max-w-sm mx-auto space-y-2.5 border border-rose-500/40 bg-zinc-950/60 text-xs">
-                <div class="flex items-center justify-between">
-                    <span class="font-extrabold text-rose-400 uppercase text-[11px]">🗑️ Delete My Account / Squad Data</span>
-                    <span id="my-delete-req-status-badge" class="text-[9px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-slate-400">Active</span>
+                <div class="cyber-card p-4 space-y-2">
+                    <h3 class="text-xs font-black uppercase tracking-wider flex items-center gap-1.5" style="color: var(--accent-primary);"><span>❓</span><span>Help & FAQ</span></h3>
+                    <div class="space-y-1.5 text-xs">
+                        <details class="cyber-card p-2.5 rounded-xl cursor-pointer">
+                            <summary class="font-bold flex items-center justify-between text-white text-[11px]">
+                                <span>🔑 When do I get Room ID & Password?</span>
+                                <span class="text-amber-400 font-mono">▼</span>
+                            </summary>
+                            <p class="mt-1.5 text-slate-300 leading-relaxed text-[10.5px]">Published 10–15 mins before match start with an automatic voice siren alarm. Copy with 1 tap from <b>Room Keys</b>.</p>
+                        </details>
+                        <details class="cyber-card p-2.5 rounded-xl cursor-pointer">
+                            <summary class="font-bold flex items-center justify-between text-white text-[11px]">
+                                <span>💰 How are cash prizes paid?</span>
+                                <span class="text-amber-400 font-mono">▼</span>
+                            </summary>
+                            <p class="mt-1.5 text-slate-300 leading-relaxed text-[10.5px]">Transferred directly to your UPI ID within 15–30 minutes after official result verification.</p>
+                        </details>
+                        <details class="cyber-card p-2.5 rounded-xl cursor-pointer">
+                            <summary class="font-bold flex items-center justify-between text-white text-[11px]">
+                                <span>🛡️ Are PC / emulators allowed?</span>
+                                <span class="text-amber-400 font-mono">▼</span>
+                            </summary>
+                            <p class="mt-1.5 text-slate-300 leading-relaxed text-[10.5px]">Strictly Mobile Only! Emulators or scripts lead to instant disqualification.</p>
+                        </details>
+                    </div>
                 </div>
-                <p class="text-[10px]" style="color: var(--text-muted);">Want to delete your profile or registered squad data? Send a deletion request to Admin for confirmation.</p>
-                <select id="user-delete-req-type" class="cyber-input w-full px-2.5 py-1.5 text-xs font-bold">
-                    <option value="squad_and_account">🗑️ Delete Full Account & Registered Squad Data</option>
-                    <option value="squad_only">🛡️ Delete Only My Registered Squad Slot</option>
-                </select>
-                <div class="flex gap-1.5">
-                    <input type="text" id="user-delete-req-reason" placeholder="Reason (e.g. Change account / Leave match)" class="cyber-input flex-1 px-2.5 py-1.5 text-xs">
-                    <button type="button" onclick="submitUserDeleteRequest()" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-lg text-[11px] cursor-pointer shrink-0 shadow">🗑️ Request Delete</button>
+
+                <!-- 🗑️ User Account & Data Deletion Request Card -->
+                <div class="cyber-card p-4 space-y-2.5 border border-rose-500/40 bg-zinc-950/60 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-rose-400 uppercase text-[11px]">🗑️ Delete Account / Squad Data</span>
+                        <span id="my-delete-req-status-badge" class="text-[9px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-slate-400">Active</span>
+                    </div>
+                    <select id="user-delete-req-type" class="cyber-input w-full px-2.5 py-1.5 text-xs font-bold">
+                        <option value="squad_and_account">🗑️ Delete Full Account & Registered Squad Data</option>
+                        <option value="squad_only">🛡️ Delete Only My Registered Squad Slot</option>
+                    </select>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="user-delete-req-reason" placeholder="Reason (optional)" class="cyber-input flex-1 px-2.5 py-1.5 text-xs">
+                        <button type="button" onclick="submitUserDeleteRequest()" class="px-3 py-1.5 bg-rose-600 text-white font-extrabold rounded-lg text-[11px] cursor-pointer shrink-0">🗑️ Request</button>
+                    </div>
+                </div>
+
+                <!-- ⚖️ Compact Native App About & Legal Card -->
+                <div class="cyber-card p-3.5 text-center space-y-2 text-[10px]" style="color: var(--text-muted);">
+                    <div class="flex items-center justify-center gap-2 font-bold text-slate-200 text-xs">
+                        <span class="w-5 h-5 rounded-md inline-flex items-center justify-center overflow-hidden border border-amber-400 relative shrink-0" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                            <img id="footer-custom-logo" src="" class="absolute inset-0 w-full h-full object-cover z-10 hidden" alt="Logo">
+                            <span id="footer-default-emblem" class="flex items-center justify-center text-[8px] font-black text-amber-300">👑</span>
+                        </span>
+                        <span>Satta Pai Official Esports App (2026)</span>
+                    </div>
+                    <div class="flex flex-wrap justify-center items-center gap-2.5 font-semibold text-[10.5px]">
+                        <a href="javascript:void(0)" onclick="openPolicyModal('terms')" class="text-emerald-400">Terms</a>
+                        <span>•</span>
+                        <a href="javascript:void(0)" onclick="openPolicyModal('privacy')" class="text-emerald-400">Privacy</a>
+                        <span>•</span>
+                        <a href="javascript:void(0)" onclick="openPolicyModal('refund')" class="text-emerald-400">Fair Play</a>
+                        <span>•</span>
+                        <a href="javascript:void(0)" onclick="openCustomerSupportModal()" class="text-amber-300">Support</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -3807,7 +4244,8 @@ html.theme-ghost-live {
         </div>
     </div>
 
-            </main>
+                <div id="native-bottom-nav-spacer" class="h-24 w-full shrink-0 pointer-events-none"></div>
+    </main>
 
     <!-- 🛡️ SECURED ADMIN PORTAL & TEMPLATE VAULT (OUTSIDE MAIN - 100% BLOCKED FROM CHROME READER MODE) -->
     <div id="admin-secured-portal" class="max-w-4xl mx-auto px-4 pt-4" hidden aria-hidden="true" inert style="display:none;">
@@ -4588,7 +5026,7 @@ html.theme-ghost-live {
 
     <nav class="bottom-nav">
         <button onclick="switchTab('home')" id="bnav-home" class="bottom-nav-item active"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></button>
-        <button onclick="switchTab('matches')" id="bnav-matches" class="bottom-nav-item"><svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span>Join Match</span></button>
+        <button onclick="switchTab('matches')" id="bnav-matches" class="bottom-nav-item"><svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg><span>Matches</span></button>
         <button onclick="switchTab('roadmap')" id="bnav-roadmap" class="bottom-nav-item"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg><span>Results</span></button>
         <button onclick="switchTab('chat')" id="bnav-chat" class="bottom-nav-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg><span>Chat</span></button>
         <button onclick="switchTab('profile')" id="bnav-profile" class="bottom-nav-item"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><span>Profile</span></button>
@@ -4658,6 +5096,7 @@ html.theme-ghost-live {
                     <span id="dm-vip-shield-desc-lbl" class="text-emerald-300 font-bold truncate text-[9.5px]">Screen-Share Blackout Active</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
+                    <button type="button" id="dm-call-lock-toggle-btn" onclick="window.toggleMyIncomingCallsLock()" class="px-1.5 py-0.5 rounded bg-zinc-900/90 border border-emerald-400/40 text-emerald-300 font-extrabold text-[8.5px] cursor-pointer" title="PRO/PRO+ Incoming Audio Call Privacy">Calls: ON</button>
                     <button type="button" id="dm-forward-lock-toggle-btn" onclick="window.toggleMyForwardLock()" class="px-1.5 py-0.5 rounded bg-zinc-900/90 border border-amber-400/40 text-amber-300 font-extrabold text-[8.5px] cursor-pointer">Fwd: ON</button>
                     <button type="button" id="dm-last-seen-toggle-btn" onclick="window.toggleMyLastSeenPrivacy()" class="px-1.5 py-0.5 rounded bg-zinc-900/90 border border-cyan-400/40 text-cyan-300 font-extrabold text-[8.5px] cursor-pointer">Last Seen: ON</button>
                 </div>
@@ -4697,10 +5136,16 @@ html.theme-ghost-live {
                             <div id="dm-active-partner-sub" class="text-[10px] font-mono text-emerald-400 truncate mt-0.5">Online</div>
                         </div>
                     </div>
-                    <button type="button" onclick="window.openDmPartnerProfileModal()" class="px-2.5 py-1.5 rounded-lg cyber-card border border-cyan-400/40 text-cyan-300 text-[10px] font-extrabold cursor-pointer shrink-0 flex items-center gap-1" title="View Profile, Pin, Block or Report">
-                        <span>Profile</span>
-                        <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                    </button>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button type="button" id="dm-audio-call-btn" onclick="window.startPrivateDmAudioCall()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600/25 hover:bg-emerald-600/40 border border-emerald-400/50 text-emerald-300 text-[10px] font-extrabold cursor-pointer flex items-center gap-1 shadow" title="Start 1-to-1 Voice Call">
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                            <span>Call</span>
+                        </button>
+                        <button type="button" onclick="window.openDmPartnerProfileModal()" class="px-2 py-1.5 rounded-lg cyber-card border border-cyan-400/40 text-cyan-300 text-[10px] font-extrabold cursor-pointer flex items-center gap-0.5" title="View Profile, Pin, Block or Report">
+                            <span>Profile</span>
+                            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 1-to-1 Messages Scroll Box -->
@@ -9427,6 +9872,7 @@ CRITICAL RULES:
 
         window.openSaveSquadModal = function() {
             window.switchTab('profile');
+            if (typeof window.switchProfileSubTab === 'function') window.switchProfileSubTab('squad');
             setTimeout(() => {
                 const sqEl = document.getElementById('sq-teamName');
                 if (sqEl) {
@@ -10180,7 +10626,21 @@ CRITICAL RULES:
             if (tab === 'chat' && typeof window.openFullScreenChat === 'function') {
                 window.openFullScreenChat();
             }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const subTxt = document.getElementById('app-native-screen-subtitle-txt');
+            if (subTxt) {
+                const mapTitles = {
+                    'home': 'Arena Lobby',
+                    'matches': 'Battleground Lobby',
+                    'roadmap': 'Results & Rankings',
+                    'profile': 'Player Locker',
+                    'chat': 'Live Arena Chat',
+                    'register-paid': 'Paid Match Entry',
+                    'register-free': 'Free Match Entry',
+                    'teams': 'Admin Console'
+                };
+                subTxt.textContent = mapTitles[tab] || 'Arena Lobby';
+            }
+            window.scrollTo({ top: 0, behavior: 'instant' });
         };
 
         window.toggleMenuDropdown = function(e) { if(e) e.stopPropagation(); const dd = document.getElementById('settings-dropdown'); if (!dd) return; dd.classList.toggle('show'); if (dd.classList.contains('show')) { window.updateThemeSwatches(); } };
@@ -11121,15 +11581,15 @@ CRITICAL RULES:
 
             if (!window.loggedEmail || window.loggedEmail === 'guest') {
                 banner.innerHTML = `
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-black text-lg shadow">🎮</div>
-                            <div>
-                                <div class="text-xs font-black text-white uppercase tracking-wide">Ready to Compete in Free Fire Tournaments?</div>
-                                <div class="text-[10px] text-slate-300">Join daily solo & squad custom battles, earn cash prizes via UPI!</div>
+                    <div class="flex items-center justify-between gap-2.5">
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow shrink-0"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-black text-white uppercase truncate">Ready for Custom Battle?</div>
+                                <div class="text-[10px] text-slate-300 truncate">Join daily BR & CS matches • Win UPI Cash</div>
                             </div>
                         </div>
-                        <button type="button" onclick="switchTab('matches')" class="btn-theme px-3.5 py-2 text-xs font-extrabold uppercase shrink-0 cursor-pointer">Explore Matches</button>
+                        <button type="button" onclick="switchTab('matches')" class="btn-theme px-3 py-2 rounded-xl text-[10.5px] font-black uppercase shrink-0 cursor-pointer">Play ›</button>
                     </div>
                 `;
                 return;
@@ -11138,15 +11598,15 @@ CRITICAL RULES:
             const myRegs = allTeams.filter(t => (t.userEmail || '').toLowerCase() === window.loggedEmail && t.status !== 'banned');
             if (myRegs.length === 0) {
                 banner.innerHTML = `
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-black font-black text-lg shadow">⚔️</div>
-                            <div>
-                                <div class="text-xs font-black text-amber-400 uppercase tracking-wide">You are not registered in any upcoming match</div>
-                                <div class="text-[10px] text-slate-300">Choose from Free Entry or High-Prize custom matches today!</div>
+                    <div class="flex items-center justify-between gap-2.5">
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-black shadow shrink-0"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6.92 5H5l9 9 1-.94m4.96 6.06l-.84.84c-.39.39-1.02.39-1.41 0l-3.12-3.12-2.68 2.66-1.41-1.41 1.42-1.42L3 7.75V3h4.75l8.92 8.92 1.42-1.42 1.41 1.41-2.67 2.67 3.12 3.12c.4.4.4 1.03.01 1.42z"/></svg></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-black text-amber-400 uppercase truncate">No Active Match Pass</div>
+                                <div class="text-[10px] text-slate-300 truncate">Book your squad slot in Free or Paid rooms</div>
                             </div>
                         </div>
-                        <button type="button" onclick="switchTab('matches')" class="btn-theme px-3.5 py-2 text-xs font-extrabold uppercase shrink-0 cursor-pointer">Join Match</button>
+                        <button type="button" onclick="switchTab('matches')" class="btn-theme px-3 py-2 rounded-xl text-[10.5px] font-black uppercase shrink-0 cursor-pointer">Join ›</button>
                     </div>
                 `;
                 return;
@@ -12952,6 +13412,9 @@ CRITICAL RULES:
 
         
         window.renderPublicMatches = function() {
+            if (typeof window.renderHomeFeaturedMatches === 'function') {
+                try { window.renderHomeFeaturedMatches(); } catch(e) {}
+            }
             const c = document.getElementById('public-matches-container'); if (!c) return;
             if (allMatches.length === 0) { c.innerHTML = `<div class="cyber-card p-4 text-center text-xs">No matches available.</div>`; return; }
             const isSuper = window.isSuperAdminGlobal; const isAdmin = isSuper || isAdminEmail(window.loggedEmail); const isHost = isSuper || isHostEmail(window.loggedEmail); const showGmailToStaff = isAdmin || isHost;
@@ -18199,6 +18662,7 @@ CRITICAL RULES:
 
         window.openProfileInventorySection = function() {
             window.switchTab('profile');
+            if (typeof window.switchProfileSubTab === 'function') window.switchProfileSubTab('locker');
             setTimeout(() => {
                 window.renderProfileInventoryUI();
                 const el = document.getElementById('profile-inventory-card-box');
@@ -18495,18 +18959,33 @@ CRITICAL RULES:
             return false;
         };
 
-        window.openExternalApkUpdateDownload = function(e, url, ver) {
+        window.openExternalApkUpdateDownload = function(e, url, ver, updatedAtTs) {
             if (e && e.preventDefault) e.preventDefault();
             const targetUrl = String(url || window._latestPublishedApkUrl || '').trim();
             if (!targetUrl || targetUrl === '#') return false;
+            const cleanVer = String(ver || window._latestPublishedApkVersion || '').trim();
+            const cleanTs = String(updatedAtTs || window._latestPublishedApkUpdatedAt || Date.now());
             try {
-                if (ver) {
-                    localStorage.setItem('satta_pai_installed_apk_ver', String(ver).trim());
-                    localStorage.setItem('satta_pai_logged_app_version', 'pending_update_' + String(ver).trim());
+                if (cleanVer) {
+                    window.CURRENT_APP_APK_VERSION = cleanVer;
+                    localStorage.setItem('satta_pai_installed_apk_ver', cleanVer);
+                    localStorage.setItem('satta_pai_installed_apk_ts', cleanTs);
+                    localStorage.setItem('satta_pai_logged_app_version', cleanVer);
+                    sessionStorage.setItem('sp_dismissed_apk_ver_' + cleanVer, '1');
+                    document.cookie = 'satta_pai_installed_apk_ver=' + encodeURIComponent(cleanVer) + '; path=/; max-age=31536000; SameSite=Lax';
+                    document.cookie = 'satta_pai_logged_app_version=' + encodeURIComponent(cleanVer) + '; path=/; max-age=31536000; SameSite=Lax';
+                    if (window.__SP_NATIVE_STORAGE__) {
+                        window.__SP_NATIVE_STORAGE__.installedApkVer = cleanVer;
+                        window.__SP_NATIVE_STORAGE__.installedApkTs = cleanTs;
+                        window.__SP_NATIVE_STORAGE__.appVersion = cleanVer;
+                    }
+                    if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                        window.SattaPaiNativeAuth.postMessage('save_installed_ver:' + cleanVer + '|' + cleanTs);
+                    }
                 }
             } catch(e2) {}
             document.getElementById('app-apk-update-modal')?.classList.add('hidden');
-            window.showToast('🌐 Opening APK Download in Browser...');
+            window.showToast('🌐 Downloading Update (' + (cleanVer || 'Latest') + ') in Browser...');
             window.openExternalBrowserUrl(targetUrl);
             return false;
         };
@@ -18581,15 +19060,22 @@ CRITICAL RULES:
                     const modal = document.getElementById('app-apk-update-modal');
                     if (!isAppEnv || !modal) return;
 
-                    const curVer = window.CURRENT_APP_APK_VERSION || '1.0.0';
+                    window._latestPublishedApkUpdatedAt = Number(d.updatedAt || 0);
+                    const nativeObj = window.__SP_NATIVE_STORAGE__ || null;
+                    const ackedVer = (nativeObj && nativeObj.installedApkVer) || localStorage.getItem('satta_pai_installed_apk_ver') || (window.getSpCookieVal ? window.getSpCookieVal('satta_pai_installed_apk_ver') : '') || '';
+                    const ackedTs = Number((nativeObj && nativeObj.installedApkTs) || localStorage.getItem('satta_pai_installed_apk_ts') || 0);
                     const remoteVer = String(d.version || '').trim();
-                    const alreadyInstalledVer = localStorage.getItem('satta_pai_installed_apk_ver') || '';
-                    const isDismissedThisSession = sessionStorage.getItem('sp_dismissed_apk_ver_' + remoteVer) === '1';
-                    const isNewerVersion = remoteVer && window.compareAppVersions(remoteVer, curVer) > 0 && alreadyInstalledVer !== remoteVer;
+                    const remoteTs = Number(d.updatedAt || 0);
 
-                    // If current version >= remoteVer, mark as installed so update modal NEVER shows!
-                    if (remoteVer && window.compareAppVersions(curVer, remoteVer) >= 0) {
-                        try { localStorage.setItem('satta_pai_installed_apk_ver', remoteVer); } catch(e) {}
+                    if (ackedVer && (!remoteVer || window.compareAppVersions(ackedVer, window.CURRENT_APP_APK_VERSION || '1.0.0') >= 0)) {
+                        window.CURRENT_APP_APK_VERSION = ackedVer;
+                    }
+                    const curVer = window.CURRENT_APP_APK_VERSION || '1.0.0';
+                    const isSameUpdateAlreadyInstalled = (ackedVer === remoteVer) && (!remoteTs || !ackedTs || ackedTs >= (remoteTs - 10000));
+                    const isDismissedThisSession = sessionStorage.getItem('sp_dismissed_apk_ver_' + remoteVer) === '1';
+                    const isNewerVersion = remoteVer && !isSameUpdateAlreadyInstalled && (window.compareAppVersions(remoteVer, curVer) > 0 || (ackedVer === remoteVer && remoteTs > ackedTs + 10000));
+
+                    if (remoteVer && (isSameUpdateAlreadyInstalled || window.compareAppVersions(curVer, remoteVer) >= 0)) {
                         modal.classList.add('hidden');
                         return;
                     }
@@ -18604,7 +19090,7 @@ CRITICAL RULES:
                         if (dlBtn) {
                             dlBtn.href = d.apkUrl;
                             dlBtn.onclick = function(ev) {
-                                return window.openExternalApkUpdateDownload(ev, d.apkUrl, remoteVer);
+                                return window.openExternalApkUpdateDownload(ev, d.apkUrl, remoteVer, remoteTs);
                             };
                         }
                         if (laterBtn) {
@@ -18885,16 +19371,27 @@ CRITICAL RULES:
             return false;
         };
 
-        // Free users chatting with a PRO/PRO+ member are strictly blocked from taking screenshots!
-        // PRO & PRO+ members CAN take normal screenshots, but Screen Sharing / Mirroring turns the screen BLACK!
+        // Screenshot Rule:
+        // - If the opposite person (partnerEm) is a PRO or PRO+ member (partnerVip === true), NOBODY (neither Free nor PRO/PRO+) can take a screenshot of their chat!
+        // - If the opposite person is a Free user (!partnerVip) and I am PRO/PRO+, I CAN take screenshots (while Screen Share still turns black)!
+        window.isPartnerVipInCurrentDm = function(partnerEmRaw) {
+            const partnerEm = String(partnerEmRaw || window._activeDmPartnerEmail || '').trim().toLowerCase();
+            if (!partnerEm) return false;
+            if (window.isEmailVipOrProPlus && window.isEmailVipOrProPlus(partnerEm)) return true;
+            // Also check if any message from this partner has isVip or isProPlus flag
+            if ((window._allDmMessages || []).some(m => String(m.senderEmail || '').toLowerCase() === partnerEm && (m.isVip || m.isProPlus || m.vipTier === 'pro' || m.vipTier === 'pro_plus'))) {
+                return true;
+            }
+            return false;
+        };
+
         window.isFreeUserBlockedFromScreenshottingVip = function() {
             const chatModal = document.getElementById('chat-fullscreen');
             const isDmOpen = Boolean(chatModal && chatModal.classList.contains('active') && window._currentChatTabMode === 'dm');
             if (!isDmOpen) return false;
-            const myVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
             const partnerEm = (window._activeDmPartnerEmail || '').toLowerCase();
-            const partnerVip = partnerEm ? window.isEmailVipOrProPlus(partnerEm) : false;
-            return (!myVip && partnerVip);
+            if (!partnerEm) return false;
+            return window.isPartnerVipInCurrentDm(partnerEm);
         };
 
         window.isActiveDmScreenshotProtected = function() {
@@ -19218,7 +19715,8 @@ CRITICAL RULES:
                             if (typeof window.triggerSystemMatchNotification === 'function') {
                                 window.triggerSystemMatchNotification(
                                     `💬 Private DM from ${senderDisplay}`,
-                                    cleanPreview
+                                    cleanPreview,
+                                    sEm
                                 );
                             }
                         } else {
@@ -19726,7 +20224,7 @@ CRITICAL RULES:
                 const s = String(m.senderEmail || '').toLowerCase();
                 const r = String(m.receiverEmail || '').toLowerCase();
                 return (s === myEm && r === partner) || (s === partner && r === myEm);
-            });
+            }).slice(-60);
 
             if (threadMsgs.length === 0) {
                 box.innerHTML = '<div class="text-center text-xs text-slate-400 my-auto py-8">🔒 End-to-End Encrypted Private Arena Chat. Say Vanakkam!</div>';
@@ -19786,7 +20284,7 @@ CRITICAL RULES:
                                <span class="w-1 h-2 bg-emerald-300 rounded"></span><span class="w-1 h-3 bg-emerald-300 rounded"></span><span class="w-1 h-1.5 bg-emerald-300 rounded"></span><span class="w-1 h-3 bg-emerald-300 rounded"></span><span class="w-1 h-2 bg-emerald-300 rounded"></span><span class="w-1 h-2.5 bg-emerald-300 rounded"></span><span class="w-1 h-1.5 bg-emerald-300 rounded"></span>
                            </div>
                            <span class="text-[9px] font-mono font-bold text-amber-200">${Number(m.audioDuration || 1)}s</span>
-                           <span onclick="event.stopPropagation(); window.cycleVoicePlaybackRate(this)" class="px-1.5 py-0.2 rounded bg-black/50 border border-white/20 text-[8.5px] font-mono font-extrabold text-cyan-300 cursor-pointer" title="Playback Speed">1x</span>
+                           <button type="button" onclick="event.stopPropagation(); window.cycleVoicePlaybackRate(this, '${window.escapeJsStr(msgKey)}')" class="dm-voice-speed-pill px-1.5 py-0.5 rounded bg-black/60 border border-cyan-400/50 text-[9px] font-mono font-black text-cyan-300 cursor-pointer shrink-0" title="Tap to change speed (1x / 1.5x / 2x)">${(window._currentVoicePlaybackRate || 1)}x</button>
                        </div>`
                     : bodyHtml;
 
@@ -20730,32 +21228,66 @@ CRITICAL RULES:
             }
         };
 
-        window.triggerSystemMatchNotification = function(title, body) {
+        window.openDirectDmFromNotification = function(partnerEmailRaw) {
+            const partner = String(partnerEmailRaw || '').trim().toLowerCase();
+            if (!partner || !partner.includes('@')) return;
+            try {
+                document.querySelectorAll('[id$="-modal"]').forEach(m => m.classList.add('hidden'));
+                if (typeof window.openFullScreenChat === 'function') window.openFullScreenChat();
+                if (typeof window.switchChatTabMode === 'function') window.switchChatTabMode('dm');
+                setTimeout(() => {
+                    if (typeof window.openPrivateDmConversationWith === 'function') {
+                        window.openPrivateDmConversationWith(partner);
+                    }
+                }, 80);
+            } catch(e) {}
+        };
+
+        window.triggerSystemMatchNotification = function(title, body, dmPartnerEmail = '') {
             const cleanTitle = String(title || 'Satta Pai Esports').trim();
             const cleanBody = String(body || '').trim();
-            // 1. Trigger Native Android Mobile Notification Bar via Flutter MethodChannel Bridge!
+            const cleanDmEmail = String(dmPartnerEmail || '').trim().toLowerCase();
+            // 1. Trigger Native Android Mobile Notification Bar with deep-link dmEmail!
             try {
                 if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
                     window.SattaPaiNativeAuth.postMessage('notify:' + JSON.stringify({
                         title: cleanTitle,
                         body: cleanBody,
-                        id: Math.floor(Date.now() % 100000)
+                        id: Math.floor(Date.now() % 100000),
+                        dmEmail: cleanDmEmail
                     }));
                 }
             } catch(e) {}
-            // 2. Also trigger Web Notification API if supported
+            // 2. Also trigger Web Notification API with onclick deep-link to Private DM
             if ("Notification" in window && Notification.permission === "granted") {
                 try {
-                    new Notification(cleanTitle, {
+                    const n = new Notification(cleanTitle, {
                         body: cleanBody,
                         icon: window.currentBrandLogoDataURL || window.DEFAULT_SATTA_PAI_LOGO_DATA_URL,
                         requireInteraction: true
                     });
+                    if (cleanDmEmail) {
+                        n.onclick = function() {
+                            window.focus();
+                            window.openDirectDmFromNotification(cleanDmEmail);
+                            n.close();
+                        };
+                    }
                 } catch(e) {}
             }
-            // 3. Show non-intrusive toast alert
+            // 3. Show clickable toast alert (tapping toast also jumps directly to that DM!)
             if (typeof window.showToast === 'function') {
                 window.showToast(`${cleanTitle} — ${cleanBody.slice(0, 70)}`);
+                if (cleanDmEmail) {
+                    const toastEl = document.getElementById('toast-box');
+                    if (toastEl) {
+                        toastEl.style.cursor = 'pointer';
+                        toastEl.onclick = function() {
+                            toastEl.onclick = null;
+                            window.openDirectDmFromNotification(cleanDmEmail);
+                        };
+                    }
+                }
             }
         };
 
@@ -21863,12 +22395,12 @@ CRITICAL RULES:
             const msg = window.aiMaskBadWords ? window.aiMaskBadWords(rawMsg) : rawMsg;
             const now = Date.now();
             const isProPlus = window.isCurrentUserProPlus ? window.isCurrentUserProPlus() : false;
-            const cooldownMs = (isSuper || isProPlus || isAdmin || isHost) ? 0 : (window.isCurrentUserVip() ? 5000 : 15000);
+            const cooldownMs = (isSuper || isProPlus || isAdmin || isHost) ? 0 : (window.isCurrentUserVip() ? 5000 : 10000);
             if (cooldownMs > 0) {
                 const lastTime = Number(window.lastUserMsgTime || 0);
                 if (now - lastTime < cooldownMs) {
                     const remaining = Math.ceil((cooldownMs - (now - lastTime)) / 1000);
-                    window.showToast(`⏳ Chat Cooldown (${window.isCurrentUserVip() ? '5s ⭐ PRO' : '15s Free'}): Wait ${remaining}s! (👑 PRO+ has 0s No Cooldown)`);
+                    window.showToast(`⏳ Chat Cooldown (${window.isCurrentUserVip() ? '5s PRO' : '10s Free'}): Wait ${remaining}s! (PRO+ has Unlimited 0s)`);
                     return;
                 }
             }
@@ -23015,6 +23547,120 @@ CRITICAL RULES:
         </div>
     </div>
 
+    <!-- 📞 1. WHATSAPP-STYLE TOP HEADS-UP INCOMING CALL BANNER (Shows on top of any screen/game) -->
+    <div id="dm-heads-up-call-banner" style="z-index: 9999998 !important;" class="fixed top-2.5 left-3 right-3 max-w-md mx-auto hidden rounded-2xl p-3 bg-zinc-950/95 border-2 border-emerald-400 shadow-2xl text-white">
+        <div class="flex items-center justify-between gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer" onclick="window.restoreDmCallFromPip()">
+                <div class="relative shrink-0">
+                    <span class="absolute inset-0 rounded-full bg-emerald-400/40 animate-ping"></span>
+                    <img id="dm-headsup-caller-dp" src="" class="relative w-11 h-11 rounded-full object-cover border-2 border-emerald-400" alt="Caller">
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                        <span class="px-1.5 py-0.2 rounded bg-emerald-500 text-black font-black text-[8px] uppercase">SATTA PAI CALL</span>
+                        <span class="text-[9.5px] font-mono text-emerald-300 truncate">Encrypted Voice</span>
+                    </div>
+                    <div id="dm-headsup-caller-name" class="text-xs font-black text-white truncate mt-0.5">Player Calling...</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <button type="button" onclick="window.endActiveDmAudioCall('declined')" class="w-10 h-10 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg cursor-pointer" title="Decline Call">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+                </button>
+                <button type="button" onclick="window.answerIncomingDmAudioCall()" class="px-3.5 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs flex items-center gap-1 shadow-lg cursor-pointer animate-bounce" title="Answer Call">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <span>Answer</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🟢 2. FLOATING MINIMIZED ACTIVE CALL PILL (Picture-in-Picture Voice Call Bar) -->
+    <div id="dm-floating-call-pip" onclick="window.restoreDmCallFromPip()" style="z-index: 9999997 !important;" class="fixed top-16 right-3 hidden px-3 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-700 text-white border-2 border-emerald-300 shadow-2xl flex items-center gap-2 cursor-pointer">
+        <span class="w-2.5 h-2.5 rounded-full bg-white animate-ping"></span>
+        <span id="dm-pip-call-timer" class="text-xs font-mono font-black">00:00</span>
+        <span class="text-[10px] font-extrabold uppercase">Return to Call ›</span>
+    </div>
+
+    <!-- 📞 3. UNIQUE SATTA PAI HOLOGRAPHIC CYBER-PULSE FULLSCREEN VOICE CALL SCREEN -->
+    <div id="dm-audio-call-modal" style="z-index: 999995 !important; background: radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.24) 0%, rgba(6, 182, 212, 0.12) 38%, rgba(5, 8, 15, 0.98) 80%) !important;" class="fixed inset-0 z-[999995] hidden flex flex-col justify-between p-5 text-white select-none overflow-hidden">
+        <!-- Top Call Security & Minimize Bar -->
+        <div class="w-full max-w-sm mx-auto flex items-center justify-between pt-2">
+            <button type="button" onclick="window.minimizeDmCallToPip()" class="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-extrabold flex items-center gap-1 cursor-pointer">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                <span>Minimize</span>
+            </button>
+            <div class="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-[10px] font-mono font-extrabold text-emerald-300 flex items-center gap-1.5" id="dm-call-header-pill">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>SATTA PAI E2EE VOICE</span>
+            </div>
+        </div>
+
+        <!-- Center Caller Holographic Radar & Spectrum Equalizer -->
+        <div class="my-auto flex flex-col items-center justify-center text-center space-y-5">
+            <div class="relative w-32 h-32 flex items-center justify-center">
+                <div id="dm-call-radar-rings" class="absolute inset-0">
+                    <div class="sp-call-ring-1"></div>
+                    <div class="sp-call-ring-2"></div>
+                    <div class="sp-call-ring-3"></div>
+                </div>
+                <img id="dm-call-partner-dp" src="" class="relative w-28 h-28 rounded-full object-cover border-4 border-emerald-400 shadow-2xl z-10" alt="Caller DP">
+                <span class="absolute -bottom-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-black font-black text-[9px] uppercase tracking-wider shadow z-20">ARENA VOICE</span>
+            </div>
+
+            <div class="space-y-1">
+                <h3 id="dm-call-partner-name" class="text-xl font-black text-white tracking-tight truncate max-w-[260px]">Player</h3>
+                <p id="dm-call-status-lbl" class="text-xs font-mono font-bold text-amber-300">Ringing...</p>
+            </div>
+
+            <!-- Live 9-Bar Voice Equalizer Waveform (Visible when call is connected) -->
+            <div id="dm-call-voice-wave" class="hidden h-8 flex items-center justify-center gap-1.5 px-5 py-1.5 rounded-full bg-white/5 border border-emerald-400/30">
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+                <span class="sp-voice-bar"></span>
+            </div>
+        </div>
+
+        <audio id="dm-webrtc-remote-audio" autoplay playsinline class="hidden"></audio>
+
+        <!-- Bottom Call Control Dock -->
+        <div class="w-full max-w-sm mx-auto pb-6">
+            <!-- Incoming Call Answer / Decline Dock -->
+            <div id="dm-call-incoming-actions" class="hidden grid grid-cols-2 gap-4 p-3 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <button type="button" onclick="window.endActiveDmAudioCall('declined')" class="py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase cursor-pointer shadow-xl flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+                    <span>Decline</span>
+                </button>
+                <button type="button" onclick="window.answerIncomingDmAudioCall()" class="py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase cursor-pointer shadow-xl flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <span>Answer</span>
+                </button>
+            </div>
+
+            <!-- Active / Outgoing Call Controls Dock -->
+            <div id="dm-call-active-actions" class="grid grid-cols-3 gap-2.5 p-3 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <button type="button" id="dm-call-mute-btn" onclick="window.toggleDmCallMicMute()" class="py-3 rounded-2xl bg-white/10 border border-white/15 text-slate-100 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+                    <span>Mic: ON</span>
+                </button>
+                <button type="button" id="dm-call-speaker-btn" onclick="window.toggleDmCallSpeakerBoost()" class="py-3 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                    <span>Speaker</span>
+                </button>
+                <button type="button" onclick="window.endActiveDmAudioCall('ended')" class="py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-[11px] uppercase cursor-pointer shadow-lg flex flex-col items-center justify-center gap-1">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+                    <span>End Call</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ✨ PRO FREE FIRE IGN & GUILD NAME UNICODE STYLER MODAL (V10.0 LEGEND) -->
     <div id="ign-name-styler-modal" style="z-index: 99998 !important;" class="fixed inset-0 z-[99998] hidden flex items-center justify-center p-4 bg-black/90" onclick="if(event.target === this) this.classList.add('hidden')">
         <div class="cyber-card p-4 max-w-sm w-full max-h-[88vh] overflow-y-auto space-y-3 text-xs border-2 border-rose-400/60 shadow-2xl" onclick="event.stopPropagation()">
@@ -23615,20 +24261,98 @@ GHOST SQUAD, 0, 11, 39</textarea>
             };
 
             window._activeDmVoiceAudio = null;
-            window.togglePlayDmVoiceNote = function(containerEl, msgKey) {
+            window._activeDmVoiceBtn = null;
+            window._activeDmVoiceSourceNode = null;
+            window._currentVoicePlaybackRate = 1.0;
+
+            window.stopActiveDmVoiceNote = function() {
+                if (window._activeDmVoiceSourceNode) {
+                    try { window._activeDmVoiceSourceNode.stop(); } catch(e) {}
+                    window._activeDmVoiceSourceNode = null;
+                }
+                if (window._activeDmVoiceAudio) {
+                    try { window._activeDmVoiceAudio.pause(); } catch(e) {}
+                    window._activeDmVoiceAudio = null;
+                }
+                if (window._activeDmVoiceBtn) {
+                    window._activeDmVoiceBtn.textContent = '▶';
+                    window._activeDmVoiceBtn = null;
+                }
+            };
+
+            window.togglePlayDmVoiceNote = async function(containerEl, msgKey, forceRestartWithNewSpeed = false) {
                 const msg = (window._allDmMessages || []).find(m => m && (m.id === msgKey || m.clientMsgId === msgKey));
                 if (!msg || !msg.audioData) return;
                 const btn = containerEl ? containerEl.querySelector('button') : null;
-                if (window._activeDmVoiceAudio && !window._activeDmVoiceAudio.paused) {
-                    window._activeDmVoiceAudio.pause();
-                    if (btn) btn.textContent = '▶';
+                const rate = Number(window._currentVoicePlaybackRate) || 1.0;
+
+                if (!forceRestartWithNewSpeed && (window._activeDmVoiceAudio || window._activeDmVoiceSourceNode) && window._activeDmVoiceKey === msgKey) {
+                    window.stopActiveDmVoiceNote();
                     return;
                 }
-                const audio = new Audio(msg.audioData);
-                window._activeDmVoiceAudio = audio;
+
+                window.stopActiveDmVoiceNote();
+                window._activeDmVoiceKey = msgKey;
+                window._activeDmVoiceBtn = btn;
                 if (btn) btn.textContent = '⏸';
-                audio.onended = () => { if (btn) btn.textContent = '▶'; };
-                audio.play().catch(() => { if (btn) btn.textContent = '▶'; });
+
+                // Primary: Use Web Audio API AudioBufferSourceNode for 100% hardware-accurate 1x / 1.5x / 2x speed on all Android WebViews!
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) {
+                        if (!window._dmVoiceAudioCtx) window._dmVoiceAudioCtx = new AudioCtx();
+                        const ctx = window._dmVoiceAudioCtx;
+                        if (ctx.state === 'suspended') await ctx.resume();
+                        const b64Part = String(msg.audioData).split(',')[1] || '';
+                        const binStr = atob(b64Part);
+                        const len = binStr.length;
+                        const bytes = new Uint8Array(len);
+                        for (let i = 0; i < len; i++) bytes[i] = binStr.charCodeAt(i);
+                        const audioBuffer = await ctx.decodeAudioData(bytes.buffer.slice(0));
+                        const source = ctx.createBufferSource();
+                        source.buffer = audioBuffer;
+                        source.playbackRate.value = rate;
+                        source.connect(ctx.destination);
+                        window._activeDmVoiceSourceNode = source;
+                        source.onended = () => {
+                            if (window._activeDmVoiceSourceNode === source) {
+                                window._activeDmVoiceSourceNode = null;
+                                if (btn) btn.textContent = '▶';
+                            }
+                        };
+                        source.start(0);
+                        return;
+                    }
+                } catch (webAudioErr) {
+                    // Fallback to HTML5 Audio element with enforced playbackRate on metadata & play
+                }
+
+                try {
+                    const audio = new Audio(msg.audioData);
+                    audio.preservesPitch = true;
+                    audio.mozPreservesPitch = true;
+                    audio.webkitPreservesPitch = true;
+                    audio.defaultPlaybackRate = rate;
+                    audio.playbackRate = rate;
+                    audio.onloadedmetadata = () => {
+                        audio.defaultPlaybackRate = Number(window._currentVoicePlaybackRate) || 1.0;
+                        audio.playbackRate = Number(window._currentVoicePlaybackRate) || 1.0;
+                    };
+                    audio.onplaying = () => {
+                        audio.playbackRate = Number(window._currentVoicePlaybackRate) || 1.0;
+                    };
+                    window._activeDmVoiceAudio = audio;
+                    audio.onended = () => {
+                        if (window._activeDmVoiceAudio === audio) {
+                            window._activeDmVoiceAudio = null;
+                            if (btn) btn.textContent = '▶';
+                        }
+                    };
+                    await audio.play();
+                    audio.playbackRate = Number(window._currentVoicePlaybackRate) || 1.0;
+                } catch (err) {
+                    if (btn) btn.textContent = '▶';
+                }
             };
 
             // =========================================================================
@@ -24217,6 +24941,367 @@ GHOST SQUAD, 0, 11, 39</textarea>
                     window.showToast('Error saving audio URL: ' + e.message);
                 }
             };
+
+            // =========================================================================
+            // 4.9 V11.0 PRIVATE DM 1-TO-1 WEBRTC AUDIO CALL ENGINE & PRO CALL LOCK
+            // =========================================================================
+            window.isMyIncomingCallsLocked = function() {
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (myEm && window.userCache && window.userCache[myEm] && typeof window.userCache[myEm].disableIncomingCalls === 'boolean') {
+                    return window.userCache[myEm].disableIncomingCalls;
+                }
+                return localStorage.getItem('satta_pai_disable_calls_' + myEm) === '1';
+            };
+
+            window.updateCallLockButtonsUI = function() {
+                const locked = window.isMyIncomingCallsLocked();
+                const btn = document.getElementById('dm-call-lock-toggle-btn');
+                if (btn) {
+                    btn.textContent = locked ? '📵 Calls: OFF' : '📞 Calls: ON';
+                    btn.className = locked
+                        ? 'px-1.5 py-0.5 rounded bg-rose-500/25 border border-rose-400/50 text-rose-200 font-extrabold text-[8.5px] cursor-pointer'
+                        : 'px-1.5 py-0.5 rounded bg-zinc-900/90 border border-emerald-400/40 text-emerald-300 font-extrabold text-[8.5px] cursor-pointer';
+                }
+            };
+
+            window.toggleMyIncomingCallsLock = async function() {
+                const isVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
+                if (!isVip) {
+                    window.showToast('⭐ PRO / PRO+ Pass required to disable incoming audio calls!');
+                    return;
+                }
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const next = !window.isMyIncomingCallsLocked();
+                try { localStorage.setItem('satta_pai_disable_calls_' + myEm, next ? '1' : '0'); } catch(e) {}
+                if (window.userCache && window.userCache[myEm]) {
+                    window.userCache[myEm].disableIncomingCalls = next;
+                }
+                window.updateCallLockButtonsUI();
+                try {
+                    if (window.setDoc && window.doc && window.db) {
+                        await window.setDoc(window.doc(window.db, 'users', myEm), { email: myEm, disableIncomingCalls: next, updatedAt: Date.now() }, { merge: true });
+                    }
+                } catch(e) {}
+                window.showToast(next
+                    ? '📵 Incoming Audio Calls Disabled! Nobody can call you in Private DM.'
+                    : '📞 Incoming Audio Calls Enabled!');
+            };
+
+            window._dmPeerConn = null;
+            window._dmLocalAudioStream = null;
+            window._dmCallUnsub = null;
+            window._dmCallListenerUnsub = null;
+            window._dmCallDurationTimer = null;
+            window._dmCallSeconds = 0;
+            window._activeCallDocId = '';
+            window._incomingCallSnapData = null;
+
+            const RTC_ICE_CONFIG = {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            };
+
+            window.cleanupDmWebRtcResources = function() {
+                clearInterval(window._dmCallDurationTimer);
+                window._dmCallDurationTimer = null;
+                if (window._dmCallUnsub) {
+                    try { window._dmCallUnsub(); } catch(e) {}
+                    window._dmCallUnsub = null;
+                }
+                if (window._dmLocalAudioStream) {
+                    try { window._dmLocalAudioStream.getTracks().forEach(t => t.stop()); } catch(e) {}
+                    window._dmLocalAudioStream = null;
+                }
+                if (window._dmPeerConn) {
+                    try { window._dmPeerConn.close(); } catch(e) {}
+                    window._dmPeerConn = null;
+                }
+                document.getElementById('dm-audio-call-modal')?.classList.add('hidden');
+            };
+
+            window.startDmCallDurationCounter = function() {
+                clearInterval(window._dmCallDurationTimer);
+                window._dmCallSeconds = 0;
+                const statusEl = document.getElementById('dm-call-status-lbl');
+                window._dmCallDurationTimer = setInterval(() => {
+                    window._dmCallSeconds += 1;
+                    const m = String(Math.floor(window._dmCallSeconds / 60)).padStart(2, '0');
+                    const s = String(window._dmCallSeconds % 60).padStart(2, '0');
+                    if (statusEl) statusEl.textContent = `🟢 Connected • ${m}:${s}`;
+                }, 1000);
+            };
+
+            window.startPrivateDmAudioCall = async function() {
+                if (!window.IS_SATTA_PAI_APP_BUILD && !window.SattaPaiNativeAuth) return;
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !partner) {
+                    window.showToast('🔐 Sign in & select an online player first!');
+                    return;
+                }
+                if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(partner)) {
+                    window.showToast('🚫 Cannot call — user is blocked!');
+                    return;
+                }
+
+                // Check if partner is a PRO/PRO+ member who has disabled incoming calls!
+                try {
+                    const pSnap = await window.getDoc(window.doc(window.db, 'users', partner));
+                    if (pSnap && pSnap.exists()) {
+                        const pData = pSnap.data() || {};
+                        if (window.userCache[partner]) window.userCache[partner].disableIncomingCalls = Boolean(pData.disableIncomingCalls);
+                        const partnerIsVip = window.isPartnerVipInCurrentDm(partner);
+                        if (partnerIsVip && pData.disableIncomingCalls === true) {
+                            window.showToast('📵 This PRO / PRO+ player has disabled incoming audio calls!');
+                            return;
+                        }
+                    }
+                } catch(e) {}
+
+                try {
+                    if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                        window.SattaPaiNativeAuth.postMessage('request_mic_perm');
+                    }
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    window.cleanupDmWebRtcResources();
+                    window._dmLocalAudioStream = stream;
+
+                    const u = (window.userCache && window.userCache[partner]) || {};
+                    const pName = window.getPublicPlayerDisplayName(partner, u, '');
+                    const pDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(partner, u, null, pName) : '';
+                    const dpEl = document.getElementById('dm-call-partner-dp');
+                    const nmEl = document.getElementById('dm-call-partner-name');
+                    const stEl = document.getElementById('dm-call-status-lbl');
+                    if (dpEl) dpEl.src = pDp;
+                    if (nmEl) nmEl.textContent = pName;
+                    if (stEl) stEl.textContent = 'Calling...'; if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('outgoing');
+                    document.getElementById('dm-call-incoming-actions')?.classList.add('hidden');
+                    document.getElementById('dm-call-active-actions')?.classList.remove('hidden');
+                    document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+
+                    const pc = new RTCPeerConnection(RTC_ICE_CONFIG);
+                    window._dmPeerConn = pc;
+                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+                    pc.ontrack = (event) => {
+                        const remAudio = document.getElementById('dm-webrtc-remote-audio');
+                        if (remAudio && event.streams && event.streams[0]) {
+                            remAudio.srcObject = event.streams[0];
+                            remAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const callerCandidates = [];
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            callerCandidates.push(event.candidate.toJSON());
+                            window.setDoc(window.doc(window.db, 'dm_calls', partner), { callerCandidates: callerCandidates.slice(-15) }, { merge: true }).catch(() => {});
+                        }
+                    };
+
+                    const offer = await pc.createOffer();
+                    await pc.setLocalDescription(offer);
+
+                    const myU = (window.userCache && window.userCache[myEm]) || {};
+                    const myName = window.getPublicPlayerDisplayName(myEm, myU, '');
+                    window._activeCallDocId = partner;
+
+                    await window.setDoc(window.doc(window.db, 'dm_calls', partner), {
+                        callerEmail: myEm,
+                        callerName: myName,
+                        calleeEmail: partner,
+                        status: 'ringing',
+                        offer: { type: offer.type, sdp: offer.sdp },
+                        answer: null,
+                        callerCandidates: [],
+                        calleeCandidates: [],
+                        timestamp: Date.now()
+                    });
+
+                    const addedCalleeIce = new Set();
+                    window._dmCallUnsub = window.onSnapshot(window.doc(window.db, 'dm_calls', partner), async (snap) => {
+                        if (!snap.exists()) return;
+                        const data = snap.data() || {};
+                        if (data.status === 'declined' || data.status === 'ended') {
+                            window.showToast(data.status === 'declined' ? '📵 Call declined' : '☎️ Call ended');
+                            window.cleanupDmWebRtcResources();
+                            return;
+                        }
+                        if (data.answer && pc.signalingState !== 'stable') {
+                            try {
+                                await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+                                window.startDmCallDurationCounter();
+                            } catch(e) {}
+                        }
+                        if (Array.isArray(data.calleeCandidates)) {
+                            for (const c of data.calleeCandidates) {
+                                const key = JSON.stringify(c);
+                                if (!addedCalleeIce.has(key)) {
+                                    addedCalleeIce.add(key);
+                                    try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+                                }
+                            }
+                        }
+                    });
+                } catch (err) {
+                    window.showToast('🎤 Allow Microphone permission to make voice calls!');
+                    window.cleanupDmWebRtcResources();
+                }
+            };
+
+            window.answerIncomingDmAudioCall = async function() {
+                const callData = window._incomingCallSnapData;
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!callData || !callData.offer || !myEm) return;
+                try {
+                    if (window.SattaPaiNativeAuth && typeof window.SattaPaiNativeAuth.postMessage === 'function') {
+                        window.SattaPaiNativeAuth.postMessage('request_mic_perm');
+                    }
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    window._dmLocalAudioStream = stream;
+
+                    document.getElementById('dm-call-incoming-actions')?.classList.add('hidden');
+                    document.getElementById('dm-call-active-actions')?.classList.remove('hidden');
+
+                    const pc = new RTCPeerConnection(RTC_ICE_CONFIG);
+                    window._dmPeerConn = pc;
+                    stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+                    pc.ontrack = (event) => {
+                        const remAudio = document.getElementById('dm-webrtc-remote-audio');
+                        if (remAudio && event.streams && event.streams[0]) {
+                            remAudio.srcObject = event.streams[0];
+                            remAudio.play().catch(() => {});
+                        }
+                    };
+
+                    const calleeCandidates = [];
+                    pc.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            calleeCandidates.push(event.candidate.toJSON());
+                            window.setDoc(window.doc(window.db, 'dm_calls', myEm), { calleeCandidates: calleeCandidates.slice(-15) }, { merge: true }).catch(() => {});
+                        }
+                    };
+
+                    await pc.setRemoteDescription(new RTCSessionDescription(callData.offer));
+                    const answer = await pc.createAnswer();
+                    await pc.setLocalDescription(answer);
+
+                    window._activeCallDocId = myEm;
+                    await window.setDoc(window.doc(window.db, 'dm_calls', myEm), {
+                        status: 'connected',
+                        answer: { type: answer.type, sdp: answer.sdp }
+                    }, { merge: true });
+
+                    window.startDmCallDurationCounter();
+
+                    const addedCallerIce = new Set();
+                    window._dmCallUnsub = window.onSnapshot(window.doc(window.db, 'dm_calls', myEm), async (snap) => {
+                        if (!snap.exists()) return;
+                        const d = snap.data() || {};
+                        if (d.status === 'ended' || d.status === 'declined') {
+                            window.showToast('☎️ Call ended');
+                            window.cleanupDmWebRtcResources();
+                            return;
+                        }
+                        if (Array.isArray(d.callerCandidates)) {
+                            for (const c of d.callerCandidates) {
+                                const key = JSON.stringify(c);
+                                if (!addedCallerIce.has(key)) {
+                                    addedCallerIce.add(key);
+                                    try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(e) {}
+                                }
+                            }
+                        }
+                    });
+                } catch (err) {
+                    window.showToast('🎤 Microphone permission required to answer call!');
+                    window.endActiveDmAudioCall('declined');
+                }
+            };
+
+            window.endActiveDmAudioCall = async function(reason = 'ended') {
+                const docId = window._activeCallDocId || (window.loggedEmail || '').toLowerCase();
+                window.cleanupDmWebRtcResources();
+                if (docId && window.setDoc && window.doc && window.db) {
+                    try {
+                        await window.setDoc(window.doc(window.db, 'dm_calls', docId), { status: reason, updatedAt: Date.now() }, { merge: true });
+                    } catch(e) {}
+                }
+            };
+
+            window.toggleDmCallMicMute = function() {
+                if (!window._dmLocalAudioStream) return;
+                const track = window._dmLocalAudioStream.getAudioTracks()[0];
+                if (!track) return;
+                track.enabled = !track.enabled;
+                const btn = document.getElementById('dm-call-mute-btn');
+                if (btn) {
+                    const spanEl = btn.querySelector('span');
+                    if (spanEl) spanEl.textContent = track.enabled ? 'Mic: ON' : 'MUTED';
+                    else btn.textContent = track.enabled ? 'Mic: ON' : 'MUTED';
+                    btn.className = track.enabled
+                        ? 'py-3 rounded-2xl bg-white/10 border border-white/15 text-slate-100 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1'
+                        : 'py-3 rounded-2xl bg-amber-500/25 border border-amber-400 text-amber-300 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1';
+                }
+            };
+
+            window.startIncomingDmCallListener = function() {
+                if (!window.IS_SATTA_PAI_APP_BUILD && !window.SattaPaiNativeAuth) return;
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest' || !window.onSnapshot || !window.doc || !window.db) return;
+                if (window._dmCallListenerEmail === myEm && window._dmCallListenerUnsub) return;
+                if (window._dmCallListenerUnsub) {
+                    try { window._dmCallListenerUnsub(); } catch(e) {}
+                }
+                window._dmCallListenerEmail = myEm;
+                window._dmCallListenerUnsub = window.onSnapshot(window.doc(window.db, 'dm_calls', myEm), (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const ageMs = Date.now() - Number(d.timestamp || 0);
+                    if (d.status === 'ringing' && ageMs < 45000 && d.callerEmail && d.callerEmail !== myEm) {
+                        const isVip = Boolean((window.isCurrentUserProPlus && window.isCurrentUserProPlus()) || (window.isCurrentUserVip && window.isCurrentUserVip()));
+                        if (isVip && window.isMyIncomingCallsLocked()) {
+                            window.setDoc(window.doc(window.db, 'dm_calls', myEm), { status: 'declined' }, { merge: true }).catch(() => {});
+                            return;
+                        }
+                        if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(d.callerEmail)) return;
+                        window._incomingCallSnapData = d;
+                        window._activeCallDocId = myEm;
+                        const cEm = String(d.callerEmail).toLowerCase();
+                        const u = (window.userCache && window.userCache[cEm]) || {};
+                        const cName = d.callerName || window.getPublicPlayerDisplayName(cEm, u, '');
+                        const cDp = window.resolveUserDpUrl ? window.resolveUserDpUrl(cEm, u, null, cName) : '';
+                        const dpEl = document.getElementById('dm-call-partner-dp');
+                        const nmEl = document.getElementById('dm-call-partner-name');
+                        const stEl = document.getElementById('dm-call-status-lbl');
+                        if (dpEl) dpEl.src = cDp;
+                        if (nmEl) nmEl.textContent = cName;
+                        if (stEl) stEl.textContent = 'Incoming Arena Voice Call...';
+                        const hDp = document.getElementById('dm-headsup-caller-dp');
+                        const hNm = document.getElementById('dm-headsup-caller-name');
+                        if (hDp) hDp.src = cDp;
+                        if (hNm) hNm.textContent = cName + ' is calling...';
+                        document.getElementById('dm-heads-up-call-banner')?.classList.remove('hidden');
+                        document.getElementById('dm-call-incoming-actions')?.classList.remove('hidden');
+                        document.getElementById('dm-call-active-actions')?.classList.add('hidden');
+                        document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                        if (typeof window.startDmCallRingtoneLoop === 'function') window.startDmCallRingtoneLoop('incoming');
+                        if (window.triggerSystemMatchNotification) {
+                            window.triggerSystemMatchNotification('Incoming Satta Pai Voice Call', cName + ' is calling you in Private Chat! Tap to Answer.', 'call:' + cEm);
+                        }
+                    }
+                }, () => {});
+            };
+            setTimeout(() => window.startIncomingDmCallListener(), 1500);
+            setInterval(() => {
+                if (window.loggedEmail && window.loggedEmail !== 'guest' && !window._dmCallListenerUnsub) {
+                    window.startIncomingDmCallListener();
+                }
+                window.updateCallLockButtonsUI();
+            }, 6000);
 
             // =========================================================================
             // 5.0 V10.0 LEGEND SUITE: PRO IGN UNICODE STYLER & 4v4 ROOM RULES BUILDER
@@ -24954,16 +26039,34 @@ GHOST SQUAD, 0, 11, 39</textarea>
                 window.clearChatReplyQuote('dm');
             };
 
-            window._currentVoicePlaybackRate = 1.0;
-            window.cycleVoicePlaybackRate = function(badgeEl) {
-                const rates = [1.0, 1.5, 2.0];
-                const nextIdx = (rates.indexOf(window._currentVoicePlaybackRate) + 1) % rates.length;
-                window._currentVoicePlaybackRate = rates[nextIdx];
-                if (badgeEl) badgeEl.textContent = window._currentVoicePlaybackRate + 'x';
-                if (window._activeDmVoiceAudio) {
-                    window._activeDmVoiceAudio.playbackRate = window._currentVoicePlaybackRate;
+            window.cycleVoicePlaybackRate = function(badgeEl, msgKey) {
+                const rates = [1, 1.5, 2];
+                const cur = Number(window._currentVoicePlaybackRate) || 1;
+                const nextIdx = (rates.indexOf(cur) + 1) % rates.length;
+                const nextRate = rates[nextIdx];
+                window._currentVoicePlaybackRate = nextRate;
+
+                // Update all speed pills in the DOM so they stay in sync
+                document.querySelectorAll('.dm-voice-speed-pill').forEach(el => {
+                    el.textContent = nextRate + 'x';
+                });
+
+                // Immediately apply to active WebAudio source node OR HTML5 Audio element!
+                if (window._activeDmVoiceSourceNode && window._activeDmVoiceSourceNode.playbackRate) {
+                    try { window._activeDmVoiceSourceNode.playbackRate.value = nextRate; } catch(e) {}
                 }
-                window.showToast('🎙️ Voice Speed: ' + window._currentVoicePlaybackRate + 'x');
+                if (window._activeDmVoiceAudio) {
+                    try {
+                        window._activeDmVoiceAudio.defaultPlaybackRate = nextRate;
+                        window._activeDmVoiceAudio.playbackRate = nextRate;
+                    } catch(e) {}
+                } else if (msgKey && badgeEl) {
+                    const parentPlayer = badgeEl.closest('div');
+                    if (parentPlayer) {
+                        window.togglePlayDmVoiceNote(parentPlayer, msgKey, true);
+                    }
+                }
+                window.showToast('🎙️ Voice Speed: ' + nextRate + 'x');
             };
 
             window.runArena120FpsRamBooster = function() {
@@ -24995,6 +26098,213 @@ GHOST SQUAD, 0, 11, 39</textarea>
                 window.applyDataUrlToTargetInput(window._activeStudioTargetInputId, 'digital_receipt_' + (utr || 'proof') + '.jpg', 'image/jpeg', dUrl);
             };
         })();
+    
+
+        // 📱 V12.0 NATIVE MOBILE APP UX CONTROLLER
+        window.switchProfileSubTab = function(subTab) {
+            const tabs = ['account', 'locker', 'squad', 'more'];
+            tabs.forEach(t => {
+                const panel = document.getElementById('prof-subpanel-' + t);
+                const btn = document.getElementById('prof-subtab-btn-' + t);
+                if (panel) {
+                    if (t === subTab) panel.classList.remove('hidden');
+                    else panel.classList.add('hidden');
+                }
+                if (btn) {
+                    if (t === subTab) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+            if (subTab === 'locker' && typeof window.renderProfileInventoryUI === 'function') {
+                window.renderProfileInventoryUI();
+            }
+        };
+
+        window.renderHomeFeaturedMatches = function() {
+            const box = document.getElementById('home-featured-matches-preview');
+            if (!box) return;
+            const list = Array.isArray(window.allMatches) ? window.allMatches : (typeof allMatches !== 'undefined' ? allMatches : []);
+            const teams = Array.isArray(window.allTeams) ? window.allTeams : (typeof allTeams !== 'undefined' ? allTeams : []);
+            const activeList = list.filter(m => (m.status || 'not_started') !== 'ended').slice(0, 2);
+            const displayList = activeList.length > 0 ? activeList : list.slice(0, 2);
+
+            if (displayList.length === 0) {
+                box.innerHTML = `
+                    <div class="cyber-card p-3.5 flex items-center justify-between gap-2.5 border border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0"><svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm5 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg></div>
+                            <div>
+                                <div class="text-xs font-extrabold">Daily Custom Rooms</div>
+                                <div class="text-[10px]" style="color: var(--text-muted);">Tap to browse upcoming BR & CS matches</div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="switchTab('matches')" class="btn-theme px-3 py-1.5 text-[10.5px] font-extrabold rounded-xl cursor-pointer">Open Lobby</button>
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = displayList.map(m => {
+                const groups = m.groups ? m.groups.split(',').map(g => g.trim().toUpperCase()) : ['TEAM A', 'TEAM B'];
+                const totalSlots = groups.length * (m.slots || 12);
+                const filledCount = teams.filter(t => t.matchId === m.id && t.status !== 'banned').length;
+                const fillPct = Math.min(100, Math.round((filledCount / Math.max(1, totalSlots)) * 100));
+                const isLive = m.status === 'playing';
+                const feeBadge = m.type === 'free'
+                    ? '<span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-blue-500/20 text-blue-300 border border-blue-400/30">FREE ENTRY</span>'
+                    : `<span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-amber-500/20 text-amber-300 border border-amber-400/40">ENTRY ₹${window.escapeHTML(String(m.fee || 0))}</span>`;
+                const statusDot = isLive
+                    ? '<span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse">🔴 LIVE</span>'
+                    : `<span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">⏰ ${window.escapeHTML(m.time || 'Upcoming')}</span>`;
+
+                return `
+                    <div onclick="switchTab('matches')" class="cyber-card p-3 space-y-2 border border-white/10 cursor-pointer active:scale-[0.98] transition-transform">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-black truncate">${window.escapeHTML(m.title || 'Custom Tournament')}</div>
+                                <div class="text-[10px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                                    <span>🗺️ ${window.escapeHTML(m.map || 'Bermuda')}</span>
+                                    <span>•</span>
+                                    <span class="text-amber-300 font-bold">🏆 Prize: ${window.escapeHTML(m.prize || 'Pool')}</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                ${feeBadge}
+                                ${statusDot}
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 pt-0.5">
+                            <div class="flex-1 bg-zinc-800/90 h-1.5 rounded-full overflow-hidden">
+                                <div class="h-full ${fillPct >= 90 ? 'bg-rose-500' : 'bg-emerald-400'}" style="width: ${fillPct}%"></div>
+                            </div>
+                            <span class="text-[9.5px] font-mono text-slate-300 shrink-0">${filledCount}/${totalSlots} Squads</span>
+                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black text-white shrink-0" style="background: var(--btn-bg);">⚡ Join ›</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+    
+
+        // 📞 V13.0 WHATSAPP-STYLE HEADS-UP CALL RINGTONE, PIP & SPEAKER BOOST ENGINE
+        window._dmRingtoneInterval = null;
+        window._dmSpeakerBoostEnabled = true;
+
+        window.startDmCallRingtoneLoop = function(mode = 'incoming') {
+            window.stopDmCallRingtoneLoop();
+            const playToneCycle = () => {
+                try {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (!Ctx) return;
+                    if (!window._spVoiceAudioCtx) window._spVoiceAudioCtx = new Ctx();
+                    const ctx = window._spVoiceAudioCtx;
+                    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+                    const now = ctx.currentTime;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    if (mode === 'incoming') {
+                        osc.frequency.setValueAtTime(587.33, now);
+                        osc.frequency.setValueAtTime(783.99, now + 0.18);
+                        osc.frequency.setValueAtTime(880.00, now + 0.36);
+                        gain.gain.setValueAtTime(0.18, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.78);
+                        if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+                    } else {
+                        osc.frequency.setValueAtTime(440, now);
+                        gain.gain.setValueAtTime(0.08, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now);
+                        osc.stop(now + 0.68);
+                    }
+                } catch(e) {}
+            };
+            playToneCycle();
+            window._dmRingtoneInterval = setInterval(playToneCycle, 1800);
+        };
+
+        window.stopDmCallRingtoneLoop = function() {
+            if (window._dmRingtoneInterval) {
+                clearInterval(window._dmRingtoneInterval);
+                window._dmRingtoneInterval = null;
+            }
+            try { if (navigator.vibrate) navigator.vibrate(0); } catch(e) {}
+        };
+
+        window.minimizeDmCallToPip = function() {
+            document.getElementById('dm-audio-call-modal')?.classList.add('hidden');
+            document.getElementById('dm-heads-up-call-banner')?.classList.add('hidden');
+            document.getElementById('dm-floating-call-pip')?.classList.remove('hidden');
+        };
+
+        window.restoreDmCallFromPip = function() {
+            document.getElementById('dm-floating-call-pip')?.classList.add('hidden');
+            document.getElementById('dm-heads-up-call-banner')?.classList.add('hidden');
+            document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+        };
+
+        window.toggleDmCallSpeakerBoost = function() {
+            window._dmSpeakerBoostEnabled = !window._dmSpeakerBoostEnabled;
+            const remAudio = document.getElementById('dm-webrtc-remote-audio');
+            if (remAudio) remAudio.volume = window._dmSpeakerBoostEnabled ? 1.0 : 0.45;
+            const btn = document.getElementById('dm-call-speaker-btn');
+            if (btn) {
+                btn.className = window._dmSpeakerBoostEnabled
+                    ? 'py-3 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1'
+                    : 'py-3 rounded-2xl bg-white/10 border border-white/15 text-slate-300 font-extrabold text-[11px] cursor-pointer flex flex-col items-center justify-center gap-1';
+                const sp = btn.querySelector('span');
+                if (sp) sp.textContent = window._dmSpeakerBoostEnabled ? 'Speaker: ON' : 'Earpiece';
+            }
+        };
+
+        (function() {
+            const origCleanup = window.cleanupDmWebRtcResources;
+            window.cleanupDmWebRtcResources = function() {
+                window.stopDmCallRingtoneLoop();
+                document.getElementById('dm-heads-up-call-banner')?.classList.add('hidden');
+                document.getElementById('dm-floating-call-pip')?.classList.add('hidden');
+                document.getElementById('dm-call-voice-wave')?.classList.add('hidden');
+                if (typeof origCleanup === 'function') origCleanup();
+            };
+
+            window.startDmCallDurationCounter = function() {
+                window.stopDmCallRingtoneLoop();
+                document.getElementById('dm-heads-up-call-banner')?.classList.add('hidden');
+                document.getElementById('dm-call-voice-wave')?.classList.remove('hidden');
+                if (window._dmCallTimerInterval) clearInterval(window._dmCallTimerInterval);
+                window._dmCallSeconds = 0;
+                const statusEl = document.getElementById('dm-call-status-lbl');
+                const pipTimer = document.getElementById('dm-pip-call-timer');
+                window._dmCallTimerInterval = setInterval(() => {
+                    window._dmCallSeconds = (window._dmCallSeconds || 0) + 1;
+                    const m = String(Math.floor(window._dmCallSeconds / 60)).padStart(2, '0');
+                    const s = String(window._dmCallSeconds % 60).padStart(2, '0');
+                    if (statusEl) statusEl.textContent = `Connected • ${m}:${s}`;
+                    if (pipTimer) pipTimer.textContent = `${m}:${s}`;
+                }, 1000);
+            };
+
+            const origOpenNotif = window.openDirectDmFromNotification;
+            window.openDirectDmFromNotification = function(rawTarget) {
+                const raw = String(rawTarget || '').trim().toLowerCase();
+                if (!raw) return;
+                const cleanEm = raw.startsWith('call:') ? raw.substring(5) : raw;
+                if (typeof origOpenNotif === 'function') origOpenNotif(cleanEm);
+                if (raw.startsWith('call:')) {
+                    setTimeout(() => {
+                        document.getElementById('dm-audio-call-modal')?.classList.remove('hidden');
+                    }, 350);
+                }
+            };
+        })();
+
     </script>
 </body>
 </html>

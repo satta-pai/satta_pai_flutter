@@ -1,0 +1,1515 @@
+name: Build Satta Pai APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
+  # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
+  APP_VERSION_NAME: "18.0.0"
+  APP_VERSION_CODE: "1800"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.3'
+          channel: 'stable'
+
+      - name: Create Flutter Project & Configure Production Native App
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          mkdir -p /tmp/web_backup
+          if [ -f "app.html" ]; then
+            cp app.html /tmp/web_backup/index.html
+          else
+            cp index.html /tmp/web_backup/index.html
+          fi
+
+          flutter create --org com.sattapai --project-name satta_pai app_build
+          cd app_build
+
+          mkdir -p assets/www
+          cp /tmp/web_backup/index.html assets/www/index.html
+
+          flutter pub add webview_flutter webview_flutter_android url_launcher shared_preferences
+
+          python3 - << 'PYEOF'
+          with open("pubspec.yaml", "r") as f:
+              content = f.read()
+
+          if "assets/www/" not in content:
+              asset_block = "\n  assets:\n    - assets/www/index.html\n"
+              if "uses-material-design: true" in content:
+                  content = content.replace("uses-material-design: true", "uses-material-design: true" + asset_block, 1)
+              else:
+                  content += "\nflutter:\n  uses-material-design: true" + asset_block
+
+          with open("pubspec.yaml", "w") as f:
+              f.write(content)
+          PYEOF
+
+          python3 - << 'PYEOF'
+          import re, base64, os, shutil, json
+
+          with open("assets/www/index.html", "r", encoding="utf-8") as f:
+              html = f.read()
+
+          res_dir = "android/app/src/main/res"
+          for root, dirs, files in os.walk(res_dir):
+              for file in files:
+                  if file.startswith("ic_launcher"):
+                      os.remove(os.path.join(root, file))
+
+          m = re.search(r'id="custom-app-logo-img"\s+src="data:image/[^;]+;base64,([^"]+)"', html)
+          default_bytes = base64.b64decode(m.group(1)) if m else b""
+
+          vip_icons = {}
+          vm = re.search(r'window\.VIP_CUSTOM_APP_ICONS\s*=\s*(\{.*?\});', html)
+          if vm:
+              try:
+                  parsed = json.loads(vm.group(1))
+                  for k, v in parsed.items():
+                      durl = v.get("dataUrl", "")
+                      if "base64," in durl:
+                          vip_icons[k] = base64.b64decode(durl.split("base64,", 1)[1])
+              except Exception:
+                  pass
+
+          for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
+              target_dir = os.path.join(res_dir, folder)
+              os.makedirs(target_dir, exist_ok=True)
+              main_icon = vip_icons.get("icon_cyan") or default_bytes
+              if main_icon:
+                  with open(os.path.join(target_dir, "ic_launcher.webp"), "wb") as out:
+                      out.write(main_icon)
+                  with open(os.path.join(target_dir, "ic_launcher_round.webp"), "wb") as out:
+                      out.write(main_icon)
+              for key in ["icon_cyan", "icon_gold", "icon_purple", "icon_fire"]:
+                  ibytes = vip_icons.get(key) or main_icon
+                  if ibytes:
+                      with open(os.path.join(target_dir, f"ic_{key}.webp"), "wb") as out:
+                          out.write(ibytes)
+          PYEOF
+
+          python3 - << 'PYEOF'
+          manifest_path = "android/app/src/main/AndroidManifest.xml"
+          with open(manifest_path, "r") as f:
+              manifest = f.read()
+
+          perms = """
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+              <uses-permission android:name="android.permission.VIBRATE"/>
+              <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+              <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+              <uses-permission android:name="android.permission.CAMERA"/>
+              <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+              <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+              <uses-permission android:name="android.permission.WAKE_LOCK"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+              <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+              <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
+              <queries>
+                  <package android:name="com.dts.freefiremax"/>
+                  <package android:name="com.dts.freefireth"/>
+                  <package android:name="com.garena.game.ffi"/>
+              </queries>
+          """
+          if "android.permission.INTERNET" not in manifest:
+              manifest = manifest.replace("<application", perms + "\n    <application", 1)
+
+          if 'android:usesCleartextTraffic="true"' not in manifest:
+              manifest = manifest.replace("<application", '<application\n        android:usesCleartextTraffic="true"\n        android:hardwareAccelerated="true"\n        android:allowBackup="true"\n        android:fullBackupContent="true"', 1)
+
+          manifest = manifest.replace('android:label="satta_pai"', 'android:label="Satta Pai"')
+
+          aliases = """
+              <activity-alias
+                  android:name=".IconGoldAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_gold"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+              <activity-alias
+                  android:name=".IconPurpleAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_purple"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+              <activity-alias
+                  android:name=".IconFireAlias"
+                  android:enabled="false"
+                  android:exported="true"
+                  android:icon="@mipmap/ic_icon_fire"
+                  android:label="Satta Pai"
+                  android:targetActivity=".MainActivity">
+                  <intent-filter>
+                      <action android:name="android.intent.action.MAIN"/>
+                      <category android:name="android.intent.category.LAUNCHER"/>
+                  </intent-filter>
+              </activity-alias>
+          """
+          service_decl = """
+              <service
+                  android:name=".SattaPaiKeepAliveService"
+                  android:enabled="true"
+                  android:exported="false"
+                  android:stopWithTask="false"
+                  android:foregroundServiceType="microphone|mediaPlayback" />
+          """
+          if "SattaPaiKeepAliveService" not in manifest:
+              manifest = manifest.replace("</application>", service_decl + "\n" + aliases + "\n    </application>", 1)
+
+          with open(manifest_path, "w") as f:
+              f.write(manifest)
+          PYEOF
+
+          python3 - << 'PYEOF'
+          import os, glob
+
+          kt_files = glob.glob("android/app/src/main/kotlin/**/MainActivity.kt", recursive=True)
+          kt_path = kt_files[0] if kt_files else "android/app/src/main/kotlin/com/sattapai/satta_pai/MainActivity.kt"
+          os.makedirs(os.path.dirname(kt_path), exist_ok=True)
+
+          kt_code = r'''package com.sattapai.satta_pai
+
+          import android.Manifest
+          import android.accounts.AccountManager
+          import android.app.Activity
+          import android.app.Notification
+          import android.app.NotificationChannel
+          import android.app.NotificationManager
+          import android.app.PendingIntent
+          import android.app.Service
+          import android.content.ComponentName
+          import android.content.Context
+          import android.content.Intent
+          import android.content.pm.PackageManager
+          import android.content.pm.ServiceInfo
+          import android.graphics.Bitmap
+          import android.graphics.BitmapFactory
+          import android.graphics.Color
+          import android.media.AudioAttributes
+          import android.media.AudioManager
+          import android.media.RingtoneManager
+          import android.net.Uri
+          import android.os.Build
+          import android.os.Bundle
+          import android.os.IBinder
+          import android.os.PowerManager
+          import android.provider.OpenableColumns
+          import android.util.Base64
+          import android.view.KeyEvent
+          import android.view.WindowManager
+          import android.webkit.WebView
+          import android.widget.Toast
+          import androidx.core.app.ActivityCompat
+          import androidx.core.app.NotificationCompat
+          import androidx.core.content.ContextCompat
+          import io.flutter.embedding.android.FlutterActivity
+          import io.flutter.embedding.engine.FlutterEngine
+          import io.flutter.plugin.common.MethodChannel
+          import org.json.JSONObject
+          import java.io.ByteArrayOutputStream
+          import java.io.File
+          import java.io.FileOutputStream
+
+          class SattaPaiKeepAliveService : Service() {
+              private var wakeLock: PowerManager.WakeLock? = null
+
+              override fun onCreate() {
+                  super.onCreate()
+                  try {
+                      val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+                      wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SattaPai::VoiceCallWakeLock")
+                      wakeLock?.setReferenceCounted(false)
+                  } catch (e: Exception) {}
+              }
+
+              override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+                  val mode = intent?.getStringExtra("mode") ?: "standby"
+                  val partner = intent?.getStringExtra("partner") ?: "Arena Player"
+                  try {
+                      val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val chanId = "satta_pai_voice_service"
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          val chan = NotificationChannel(chanId, "Satta Pai Active Voice Call", NotificationManager.IMPORTANCE_LOW)
+                          chan.description = "Keeps Satta Pai Voice Call & Mic active in background"
+                          nm.createNotificationChannel(chan)
+                      }
+                      val openIntent = Intent(this, MainActivity::class.java).apply {
+                          this.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                      }
+                      val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                      } else {
+                          PendingIntent.FLAG_UPDATE_CURRENT
+                      }
+                      val pi = PendingIntent.getActivity(this, 8801, openIntent, piFlags)
+                      val titleTxt = if (mode == "call") "📞 Active Voice Call • $partner" else "🛡️ Satta Pai Arena Connected"
+                      val bodyTxt = if (mode == "call") "Tap to return to ongoing voice call (Mic Active)" else "Listening for incoming Arena Voice Calls"
+                      val notif = NotificationCompat.Builder(this, chanId)
+                          .setSmallIcon(applicationInfo.icon)
+                          .setContentTitle(titleTxt)
+                          .setContentText(bodyTxt)
+                          .setOngoing(mode == "call")
+                          .setContentIntent(pi)
+                          .build()
+
+                      if (mode == "call") {
+                          wakeLock?.acquire(60 * 60 * 1000L)
+                          val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                          am.mode = AudioManager.MODE_IN_COMMUNICATION
+                          am.isSpeakerphoneOn = true
+                          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                              startForeground(8801, notif, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
+                          } else {
+                              startForeground(8801, notif)
+                          }
+                      } else {
+                          if (wakeLock?.isHeld == true) wakeLock?.release()
+                          val am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                          am.mode = AudioManager.MODE_NORMAL
+                          stopForeground(true)
+                      }
+                  } catch (e: Exception) {}
+                  return START_STICKY
+              }
+
+              override fun onTaskRemoved(rootIntent: Intent?) {
+                  // Keep call service alive even if app is swiped from recents during a call
+                  super.onTaskRemoved(rootIntent)
+              }
+
+              override fun onBind(intent: Intent?): IBinder? = null
+          }
+
+          class MainActivity: FlutterActivity() {
+              private val CHANNEL = "satta_pai/native_auth"
+              private val NOTIF_CHANNEL_ID = "satta_pai_esports_alerts"
+              private val CALL_CHANNEL_ID = "satta_pai_heads_up_calls_v2"
+              private var pendingResult: MethodChannel.Result? = null
+              private var pendingFileResult: MethodChannel.Result? = null
+              private val PICK_ACCOUNT_REQ = 9001
+              private val REQ_POST_NOTIF = 9002
+              private val PICK_FILE_REQ = 9003
+              private val REQ_RECORD_AUDIO = 9004
+              private var isVipDmSecureShieldActive = false
+              private var pendingOpenDmEmail: String = ""
+
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  try {
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                          setShowWhenLocked(true)
+                          setTurnScreenOn(true)
+                      } else {
+                          @Suppress("DEPRECATION")
+                          window.addFlags(
+                              WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                              WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                          )
+                      }
+                  } catch (e: Exception) {}
+                  intent?.getStringExtra("open_dm_email")?.let {
+                      if (it.isNotEmpty()) pendingOpenDmEmail = it
+                  }
+                  createNotificationChannelIfNeeded()
+                  requestNotificationPermissionIfNeeded()
+              }
+
+              override fun onNewIntent(intent: Intent) {
+                  super.onNewIntent(intent)
+                  setIntent(intent)
+                  intent.getStringExtra("open_dm_email")?.let {
+                      if (it.isNotEmpty()) pendingOpenDmEmail = it
+                  }
+              }
+
+              private fun setCallForegroundState(active: Boolean, partnerName: String = "Player") {
+                  try {
+                      val sIntent = Intent(this, SattaPaiKeepAliveService::class.java).apply {
+                          putExtra("mode", if (active) "call" else "standby")
+                          putExtra("partner", partnerName)
+                      }
+                      if (active && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          startForegroundService(sIntent)
+                      } else {
+                          startService(sIntent)
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun requestNotificationPermissionIfNeeded() {
+                  try {
+                      if (Build.VERSION.SDK_INT >= 33) {
+                          if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                              != PackageManager.PERMISSION_GRANTED) {
+                              ActivityCompat.requestPermissions(
+                                  this,
+                                  arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                  REQ_POST_NOTIF
+                              )
+                          }
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun ensureMicrophonePermission(): Boolean {
+                  return try {
+                      if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                          != PackageManager.PERMISSION_GRANTED) {
+                          ActivityCompat.requestPermissions(
+                              this,
+                              arrayOf(Manifest.permission.RECORD_AUDIO),
+                              REQ_RECORD_AUDIO
+                          )
+                          false
+                      } else {
+                          true
+                      }
+                  } catch (e: Exception) {
+                      false
+                  }
+              }
+
+              private fun createNotificationChannelIfNeeded() {
+                  try {
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                          val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                          val chan = NotificationChannel(
+                              NOTIF_CHANNEL_ID,
+                              "Satta Pai Arena Alerts & DMs",
+                              NotificationManager.IMPORTANCE_HIGH
+                          )
+                          chan.description = "Private DM messages, Match Room Keys & App Update alerts"
+                          chan.enableVibration(true)
+                          nm.createNotificationChannel(chan)
+
+                          val ringUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                          val audioAttr = AudioAttributes.Builder()
+                              .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                              .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                              .build()
+                          val callChan = NotificationChannel(
+                              CALL_CHANNEL_ID,
+                              "Satta Pai Incoming Voice Calls",
+                              NotificationManager.IMPORTANCE_HIGH
+                          )
+                          callChan.description = "WhatsApp-style Heads-Up Incoming Voice Call Banner over games & apps"
+                          callChan.enableVibration(true)
+                          callChan.vibrationPattern = longArrayOf(0, 800, 400, 800, 400, 800, 400, 800)
+                          callChan.setSound(ringUri, audioAttr)
+                          callChan.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                          nm.createNotificationChannel(callChan)
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun showNativeNotification(title: String, body: String, notifId: Int, dmEmail: String = "") {
+                  try {
+                      createNotificationChannelIfNeeded()
+                      val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val isCallAlert = title.contains("Call", ignoreCase = true) || dmEmail.startsWith("call:")
+                      val intent = Intent(this, MainActivity::class.java).apply {
+                          flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                          if (dmEmail.isNotEmpty()) {
+                              putExtra("open_dm_email", dmEmail)
+                          }
+                      }
+                      val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                      } else {
+                          PendingIntent.FLAG_UPDATE_CURRENT
+                      }
+                      val pendingIntent = PendingIntent.getActivity(this, if (isCallAlert) 9991 else notifId, intent, piFlags)
+                      val channelToUse = if (isCallAlert) CALL_CHANNEL_ID else NOTIF_CHANNEL_ID
+                      val builder = NotificationCompat.Builder(this, channelToUse)
+                          .setSmallIcon(applicationInfo.icon)
+                          .setContentTitle(title)
+                          .setContentText(body)
+                          .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                          .setPriority(NotificationCompat.PRIORITY_MAX)
+                          .setCategory(if (isCallAlert) NotificationCompat.CATEGORY_CALL else NotificationCompat.CATEGORY_MESSAGE)
+                          .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                          .setDefaults(NotificationCompat.DEFAULT_ALL)
+                          .setAutoCancel(true)
+                          .setContentIntent(pendingIntent)
+
+                      if (isCallAlert) {
+                          builder.setFullScreenIntent(pendingIntent, true)
+                          builder.setColor(Color.parseColor("#10B981"))
+                          builder.setColorized(true)
+                          builder.setVibrate(longArrayOf(0, 800, 400, 800, 400, 800, 400, 800))
+                          builder.addAction(android.R.drawable.sym_action_call, "📞 Answer Call", pendingIntent)
+                      }
+                      nm.notify(if (isCallAlert) 9991 else notifId, builder.build())
+                  } catch (e: Exception) {}
+              }
+
+              private fun switchLauncherIcon(iconKey: String) {
+                  try {
+                      val pm = applicationContext.packageManager
+                      val pkg = applicationContext.packageName
+                      val components = mapOf(
+                          "icon_cyan" to ComponentName(pkg, "$pkg.MainActivity"),
+                          "icon_gold" to ComponentName(pkg, "$pkg.IconGoldAlias"),
+                          "icon_purple" to ComponentName(pkg, "$pkg.IconPurpleAlias"),
+                          "icon_fire" to ComponentName(pkg, "$pkg.IconFireAlias")
+                      )
+                      for ((k, comp) in components) {
+                          val state = if (k == iconKey)
+                              PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                          else
+                              PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                          pm.setComponentEnabledSetting(comp, state, PackageManager.DONT_KILL_APP)
+                      }
+                  } catch (e: Exception) {}
+              }
+
+              private fun saveAndMaybeShareImage(name: String, b64: String, share: Boolean): Boolean {
+                  return try {
+                      val bytes = Base64.decode(b64, Base64.DEFAULT)
+                      if (bytes.isEmpty()) return false
+                      val safeName = name.replace(Regex("[^a-zA-Z0-9._-]"), "_").ifEmpty { "SattaPai_poster.jpg" }
+                      var uri: Uri? = null
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                          val values = android.content.ContentValues()
+                          values.put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, safeName)
+                          values.put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                          values.put(android.provider.MediaStore.Images.Media.RELATIVE_PATH, "Pictures/SattaPai")
+                          uri = contentResolver.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+                          if (uri != null) {
+                              contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
+                          }
+                      } else {
+                          if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                              ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 9005)
+                              Toast.makeText(this, "Allow storage permission, then tap again.", Toast.LENGTH_LONG).show()
+                              return false
+                          }
+                          val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                          val path = android.provider.MediaStore.Images.Media.insertImage(contentResolver, bmp, safeName, "Satta Pai Esports")
+                          if (path != null) uri = Uri.parse(path)
+                      }
+                      if (uri == null) return false
+                      if (share) {
+                          val send = Intent(Intent.ACTION_SEND)
+                          send.type = "image/jpeg"
+                          send.putExtra(Intent.EXTRA_STREAM, uri)
+                          send.putExtra(Intent.EXTRA_TEXT, "Satta Pai Esports")
+                          send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                          startActivity(Intent.createChooser(send, "Share poster"))
+                      } else {
+                          Toast.makeText(this, "Saved to Pictures/SattaPai", Toast.LENGTH_SHORT).show()
+                      }
+                      true
+                  } catch (e: Exception) {
+                      false
+                  }
+              }
+              private fun launchInstalledFreeFire(targetPkg: String): Boolean {
+                  try {
+                      val pm = applicationContext.packageManager
+                      val candidates = listOf(targetPkg, "com.dts.freefiremax", "com.dts.freefireth", "com.garena.game.ffi")
+                      for (pkg in candidates) {
+                          val launchIntent = pm.getLaunchIntentForPackage(pkg)
+                          if (launchIntent != null) {
+                              launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                              startActivity(launchIntent)
+                              return true
+                          }
+                      }
+                      val marketIntent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + targetPkg))
+                      marketIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                      startActivity(marketIntent)
+                      return true
+                  } catch (e: Exception) {
+                      return false
+                  }
+              }
+
+              override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+                  super.configureFlutterEngine(flutterEngine)
+                  MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+                      when (call.method) {
+                          "pickAccount" -> {
+                              if (pendingResult != null) {
+                                  pendingResult?.success("")
+                                  pendingResult = null
+                              }
+                              pendingResult = result
+                              try {
+                                  val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                      AccountManager.newChooseAccountIntent(
+                                          null, null, arrayOf("com.google"), null, null, null, null
+                                      )
+                                  } else {
+                                      @Suppress("DEPRECATION")
+                                      AccountManager.newChooseAccountIntent(
+                                          null, null, arrayOf("com.google"), false, null, null, null, null
+                                      )
+                                  }
+                                  startActivityForResult(intent, PICK_ACCOUNT_REQ)
+                              } catch (e: Exception) {
+                                  pendingResult = null
+                                  result.success("")
+                              }
+                          }
+                          "pickFile" -> {
+                              if (pendingFileResult != null) {
+                                  pendingFileResult?.success("")
+                                  pendingFileResult = null
+                              }
+                              pendingFileResult = result
+                              try {
+                                  val mime = call.argument<String>("mime") ?: "*/*"
+                                  val cleanMime = when {
+                                      mime.contains("audio") -> "audio/*"
+                                      mime.contains("image") -> "image/*"
+                                      else -> "*/*"
+                                  }
+                                  val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                                      type = cleanMime
+                                      addCategory(Intent.CATEGORY_OPENABLE)
+                                  }
+                                  startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_FILE_REQ)
+                              } catch (e: Exception) {
+                                  pendingFileResult = null
+                                  result.success("")
+                              }
+                          }
+                          "requestMicPermission" -> {
+                              val granted = ensureMicrophonePermission()
+                              result.success(granted)
+                          }
+                          "setCallState" -> {
+                              val active = call.argument<Boolean>("active") ?: false
+                              val partner = call.argument<String>("partner") ?: "Player"
+                              setCallForegroundState(active, partner)
+                              result.success(true)
+                          }
+                          "launchFreeFire" -> {
+                              val pkg = call.argument<String>("pkg") ?: "com.dts.freefiremax"
+                              val ok = launchInstalledFreeFire(pkg)
+                              result.success(ok)
+                          }
+                          "setAppIcon" -> {
+                              val iconKey = call.argument<String>("icon") ?: "icon_cyan"
+                              switchLauncherIcon(iconKey)
+                              result.success(true)
+                          }
+                          "showNotification" -> {
+                              val title = call.argument<String>("title") ?: "Satta Pai Esports"
+                              val body = call.argument<String>("body") ?: ""
+                              val id = call.argument<Int>("id") ?: (System.currentTimeMillis() % 100000).toInt()
+                              val dmEmail = call.argument<String>("dmEmail") ?: ""
+                              showNativeNotification(title, body, id, dmEmail)
+                              result.success(true)
+                          }
+                          "consumePendingOpenDm" -> {
+                              val target = pendingOpenDmEmail
+                              pendingOpenDmEmail = ""
+                              result.success(target)
+                          }
+                          "clearNotifications" -> {
+                              try {
+                                  val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                                  nm.cancelAll()
+                              } catch (e: Exception) {}
+                              result.success(true)
+                          }
+                          "setScreenshotBlock" -> {
+                              val enable = call.argument<Boolean>("enable") ?: false
+                              isVipDmSecureShieldActive = enable
+                              runOnUiThread {
+                                  try {
+                                      if (enable) {
+                                          window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                                      } else {
+                                          window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                                      }
+                                  } catch (e: Exception) {}
+                              }
+                              result.success(true)
+                          }
+                          "getFcmToken" -> {
+                              SattaPaiFcmBridge.getToken(applicationContext) { tok -> runOnUiThread { result.success(tok) } }
+                          }
+                          "shareImage" -> {
+                              val nm = call.argument<String>("name") ?: "SattaPai_poster.jpg"
+                              val b64 = call.argument<String>("b64") ?: ""
+                              val sh = call.argument<Boolean>("share") ?: true
+                              result.success(saveAndMaybeShareImage(nm, b64, sh))
+                          }
+                          else -> result.notImplemented()
+                      }
+                  }
+              }
+
+              override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+                  if (isVipDmSecureShieldActive && (keyCode == KeyEvent.KEYCODE_SYSRQ || keyCode == KeyEvent.KEYCODE_CAPTIONS)) {
+                      Toast.makeText(this, "Cannot take screenshot! PRO / PRO+ Privacy Shield Active.", Toast.LENGTH_SHORT).show()
+                      return true
+                  }
+                  return super.onKeyDown(keyCode, event)
+              }
+
+              override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+                  super.onActivityResult(requestCode, resultCode, data)
+                  if (requestCode == PICK_ACCOUNT_REQ) {
+                      val res = pendingResult
+                      pendingResult = null
+                      if (resultCode == Activity.RESULT_OK && data != null) {
+                          val email = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME) ?: ""
+                          res?.success(email)
+                      } else {
+                          res?.success("")
+                      }
+                  } else if (requestCode == PICK_FILE_REQ) {
+                      val res = pendingFileResult
+                      pendingFileResult = null
+                      if (resultCode == Activity.RESULT_OK && data?.data != null) {
+                          try {
+                              val uri = data.data!!
+                              val mime = contentResolver.getType(uri) ?: "application/octet-stream"
+                              var fileName = "picked_file_" + System.currentTimeMillis()
+                              contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                                  val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                                  if (nameIndex >= 0 && cursor.moveToFirst()) {
+                                      fileName = cursor.getString(nameIndex) ?: fileName
+                                  }
+                              }
+                              val safeName = fileName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
+                              val tempFile = File(cacheDir, "sp_upload_" + safeName)
+                              var rawBytes = contentResolver.openInputStream(uri)?.use { it.readBytes() } ?: ByteArray(0)
+                              var finalMime = mime
+
+                              if (mime.startsWith("image/") && rawBytes.isNotEmpty()) {
+                                  try {
+                                      val bmp = BitmapFactory.decodeByteArray(rawBytes, 0, rawBytes.size)
+                                      if (bmp != null) {
+                                          val maxDim = 640
+                                          val w = bmp.width
+                                          val h = bmp.height
+                                          val scaled = if (w > maxDim || h > maxDim) {
+                                              val ratio = minOf(maxDim.toFloat() / w.toFloat(), maxDim.toFloat() / h.toFloat())
+                                              Bitmap.createScaledBitmap(bmp, (w * ratio).toInt().coerceAtLeast(1), (h * ratio).toInt().coerceAtLeast(1), true)
+                                          } else {
+                                              bmp
+                                          }
+                                          val baos = ByteArrayOutputStream()
+                                          scaled.compress(Bitmap.CompressFormat.JPEG, 82, baos)
+                                          rawBytes = baos.toByteArray()
+                                          finalMime = "image/jpeg"
+                                      }
+                                  } catch (e: Exception) {}
+                              }
+
+                              FileOutputStream(tempFile).use { it.write(rawBytes) }
+                              val fileUriStr = Uri.fromFile(tempFile).toString()
+                              val b64 = if (rawBytes.size <= 350 * 1024) {
+                                  Base64.encodeToString(rawBytes, Base64.NO_WRAP)
+                              } else ""
+                              val json = JSONObject()
+                              json.put("uri", fileUriStr)
+                              json.put("path", tempFile.absolutePath)
+                              json.put("name", safeName)
+                              json.put("mime", finalMime)
+                              json.put("dataUrl", if (b64.isNotEmpty()) "data:$finalMime;base64,$b64" else "")
+                              res?.success(json.toString())
+                          } catch (e: Exception) {
+                              res?.success("")
+                          }
+                      } else {
+                          res?.success("")
+                      }
+                  }
+              }
+          }'''
+          with open(kt_path, "w") as f:
+              f.write(kt_code)
+          PYEOF
+
+          python3 - << 'PYEOF'
+          import os
+          ver_name = os.environ.get("APP_VERSION_NAME", "1.0.0").strip() or "1.0.0"
+
+          dart_code = r'''import 'dart:async';
+          import 'dart:convert';
+          import 'dart:io';
+          import 'package:flutter/material.dart';
+          import 'package:flutter/services.dart';
+          import 'package:shared_preferences/shared_preferences.dart';
+          import 'package:webview_flutter/webview_flutter.dart';
+          import 'package:webview_flutter_android/webview_flutter_android.dart';
+          import 'package:url_launcher/url_launcher.dart';
+
+          const String kCurrentNativeAppVersion = '__APP_VERSION_NAME__';
+          const int kFixedLocalServerPort = 18765;
+
+          void main() async {
+            WidgetsFlutterBinding.ensureInitialized();
+            SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light,
+              systemNavigationBarColor: Color(0xFF0A0E17),
+              systemNavigationBarIconBrightness: Brightness.light,
+            ));
+            runApp(const SattaPaiApp());
+          }
+
+          class SattaPaiApp extends StatelessWidget {
+            const SattaPaiApp({super.key});
+
+            @override
+            Widget build(BuildContext context) {
+              return MaterialApp(
+                title: 'Satta Pai',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData.dark().copyWith(
+                  scaffoldBackgroundColor: const Color(0xFF0A0E17),
+                ),
+                home: const ArenaWebViewScreen(),
+              );
+            }
+          }
+
+          class ArenaWebViewScreen extends StatefulWidget {
+            const ArenaWebViewScreen({super.key});
+
+            @override
+            State<ArenaWebViewScreen> createState() => _ArenaWebViewScreenState();
+          }
+
+          class _ArenaWebViewScreenState extends State<ArenaWebViewScreen> with WidgetsBindingObserver {
+            WebViewController? _controller;
+            HttpServer? _server;
+            SharedPreferences? _prefs;
+            bool _isReady = false;
+            String _lastPickedFilePath = '';
+            String _lastPickedFileMime = 'application/octet-stream';
+            static const MethodChannel _authChannel = MethodChannel('satta_pai/native_auth');
+
+            @override
+            void initState() {
+              super.initState();
+              WidgetsBinding.instance.addObserver(this);
+              _startLocalServerAndWebView();
+            }
+
+            @override
+            void didChangeAppLifecycleState(AppLifecycleState state) {
+              if (state == AppLifecycleState.resumed) {
+                _checkPendingNotificationDeepLink();
+                _pushFcmTokenToWeb();
+              }
+            }
+
+            Future<void> _pushFcmTokenToWeb() async {
+              try {
+                if (_controller == null) return;
+                final String? tok = await _authChannel.invokeMethod<String>('getFcmToken');
+                if (tok != null && tok.trim().isNotEmpty) {
+                  await _controller!.runJavaScript(
+                    'if(window.onNativeFcmToken){window.onNativeFcmToken(' + jsonEncode(tok.trim()) + ');}'
+                  );
+                }
+              } catch (_) {}
+            }
+            Future<void> _checkPendingNotificationDeepLink() async {
+              try {
+                if (_controller == null) return;
+                final String? dmEmail = await _authChannel.invokeMethod<String>('consumePendingOpenDm');
+                if (dmEmail != null && dmEmail.trim().isNotEmpty) {
+                  await _controller!.runJavaScript(
+                    'if(window.openDirectDmFromNotification){window.openDirectDmFromNotification(' + jsonEncode(dmEmail.trim().toLowerCase()) + ');}'
+                  );
+                }
+              } catch (_) {}
+            }
+
+            Future<void> _saveNativeAuthSession({
+              required String email,
+              String uid = '',
+              String guest = '0',
+              String appVersion = kCurrentNativeAppVersion,
+            }) async {
+              try {
+                final prefs = _prefs ?? await SharedPreferences.getInstance();
+                _prefs = prefs;
+                await prefs.setString('sp_saved_email', email.trim().toLowerCase());
+                if (uid.isNotEmpty) {
+                  await prefs.setString('sp_saved_uid', uid.trim());
+                }
+                await prefs.setString('sp_saved_guest', guest);
+                await prefs.setString('sp_saved_app_version', appVersion);
+              } catch (e) {
+                debugPrint('Error saving native auth prefs: ' + e.toString());
+              }
+            }
+
+            Future<void> _clearNativeAuthSession() async {
+              try {
+                final prefs = _prefs ?? await SharedPreferences.getInstance();
+                _prefs = prefs;
+                await prefs.remove('sp_saved_email');
+                await prefs.remove('sp_saved_uid');
+                await prefs.remove('sp_saved_guest');
+              } catch (e) {
+                debugPrint('Error clearing native auth prefs: ' + e.toString());
+              }
+            }
+
+            Future<void> _triggerNativePicker(String provider) async {
+              try {
+                final String? email = await _authChannel.invokeMethod<String>('pickAccount');
+                if (email != null && email.trim().isNotEmpty && _controller != null) {
+                  final String cleanEmail = email.trim().toLowerCase();
+                  await _saveNativeAuthSession(
+                    email: cleanEmail,
+                    guest: '0',
+                    appVersion: kCurrentNativeAppVersion,
+                  );
+                  final String safeEmail = jsonEncode(cleanEmail);
+                  final String safeProv = jsonEncode(provider);
+                  await _controller!.runJavaScript(
+                    'if(window.onNativeAccountPicked){window.onNativeAccountPicked(' + safeEmail + ',' + safeProv + ');}'
+                  );
+                }
+              } catch (e) {
+                debugPrint('Native account picker error: ' + e.toString());
+              }
+            }
+
+            String _buildHydratedHtml(String rawHtml) {
+              String savedEmail = _prefs?.getString('sp_saved_email') ?? '';
+              String savedUid = _prefs?.getString('sp_saved_uid') ?? '';
+              String savedGuest = _prefs?.getString('sp_saved_guest') ?? '0';
+              String savedVer = _prefs?.getString('sp_saved_app_version') ?? '';
+              String savedMusicMuted = _prefs?.getString('sp_music_muted') ?? '';
+              String savedMusicVol = _prefs?.getString('sp_music_volume') ?? '';
+              String savedInstalledVer = _prefs?.getString('sp_installed_apk_ver') ?? '';
+              String savedInstalledTs = _prefs?.getString('sp_installed_apk_ts') ?? '0';
+
+              if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
+                // Preserve user login session across app updates while updating stored version!
+                savedVer = kCurrentNativeAppVersion;
+                _prefs?.setString('sp_saved_app_version', kCurrentNativeAppVersion);
+              } else if (savedVer.isEmpty && (savedEmail.isNotEmpty || savedGuest == '1')) {
+                savedVer = kCurrentNativeAppVersion;
+                _prefs?.setString('sp_saved_app_version', kCurrentNativeAppVersion);
+              }
+
+              final Map<String, String> bootPayload = {
+                'email': savedEmail,
+                'uid': savedUid,
+                'guest': savedGuest,
+                'appVersion': savedVer.isEmpty ? kCurrentNativeAppVersion : savedVer,
+                'nativeBuildVersion': kCurrentNativeAppVersion,
+                'musicMuted': savedMusicMuted,
+                'musicVolume': savedMusicVol,
+                'installedApkVer': savedInstalledVer,
+                'installedApkTs': savedInstalledTs,
+              };
+
+              final String bootScript = '<script id="sp-native-boot-bridge">'
+                  'window.__SP_NATIVE_STORAGE__ = ' + jsonEncode(bootPayload) + ';'
+                  'window.CURRENT_APP_APK_VERSION = "' + kCurrentNativeAppVersion + '";'
+                  'try {'
+                  '  sessionStorage.setItem("sp_intro_shown_session", "1");'
+                  '  sessionStorage.setItem("sp_intro_seen_session", "1");'
+                  '  var _spN = window.__SP_NATIVE_STORAGE__;'
+                  '  if (_spN && _spN.musicMuted) localStorage.setItem("satta_pai_music_muted", _spN.musicMuted);'
+                  '  if (_spN && _spN.musicVolume) localStorage.setItem("satta_pai_music_volume", _spN.musicVolume);'
+                  '  if (_spN && _spN.email && _spN.email.indexOf("@") !== -1) {'
+                  '    localStorage.setItem("satta_pai_intro_completed", "1");'
+                  '    localStorage.setItem("satta_pai_auth_email", _spN.email);'
+                  '    localStorage.setItem("satta_pai_native_google_email", _spN.email);'
+                  '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
+                  '    sessionStorage.setItem("satta_pai_auth_email", _spN.email);'
+                  '    if (_spN.uid) localStorage.setItem("satta_pai_auth_uid", _spN.uid);'
+                  '    window.loggedEmail = _spN.email;'
+                  '    window._hasVerifiedAuthSession = true;'
+                  '  } else if (_spN && _spN.guest === "1") {'
+                  '    localStorage.setItem("satta_pai_intro_completed", "1");'
+                  '    localStorage.setItem("satta_pai_guest_session", "1");'
+                  '    localStorage.setItem("satta_pai_logged_app_version", _spN.appVersion || "' + kCurrentNativeAppVersion + '");'
+                  '    sessionStorage.setItem("satta_pai_guest_session", "1");'
+                  '    window.loggedEmail = "guest";'
+                  '  }'
+                  '} catch(e) {}'
+                  '</script>';
+
+              if (rawHtml.contains('<head>')) {
+                return rawHtml.replaceFirst('<head>', '<head>' + bootScript);
+              }
+              return bootScript + rawHtml;
+            }
+
+            Future<void> _startLocalServerAndWebView() async {
+              try {
+                _prefs = await SharedPreferences.getInstance();
+                final indexHtml = await rootBundle.loadString('assets/www/index.html');
+
+                try {
+                  _server = await HttpServer.bind(
+                    InternetAddress.loopbackIPv4,
+                    kFixedLocalServerPort,
+                    shared: true,
+                  );
+                } catch (_) {
+                  _server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+                }
+                final int port = _server!.port;
+
+                _server!.listen((HttpRequest req) async {
+                  req.response.headers.set('Access-Control-Allow-Origin', '*');
+                  req.response.headers.set('Cache-Control', 'no-store');
+                  if (req.uri.path == '/__picked_file' && _lastPickedFilePath.isNotEmpty) {
+                    try {
+                      final f = File(_lastPickedFilePath);
+                      if (await f.exists()) {
+                        req.response.headers.set('Content-Type', _lastPickedFileMime);
+                        await req.response.addStream(f.openRead());
+                        await req.response.close();
+                        return;
+                      }
+                    } catch (_) {}
+                    req.response.statusCode = 404;
+                    await req.response.close();
+                    return;
+                  }
+                  req.response.headers.contentType = ContentType.html;
+                  req.response.write(_buildHydratedHtml(indexHtml));
+                  await req.response.close();
+                });
+
+                final controller = WebViewController()
+                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                  ..setBackgroundColor(const Color(0xFF0A0E17))
+                  ..setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36 SattaPaiApp/' + kCurrentNativeAppVersion)
+                  ..addJavaScriptChannel(
+                    'SattaPaiNativeAuth',
+                    onMessageReceived: (JavaScriptMessage message) async {
+                      final msg = message.message;
+                      if (msg.startsWith('pick_account:')) {
+                        final provider = msg.substring('pick_account:'.length);
+                        await _triggerNativePicker(provider.isEmpty ? 'Google' : provider);
+                      } else if (msg.startsWith('open_browser:')) {
+                        final targetUrl = msg.substring('open_browser:'.length).trim();
+                        if (targetUrl.isNotEmpty) {
+                          await launchUrl(Uri.parse(targetUrl), mode: LaunchMode.externalApplication);
+                        }
+                      } else if (msg.startsWith('notify:')) {
+                        try {
+                          final payloadStr = msg.substring('notify:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          await _authChannel.invokeMethod('showNotification', {
+                            'title': (data['title'] ?? 'Satta Pai Esports').toString(),
+                            'body': (data['body'] ?? '').toString(),
+                            'id': data['id'] is int ? data['id'] : (DateTime.now().millisecondsSinceEpoch % 100000),
+                            'dmEmail': (data['dmEmail'] ?? '').toString(),
+                          });
+                        } catch (e) {
+                          debugPrint('notify error: ' + e.toString());
+                        }
+                      } else if (msg.startsWith('save_audio_prefs:')) {
+                        try {
+                          final payloadStr = msg.substring('save_audio_prefs:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          final prefs = _prefs ?? await SharedPreferences.getInstance();
+                          if (data.containsKey('muted')) {
+                            await prefs.setString('sp_music_muted', (data['muted'] ?? '0').toString());
+                          }
+                          if (data.containsKey('volume')) {
+                            await prefs.setString('sp_music_volume', (data['volume'] ?? '0.8').toString());
+                          }
+                        } catch (e) {}
+                      } else if (msg.startsWith('save_auth:')) {
+                        try {
+                          final payloadStr = msg.substring('save_auth:'.length);
+                          final Map<String, dynamic> data = jsonDecode(payloadStr);
+                          await _saveNativeAuthSession(
+                            email: (data['email'] ?? '').toString(),
+                            uid: (data['uid'] ?? '').toString(),
+                            guest: (data['guest'] ?? '0').toString(),
+                            appVersion: (data['appVersion'] ?? kCurrentNativeAppVersion).toString(),
+                          );
+                        } catch (e) {
+                          debugPrint('save_auth parse error: ' + e.toString());
+                        }
+                      } else if (msg == 'clear_auth') {
+                        await _clearNativeAuthSession();
+                      } else if (msg == 'clear_notifications') {
+                        await _authChannel.invokeMethod('clearNotifications');
+                      } else if (msg.startsWith('save_installed_ver:')) {
+                        try {
+                          final rest = msg.substring('save_installed_ver:'.length);
+                          final parts = rest.split('|');
+                          final ver = parts.isNotEmpty ? parts[0].trim() : '';
+                          final ts = parts.length > 1 ? parts[1].trim() : '0';
+                          final prefs = _prefs ?? await SharedPreferences.getInstance();
+                          if (ver.isNotEmpty) await prefs.setString('sp_installed_apk_ver', ver);
+                          await prefs.setString('sp_installed_apk_ts', ts);
+                        } catch (_) {}
+                      } else if (msg.startsWith('launch_pkg:')) {
+                        final pkg = msg.substring('launch_pkg:'.length).trim();
+                        await _authChannel.invokeMethod('launchFreeFire', {'pkg': pkg});
+                      } else if (msg.startsWith('set_app_icon:')) {
+                        final iconKey = msg.substring('set_app_icon:'.length).trim();
+                        await _authChannel.invokeMethod('setAppIcon', {'icon': iconKey});
+                      } else if (msg.startsWith('set_screenshot_block:')) {
+                        final flag = msg.substring('set_screenshot_block:'.length).trim();
+                        final enable = (flag == '1' || flag == 'true');
+                        await _authChannel.invokeMethod('setScreenshotBlock', {'enable': enable});
+                      } else if (msg == 'request_fcm_token') {
+                        await _pushFcmTokenToWeb();
+                      } else if (msg.startsWith('share_image:') || msg.startsWith('save_image:')) {
+                        try {
+                          final bool doShare = msg.startsWith('share_image:');
+                          final String rest = msg.substring(msg.indexOf(':') + 1);
+                          final int bar = rest.indexOf('|');
+                          if (bar > 0) {
+                            await _authChannel.invokeMethod('shareImage', {
+                              'name': rest.substring(0, bar),
+                              'b64': rest.substring(bar + 1),
+                              'share': doShare,
+                            });
+                          }
+                        } catch (e) {
+                          debugPrint('image share error: ' + e.toString());
+                        }
+                      } else if (msg == 'request_mic_perm') {
+                        await _authChannel.invokeMethod('requestMicPermission');
+                      } else if (msg.startsWith('call_state:')) {
+                        try {
+                          final rest = msg.substring('call_state:'.length);
+                          final parts = rest.split('|');
+                          final isAct = parts.isNotEmpty && parts[0] == '1';
+                          final pName = parts.length > 1 ? parts[1] : 'Player';
+                          await _authChannel.invokeMethod('setCallState', {'active': isAct, 'partner': pName});
+                        } catch (_) {}
+                      } else if (msg.startsWith('pick_file:')) {
+                        try {
+                          final rest = msg.substring('pick_file:'.length);
+                          final parts = rest.split('|');
+                          final inputId = parts.isNotEmpty ? parts[0] : '';
+                          final mime = parts.length > 1 ? parts[1] : '*/*';
+                          final String? resJson = await _authChannel.invokeMethod<String>('pickFile', {'mime': mime});
+                          if (resJson != null && resJson.isNotEmpty && _controller != null) {
+                            final Map<String, dynamic> fObj = jsonDecode(resJson);
+                            final String dUrl = (fObj['dataUrl'] ?? '').toString();
+                            final String fPath = (fObj['path'] ?? '').toString();
+                            final String fName = (fObj['name'] ?? 'file').toString();
+                            final String fMime = (fObj['mime'] ?? 'application/octet-stream').toString();
+                            if (fPath.isNotEmpty) {
+                              _lastPickedFilePath = fPath;
+                              _lastPickedFileMime = fMime;
+                            }
+                            final String httpUrl = 'http://127.0.0.1:' + port.toString() + '/__picked_file?t=' + DateTime.now().millisecondsSinceEpoch.toString();
+                            await _controller!.runJavaScript(
+                              'if(window.onNativeFilePicked){window.onNativeFilePicked(' +
+                                  jsonEncode(inputId) + ',' +
+                                  jsonEncode(fName) + ',' +
+                                  jsonEncode(fMime) + ',' +
+                                  jsonEncode(dUrl) + ',' +
+                                  jsonEncode(httpUrl) + ');}'
+                            );
+                          }
+                        } catch (e) {
+                          debugPrint('pick_file error: ' + e.toString());
+                        }
+                      } else {
+                        await _triggerNativePicker('Google');
+                      }
+                    },
+                  )
+                  ..setNavigationDelegate(
+                    NavigationDelegate(
+                      onNavigationRequest: (NavigationRequest request) {
+                        final url = request.url;
+                        if (url.startsWith('upi://') ||
+                            url.startsWith('whatsapp://') ||
+                            url.startsWith('intent://') ||
+                            url.startsWith('freefire://') ||
+                            url.startsWith('freefiremax://') ||
+                            url.startsWith('market://') ||
+                            url.startsWith('mailto:') ||
+                            url.startsWith('tel:') ||
+                            url.endsWith('.apk') ||
+                            url.contains('github.com/login/oauth') ||
+                            url.contains('facebook.com/v') ||
+                            url.contains('facebook.com/dialog/oauth') ||
+                            url.contains('drive.google.com') ||
+                            url.contains('mediafire.com') ||
+                            url.contains('mega.nz') ||
+                            url.contains('t.me/')) {
+                          launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                          return NavigationDecision.prevent;
+                        }
+                        return NavigationDecision.navigate;
+                      },
+                    ),
+                  );
+
+                if (controller.platform is AndroidWebViewController) {
+                  AndroidWebViewController.enableDebugging(false);
+                  final androidCtrl = controller.platform as AndroidWebViewController;
+                  androidCtrl.setMediaPlaybackRequiresUserGesture(false);
+                  androidCtrl.setOnPlatformPermissionRequest((PlatformWebViewPermissionRequest request) {
+                    request.grant();
+                  });
+                  androidCtrl.setOnShowFileSelector((FileSelectorParams params) async {
+                    try {
+                      final accept = params.acceptTypes.isNotEmpty ? params.acceptTypes.join(',') : '*/*';
+                      final String? resJson = await _authChannel.invokeMethod<String>('pickFile', {'mime': accept});
+                      if (resJson != null && resJson.isNotEmpty) {
+                        final Map<String, dynamic> fObj = jsonDecode(resJson);
+                        final String uriStr = (fObj['uri'] ?? '').toString();
+                        final String dUrl = (fObj['dataUrl'] ?? '').toString();
+                        final String fName = (fObj['name'] ?? 'file').toString();
+                        final String fMime = (fObj['mime'] ?? 'application/octet-stream').toString();
+                        if (dUrl.isNotEmpty && _controller != null) {
+                          await _controller!.runJavaScript(
+                            'if(window.onNativeFilePicked){window.onNativeFilePicked(window._lastClickedFileInputId||"",' +
+                                jsonEncode(fName) + ',' +
+                                jsonEncode(fMime) + ',' +
+                                jsonEncode(dUrl) + ');}'
+                          );
+                        }
+                        if (uriStr.isNotEmpty) {
+                          return <String>[uriStr];
+                        }
+                      }
+                    } catch (e) {
+                      debugPrint('FileSelector error: ' + e.toString());
+                    }
+                    return <String>[];
+                  });
+                }
+
+                await controller.clearCache();
+                final String localUrl = 'http://127.0.0.1:' + port.toString() + '/index.html?v=' + kCurrentNativeAppVersion + '_' + DateTime.now().millisecondsSinceEpoch.toString();
+                await controller.loadRequest(Uri.parse(localUrl));
+                Future.delayed(const Duration(milliseconds: 900), () => _checkPendingNotificationDeepLink());
+                Future.delayed(const Duration(milliseconds: 2500), () => _pushFcmTokenToWeb());
+
+                if (mounted) {
+                  setState(() {
+                    _controller = controller;
+                    _isReady = true;
+                  });
+                }
+              } catch (e) {
+                debugPrint('Error starting WebView: ' + e.toString());
+              }
+            }
+
+            @override
+            void dispose() {
+              WidgetsBinding.instance.removeObserver(this);
+              _server?.close(force: true);
+              super.dispose();
+            }
+
+            @override
+            Widget build(BuildContext context) {
+              return PopScope(
+                canPop: false,
+                onPopInvoked: (bool didPop) async {
+                  if (didPop) return;
+                  if (_controller != null && await _controller!.canGoBack()) {
+                    await _controller!.goBack();
+                  }
+                },
+                child: Scaffold(
+                  backgroundColor: const Color(0xFF0A0E17),
+                  body: SafeArea(
+                    child: _isReady && _controller != null
+                        ? WebViewWidget(controller: _controller!)
+                        : const Center(
+                            child: CircularProgressIndicator(color: Color(0xFF00F2FE)),
+                          ),
+                  ),
+                ),
+              );
+            }
+          }
+          '''.replace('__APP_VERSION_NAME__', ver_name)
+          with open("lib/main.dart", "w") as f:
+              f.write(dart_code)
+          PYEOF
+
+          # 🔔 FCM PUSH SETUP — only active when the GOOGLE_SERVICES_JSON repo secret is present & valid.
+          # Without it the APK still builds exactly as before (push disabled, stub bridge).
+          python3 - << 'PYEOF'
+          import os, re, json, glob
+
+          PKG = "com.sattapai.satta_pai"
+          kt_main = glob.glob("android/app/src/main/kotlin/**/MainActivity.kt", recursive=True)
+          kt_dir = os.path.dirname(kt_main[0])
+          enabled = False
+          gs = os.environ.get("GOOGLE_SERVICES_JSON", "").strip()
+
+          if not gs:
+              print("::warning::GOOGLE_SERVICES_JSON secret not set - building WITHOUT push notifications (FCM disabled).")
+          else:
+              try:
+                  parsed = json.loads(gs)
+                  pkgs = [c.get("client_info", {}).get("android_client_info", {}).get("package_name") for c in parsed.get("client", [])]
+                  if PKG not in pkgs:
+                      print("::warning::google-services.json has no Android app for " + PKG + " (found: " + ", ".join(map(str, pkgs)) + "). FCM disabled.")
+                  else:
+                      with open("android/settings.gradle") as f: settings = f.read()
+                      with open("android/app/build.gradle") as f: appg = f.read()
+                      m = re.search(r'^(\s*)id "com\.android\.application" version "[^"]+" apply false\s*$', settings, re.M)
+                      p = re.search(r'^(\s*)id "dev\.flutter\.flutter-gradle-plugin"\s*$', appg, re.M)
+                      if not m or not p:
+                          print("::warning::Unexpected Gradle template layout - FCM disabled (build continues).")
+                      else:
+                          if "com.google.gms.google-services" not in settings:
+                              settings = settings[:m.end()] + "\n" + m.group(1) + 'id "com.google.gms.google-services" version "4.4.2" apply false' + settings[m.end():]
+                          if "com.google.gms.google-services" not in appg:
+                              appg = appg[:p.end()] + "\n" + p.group(1) + 'id "com.google.gms.google-services"' + appg[p.end():]
+                          if "firebase-messaging" not in appg:
+                              appg += "\ndependencies {\n    implementation platform('com.google.firebase:firebase-bom:33.4.0')\n    implementation 'com.google.firebase:firebase-messaging'\n}\n"
+                          with open("android/settings.gradle", "w") as f: f.write(settings)
+                          with open("android/app/build.gradle", "w") as f: f.write(appg)
+                          with open("android/app/google-services.json", "w") as f: f.write(gs)
+                          enabled = True
+              except Exception as ex:
+                  print("::warning::GOOGLE_SERVICES_JSON invalid: " + str(ex) + " - FCM disabled.")
+
+          NOTIFIER = r"""package com.sattapai.satta_pai
+
+          import android.app.ActivityManager
+          import android.app.Notification
+          import android.app.NotificationChannel
+          import android.app.NotificationManager
+          import android.app.PendingIntent
+          import android.content.Context
+          import android.content.Intent
+          import android.graphics.Color
+          import android.media.AudioAttributes
+          import android.media.RingtoneManager
+          import android.os.Build
+          import androidx.core.app.NotificationCompat
+
+          object SattaPaiNotifier {
+              private const val CH_ALERTS = "satta_pai_esports_alerts"
+              private const val CH_CALL = "satta_pai_heads_up_calls_v2"
+              private const val CH_SIREN = "satta_pai_match_siren_v1"
+
+              private fun isForeground(ctx: Context): Boolean {
+                  return try {
+                      val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                      val procs = am.runningAppProcesses ?: return false
+                      procs.any { it.processName == ctx.packageName && it.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND }
+                  } catch (e: Exception) { false }
+              }
+
+              private fun ensureChannels(ctx: Context) {
+                  if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+                  val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                  val alerts = NotificationChannel(CH_ALERTS, "Satta Pai Arena Alerts & DMs", NotificationManager.IMPORTANCE_HIGH)
+                  alerts.enableVibration(true)
+                  nm.createNotificationChannel(alerts)
+
+                  val callAttr = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+                  val call = NotificationChannel(CH_CALL, "Satta Pai Incoming Voice Calls", NotificationManager.IMPORTANCE_HIGH)
+                  call.enableVibration(true)
+                  call.vibrationPattern = longArrayOf(0, 800, 400, 800, 400, 800, 400, 800)
+                  call.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE), callAttr)
+                  call.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                  nm.createNotificationChannel(call)
+
+                  val sirenAttr = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+                  val siren = NotificationChannel(CH_SIREN, "Match Room ID Siren", NotificationManager.IMPORTANCE_HIGH)
+                  siren.description = "Siren when a Room ID is published and 10 minutes before your match"
+                  siren.enableVibration(true)
+                  siren.vibrationPattern = longArrayOf(0, 600, 250, 600, 250, 600, 250, 600)
+                  siren.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM), sirenAttr)
+                  siren.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
+                  nm.createNotificationChannel(siren)
+              }
+
+              fun show(ctx: Context, type: String, title: String, body: String, dmEmail: String, matchId: String) {
+                  try {
+                      // App on screen: the web layer already shows its own in-app alert / ringing UI.
+                      if (isForeground(ctx)) return
+                      ensureChannels(ctx)
+                      val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                      val isCall = type == "call"
+                      val isSiren = type == "room_siren" || type == "match_start"
+                      val id = when {
+                          isCall -> 9991
+                          isSiren -> 7000 + (matchId.hashCode() and 0xFFFF)
+                          else -> 20000 + ((if (dmEmail.isNotEmpty()) dmEmail else title).hashCode() and 0xFFFFFF)
+                      }
+                      val open = Intent(ctx, MainActivity::class.java)
+                      open.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                      if (dmEmail.isNotEmpty()) open.putExtra("open_dm_email", dmEmail)
+                      val piFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+                      val pi = PendingIntent.getActivity(ctx, id, open, piFlags)
+                      val channel = if (isCall) CH_CALL else if (isSiren) CH_SIREN else CH_ALERTS
+                      val b = NotificationCompat.Builder(ctx, channel)
+                          .setSmallIcon(ctx.applicationInfo.icon)
+                          .setContentTitle(title)
+                          .setContentText(body)
+                          .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                          .setPriority(NotificationCompat.PRIORITY_MAX)
+                          .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                          .setAutoCancel(true)
+                          .setContentIntent(pi)
+                          .setCategory(if (isCall) NotificationCompat.CATEGORY_CALL else if (isSiren) NotificationCompat.CATEGORY_ALARM else NotificationCompat.CATEGORY_MESSAGE)
+                      if (isCall) {
+                          b.setFullScreenIntent(pi, true)
+                          b.setColor(Color.parseColor("#10B981"))
+                          b.setTimeoutAfter(45000L)
+                          b.addAction(android.R.drawable.sym_action_call, "Answer", pi)
+                      }
+                      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) b.setDefaults(NotificationCompat.DEFAULT_ALL)
+                      nm.notify(id, b.build())
+                  } catch (e: Exception) {}
+              }
+          }
+          """
+
+          BRIDGE_REAL = r"""package com.sattapai.satta_pai
+
+          import android.content.Context
+          import com.google.firebase.messaging.FirebaseMessaging
+
+          object SattaPaiFcmBridge {
+              fun getToken(ctx: Context, cb: (String) -> Unit) {
+                  try {
+                      val prefs = ctx.getSharedPreferences("sp_fcm", Context.MODE_PRIVATE)
+                      val cached = prefs.getString("token", "") ?: ""
+                      FirebaseMessaging.getInstance().token.addOnCompleteListener { t ->
+                          val tok = if (t.isSuccessful) (t.result ?: "") else cached
+                          if (tok.isNotEmpty()) prefs.edit().putString("token", tok).apply()
+                          cb(tok)
+                      }
+                  } catch (e: Exception) { cb("") }
+              }
+          }
+          """
+
+          BRIDGE_STUB = r"""package com.sattapai.satta_pai
+
+          import android.content.Context
+
+          object SattaPaiFcmBridge {
+              fun getToken(ctx: Context, cb: (String) -> Unit) { cb("") }
+          }
+          """
+
+          SERVICE = r"""package com.sattapai.satta_pai
+
+          import android.content.Context
+          import com.google.firebase.messaging.FirebaseMessagingService
+          import com.google.firebase.messaging.RemoteMessage
+
+          class SattaPaiFcmService : FirebaseMessagingService() {
+              override fun onNewToken(token: String) {
+                  super.onNewToken(token)
+                  getSharedPreferences("sp_fcm", Context.MODE_PRIVATE).edit().putString("token", token).apply()
+              }
+
+              override fun onMessageReceived(message: RemoteMessage) {
+                  super.onMessageReceived(message)
+                  val d = message.data
+                  SattaPaiNotifier.show(
+                      applicationContext,
+                      d["type"] ?: "generic",
+                      d["title"] ?: message.notification?.title ?: "Satta Pai Esports",
+                      d["body"] ?: message.notification?.body ?: "",
+                      d["dmEmail"] ?: "",
+                      d["matchId"] ?: ""
+                  )
+              }
+          }
+          """
+
+          def w(name, body):
+              with open(os.path.join(kt_dir, name), "w") as f: f.write(body)
+
+          w("SattaPaiNotifier.kt", NOTIFIER)
+          w("SattaPaiFcmBridge.kt", BRIDGE_REAL if enabled else BRIDGE_STUB)
+          if enabled:
+              w("SattaPaiFcmService.kt", SERVICE)
+              mp = "android/app/src/main/AndroidManifest.xml"
+              with open(mp) as f: mf = f.read()
+              if "SattaPaiFcmService" not in mf:
+                  svc = """
+                  <service android:name=".SattaPaiFcmService" android:exported="false">
+                      <intent-filter>
+                          <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                      </intent-filter>
+                  </service>
+          """
+                  mf = mf.replace("</application>", svc + "    </application>", 1)
+                  with open(mp, "w") as f: f.write(mf)
+          print("FCM push enabled:", enabled)
+          PYEOF
+
+                    # 🔐 PERMANENT STATIC SIGNING KEYSTORE (Prevents "App not installed as package conflicts with an existing package"!)
+          # By writing the exact same binary keystore to ~/.android/debug.keystore on every GitHub Actions run,
+          # every APK ever built has the 100% identical RSA SHA-256 certificate signature forever!
+          mkdir -p ~/.android
+          echo "/u3+7QAAAAIAAAABAAAAAQAPYW5kcm9pZGRlYnVna2V5AAABoZdxV8sAAAUCMIIE/jAOBgorBgEEASoCEQEBBQAEggTqlKDx33XYHzb+SDGbsaABCEVGxfDR82OSyn8at3P1nWqP/Nf9xpE/aLnznFH5qFaSJL8Bsk1huejaC6B12AO82gKg2ggMT5jiPt6kXy0b6p6KQfILiTJmVzuVUY3vOZcNVcg4y+frObrtXTF1cdR4pBuTfRxIEql04JZD4ZX7ARMkdcZw2fZLBf2TywdQx8t6MQEEre5Ns0Bj56YEszLbaqui4DrwpIZzdFK43qnTHuvwrFsHi0+288j0+yWobFXRhuw7+CpZz9TzgoDSV6I4Q+Ve6htRMm6e7pWpJKzvMqqicjYBKNjCtgfRY+aRtYMb8NJva8NBUo4meUutFXULg3Aj+WYUxSfGfNT+LyjtZyYK0AClhvtBT/ZevzkolAAi2ZVzrn8z5KlIiLJnZEBlnTMVRwyZR9QtNEuhdGEGOcurG//4LcHUMyAs3TnIOkF685v5Gmg/X3CBGUE3s1uRzVg704jDUWVnXQydsut0h6Dbwpm5LRtYW4yrYcZ0hWkyjQZMQPHDzzTfucgqtHTqe9cQ4qiVqW95Y+gQlh0ER6VXTFIQqIklIcGAZXtliPgoqG0E+GCbuvbrfF+jvTwuXQgBcMGkWYIsKH8r5TZ3dO5KgDyFghI2iMFmoHqj4VmyknxfGhr+48QBf6HtJJmfTb85DCWrmOD/WLFjx2T9lx20BXR3+mdXgv0zEKej3PiJPLXqhJ9s3SPJG94cYWpsRUFlSkru3PN2yL+nAOqw+Fdst3ZGqbGb+HF6mWbrIyFU4LWXzZXpzvFNCFm2ejtHFFAHE2dGJ6ZfCyFYgCf5/8M5FYngbdJC5L2TwBbtSAiqMSEt9rD/AeWdGyu7wS8L3xfLNq+8SWrODDFSCsLbvjbRT3lSMxWZl2GHCaXvzyupGFgn5lNv5jJNfX+uNSgLf1E1J3b1oUhd0dQtX5LwbCE4SB6yfpHeNPYGp4IBvQXalL4WPmCPOGAtKEiHisSujXt68CrqkIiGmGZG7uwoHFIGc8fIjKTphGX5W5CqOpjzPrkaV6vJBjMczISDZPt/3HGhbazdOVr0g/AJQnuylaLmZXEDq0SeE2tnUFIxiCo3g9t8MHW3mrTKylw9OuE5q0NnijBifyZRm6z9z5LBVRZ3/HtLdJn/ZGzS0RgHnIpBh0ZWruKP9/AScfVM/9673XDDQNcy7hiVSZOjhaud1dn3QBF7sMA50eRvuBYJArBttE1un0uKjZFoh7vdRw6iL77SQymWd2es4q5zp4lauahPj2ZA03ZGkbNxfaKN556rbRHHts8VwintxSogIHNbHNi++zAUsP0X8+Nq5SiFZPvZwAhm7Y7vRXb9Q9iRfQmFK2zci2YK0vZu6bL/pG2bg+yKXik9iw2MLYb4prFWoooyQTALMqUkoM2IiPLA6vDnySIhj7qOeT5N+MxQfVJiFGdYbbeF7aOJPeZOd+/2ijgtsqnsWAIxcxe6/0CbRD66pIrIjugEhj85DiMa2MqSTh9anwdhoQVyj3HlUpzA0B8O3eIgp9lrNR4qd+mTzWTd4mCQJnMPgwAvm/Fwumm0cf6Y3rk8UKPjbI7k5plKiExL3YuJKCopFHVvCTe5ckXA8ycTPRo7D/NdMwk+jE+l48UUZf2zqGUR9Uap5Vrm4dDIoN7ZVP3B+RXxk9z/rngo0WWyP2NKiNNPmQAAAAEABVguNTA5AAADGDCCAxQwggH8oAMCAQICCQD+ry+OgoyMRzANBgkqhkiG9w0BAQsFADA3MQswCQYDVQQGEwJVUzEQMA4GA1UEChMHQW5kcm9pZDEWMBQGA1UEAxMNQW5kcm9pZCBEZWJ1ZzAgFw0yNjExMDExNDA5MTBaGA8yMDU2MTAyNDE0MDkxMFowNzELMAkGA1UEBhMCVVMxEDAOBgNVBAoTB0FuZHJvaWQxFjAUBgNVBAMTDUFuZHJvaWQgRGVidWcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDJ3l927ZOKVhXWAEUI7gYLle0NH0rai51B7OXKHYUYYv6FnkMXO/LZ/JBchEs2cN5jp6zVa5KQ3ovtCnZaNqB1uRzuRsczOqbzDC4cdB69y7EqhZdrUF3yHtJ+pjcWW8t5MEQHAwg3TWBDUBPtXQ1H7dAdHgYjDcELsWjMXcTT0i8dwTpREsUtOs9U/+OuBXQbduocBP/99QBxGI0Si/n+FptnUHrA7I9E0APl74N2I9phAL2dQMCNEL4els5l/mCzmw5+Vsle8W7yTdmSa5WG3j0wgfbjBX3uetTxbUWpxaBZAMHw1GfJ8uHh+sYQcKp22EDtyLZa1MmEFbqOwbMFAgMBAAGjITAfMB0GA1UdDgQWBBRiklv2EKJCc69iIq4kPPvfWdlhQjANBgkqhkiG9w0BAQsFAAOCAQEAeq2sj8HW2ylAcEvPUziN4AgOSvcaSCO7xIPc9ATxXGePt5U/szgySbQNDu8vVwD0yY5UDajSzwf3fZUSkE34XiE9S69QAZfiONlBymEV35kzRiPLwkWhCX3NRSSh9P2dyav7+OyQv2zIB9OHBkmaUBgcU7S/2lkKo3Vx+5jD+e8yVChvHyA+pQCAKEo1nao8OrgNXdw2dlygRxLWiv29kUdOPvPoZiWbuBRa//GZ/nwZIN+X4N6pgLa1W0A/IoUXaqvrGo6hyD20eM/uFObQvP+agfwTpq3OxqvWTD0+lYOBP/XZRx2RB2uB2IDtNhhsBBg+Rte1lklB/bkfHRg/4h7+L4usA1bxeXJDpLul9EWQCBkF" | base64 -d > ~/.android/debug.keystore
+          cp ~/.android/debug.keystore android/app/debug.keystore
+
+          # Auto-increment build number on every GitHub Actions run so Android always allows in-place APK Update!
+          AUTO_BUILD_NUMBER=$((1000 + ${GITHUB_RUN_NUMBER:-1}))
+          echo "Building APK v${APP_VERSION_NAME} (versionCode: ${AUTO_BUILD_NUMBER})..."
+
+          flutter build apk --release --build-name="${APP_VERSION_NAME}" --build-number="${AUTO_BUILD_NUMBER}"
+          flutter build appbundle --release --build-name="${APP_VERSION_NAME}" --build-number="${AUTO_BUILD_NUMBER}"
+
+      - name: Upload Release APK (For Direct Phone Install & Update)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Satta-Pai-Release-APK
+          path: app_build/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Play Store AAB Bundle (For Google Play Console Upload)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Satta-Pai-PlayStore-AAB
+          path: app_build/build/app/outputs/bundle/release/app-release.aab

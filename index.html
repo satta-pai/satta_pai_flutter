@@ -2082,6 +2082,18 @@ html.theme-ghost-live {
         }
     </style>
 
+<script id="sp-ice-config">
+/* WebRTC ICE: STUN + free TURN relays (TCP/443 + TLS fallbacks so calls survive strict carrier NAT / firewalls).
+   Shared public relay = best-effort. For production add your own Metered/Coturn credentials in Firestore settings/webrtc. */
+window.SP_ICE_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:openrelay.metered.ca:80' },
+  { urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' },
+  { urls: 'turns:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+];
+window.SP_RTC_CONFIG = function () { return { iceServers: window.SP_ICE_SERVERS, iceCandidatePoolSize: 4, bundlePolicy: 'max-bundle' }; };
+</script>
 </head>
 <body id="body-root" role="application" aria-label="Satta Pai Esports Arena">
 
@@ -25231,12 +25243,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
             window._activeCallDocId = '';
             window._incomingCallSnapData = null;
 
-            const RTC_ICE_CONFIG = {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
-                ]
-            };
+            const RTC_ICE_CONFIG = window.SP_RTC_CONFIG();
 
             window.cleanupDmWebRtcResources = function() {
                 clearInterval(window._dmCallDurationTimer);
@@ -26458,12 +26465,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // 📞 OVERRIDE startPrivateDmAudioCall, answerIncomingDmAudioCall, endActiveDmAudioCall & startIncomingDmCallListener
         // Uses 'dm_messages' doc 'call_signal__<email>' (100% permitted on live Firebase DB!)
         (function() {
-            const RTC_CFG = {
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
-                ]
-            };
+            const RTC_CFG = window.SP_RTC_CONFIG();
 
             const getCallSignalDocRef = (targetEmail) => {
                 const clean = String(targetEmail || '').trim().toLowerCase();
@@ -27675,7 +27677,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
                 window.showToast('📞 Adding ' + thirdName + ' to Conference Call...');
 
                 try {
-                    const RTC_CFG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+                    const RTC_CFG = window.SP_RTC_CONFIG();
                     const pc2 = new RTCPeerConnection(RTC_CFG);
                     window._dmConferencePeers[thirdEm] = pc2;
                     window._dmLocalAudioStream.getTracks().forEach(t => pc2.addTrack(t, window._dmLocalAudioStream));
@@ -27829,7 +27831,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
 
                 try {
                     window._dmLocalAudioStream = stream;
-                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    const pc = new RTCPeerConnection(window.SP_RTC_CONFIG());
                     window._dmPeerConn = pc;
                     stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
@@ -29351,5 +29353,751 @@ GHOST SQUAD, 0, 11, 39</textarea>
         })();
 
     </script>
+<script id="sp-upgrade-module">
+/* =====================================================================
+ * SATTA PAI ESPORTS — UPGRADE MODULE v1
+ *  1. Daily chat/DM message limits (Free 60 / Pro 180 / Pro+ 360)
+ *  2. Play Store review "Safe Mode" (₹ -> SP Points), admin 1-click switch
+ *  3. Point Table / Bracket poster generator (HTML5 Canvas, live Firestore)
+ *  4. TURN/STUN credential refresh for WebRTC (config itself lives in <head>)
+ *  5. FCM token bridge (native app -> users/{email}.fcm)
+ *  6. True "10 minutes before match" siren + small scroll/UX CSS
+ * Plain classic <script>. Never throws into the host app.
+ * ===================================================================== */
+(function () {
+  'use strict';
+  if (window.__SP_UPGRADE_V1__) return;
+  window.__SP_UPGRADE_V1__ = true;
+  var W = window;
+
+  /* ---------- tiny helpers ---------- */
+  function tryDo(fn, fb) { try { return fn(); } catch (e) { return fb; } }
+  function lsGet(k) { return tryDo(function () { return localStorage.getItem(k); }, null); }
+  function lsSet(k, v) { tryDo(function () { localStorage.setItem(k, v); }); }
+  function noop() {}
+  function fbReady() { return !!(W.db && W.doc && W.setDoc && W.getDoc && W.onSnapshot); }
+  function whenFirebase(cb) {
+    var n = 0;
+    (function poll() {
+      if (fbReady()) { tryDo(cb); return; }
+      if (++n < 400) setTimeout(poll, 300); // ~2 min max
+    })();
+  }
+  function email() {
+    var e = String(W.loggedEmail || '').toLowerCase();
+    return e && e !== 'guest' && e.indexOf('@') > 0 ? e : '';
+  }
+  function isNativeApp() { return !!(W.SattaPaiNativeAuth && typeof W.SattaPaiNativeAuth.postMessage === 'function'); }
+  function nativeMsg(m) { if (isNativeApp()) { tryDo(function () { W.SattaPaiNativeAuth.postMessage(m); }); return true; } return false; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function dayKey(d) { d = d || new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function toast(m) { if (typeof W.showToast === 'function') tryDo(function () { W.showToast(m); }); }
+
+  /* ---------- accessor guard: wraps a window function now AND on every later assignment ---------- */
+  function interceptFn(name, wrapFn) {
+    var cur = W[name];
+    var wrapped = typeof cur === 'function' ? wrapFn(cur) : cur;
+    try {
+      Object.defineProperty(W, name, {
+        configurable: true, enumerable: true,
+        get: function () { return wrapped; },
+        set: function (fn) { wrapped = (typeof fn === 'function' && !fn.__spw) ? wrapFn(fn) : fn; }
+      });
+    } catch (e) { /* non-configurable: leave host untouched */ }
+  }
+  function mark(fn, orig) { fn.__spw = true; fn.__orig = orig; return fn; }
+
+  /* =====================================================================
+   * 0. CSS
+   * ===================================================================== */
+  (function injectCss() {
+    var css = [
+      /* scroll smoothness (safe tweaks only; refresh-rate itself is decided by the device/WebView) */
+      '#chat-messages,#dm-messages-scroll-box{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scroll-behavior:auto}',
+      'html{touch-action:manipulation;-webkit-tap-highlight-color:transparent}',
+      '@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}',
+      /* limit sheet */
+      '#sp-limit-sheet{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:100001;width:min(92vw,420px);padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#1b1030,#0b1630);border:1px solid rgba(251,191,36,.55);box-shadow:0 12px 40px rgba(0,0,0,.6);color:#fff;font:600 12.5px/1.45 system-ui,sans-serif}',
+      '#sp-limit-sheet b{color:#fbbf24}',
+      '#sp-limit-sheet button{margin-top:10px;padding:7px 16px;border:0;border-radius:10px;background:#fbbf24;color:#111;font:800 12px system-ui;cursor:pointer}',
+      /* admin card */
+      '.sp-upg-card{border:1px solid rgba(0,242,254,.35);background:rgba(8,14,30,.85);border-radius:14px;padding:12px;margin-bottom:12px;color:#e5e7eb;font:600 12px/1.4 system-ui,sans-serif}',
+      '.sp-upg-card h4{margin:0 0 8px;font:800 13px system-ui;color:#00f2fe}',
+      '.sp-upg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px}',
+      '.sp-upg-btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font:800 12px system-ui;color:#04121a;background:linear-gradient(90deg,#00f2fe,#4facfe)}',
+      '.sp-upg-btn.gold{background:linear-gradient(90deg,#fbbf24,#f59e0b)}',
+      '.sp-sw{position:relative;width:52px;height:28px;border-radius:99px;border:0;cursor:pointer;background:#374151;transition:background .15s}',
+      '.sp-sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s}',
+      '.sp-sw[aria-checked="true"]{background:#10b981}.sp-sw[aria-checked="true"]::after{transform:translateX(24px)}',
+      /* poster modal */
+      '#sp-poster-modal{position:fixed;inset:0;z-index:100002;background:rgba(2,6,16,.92);display:flex;align-items:center;justify-content:center;padding:12px}',
+      '#sp-poster-modal .sp-pm{width:min(96vw,520px);max-height:96vh;overflow:auto;background:#0a1020;border:1px solid rgba(0,242,254,.4);border-radius:18px;padding:12px;color:#fff;font:600 12px system-ui}',
+      '#sp-poster-modal select{width:100%;padding:8px;border-radius:10px;background:#111a30;color:#fff;border:1px solid #334155;margin-top:8px}',
+      '#sp-poster-modal .sp-tabs{display:flex;gap:6px;margin-top:8px}',
+      '#sp-poster-modal .sp-tab{flex:1;padding:8px 4px;border-radius:10px;border:1px solid #334155;background:#111a30;color:#cbd5e1;font:800 11px system-ui;cursor:pointer}',
+      '#sp-poster-modal .sp-tab.on{background:#00f2fe;color:#04121a;border-color:#00f2fe}',
+      '#sp-poster-modal img{display:block;width:100%;height:auto;max-height:62vh;object-fit:contain;margin-top:10px;border-radius:12px;background:#000}',
+      '#sp-poster-modal .sp-actions{display:flex;gap:8px;margin-top:10px}',
+      '#sp-poster-modal .sp-actions button{flex:1}'
+    ].join('\n');
+    var st = document.createElement('style');
+    st.id = 'sp-upgrade-css';
+    st.textContent = css;
+    (document.head || document.documentElement).appendChild(st);
+  })();
+
+  /* =====================================================================
+   * 1. DAILY MESSAGE LIMITS
+   * ===================================================================== */
+  var LIMITS = { free: 60, pro: 180, proplus: 360 };
+  var TIER_NAME = { free: 'Free', pro: '⭐ PRO', proplus: '👑 PRO+' };
+
+  function tierNow() {
+    if (tryDo(function () { return W.isCurrentUserProPlus && W.isCurrentUserProPlus(); }, false)) return 'proplus';
+    if (tryDo(function () { return W.isCurrentUserVip && W.isCurrentUserVip(); }, false)) return 'pro';
+    return 'free';
+  }
+  function qKey(e, d) { return 'sp_msgq_' + e + '_' + d; }
+
+  var Q = {
+    loaded: {}, syncT: null,
+    count: function (e) { var n = parseInt(lsGet(qKey(e, dayKey())), 10); return isFinite(n) && n > 0 ? n : 0; },
+    set: function (e, n) { lsSet(qKey(e, dayKey()), String(n)); },
+    purge: function (e) {
+      tryDo(function () {
+        var pre = 'sp_msgq_' + e + '_', keep = pre + dayKey();
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf(pre) === 0 && k !== keep) localStorage.removeItem(k);
+        }
+      });
+    },
+    /* merge server counter once per login so clearing app data / switching device can't reset the day's usage */
+    ensureLoaded: function (e) {
+      var self = this;
+      if (!e || !fbReady()) return Promise.resolve();
+      if (self.loaded[e]) return self.loaded[e];
+      self.purge(e);
+      self.loaded[e] = new Promise(function (resolve) {
+        var done = false;
+        var t = setTimeout(function () { if (!done) { done = true; resolve(); } }, 2500);
+        tryDo(function () {
+          W.getDoc(W.doc(W.db, 'users', e)).then(function (snap) {
+            if (done) return; done = true; clearTimeout(t);
+            var d = (snap && snap.exists && snap.exists()) ? (snap.data() || {}) : {};
+            var q = d.msgQuota || {};
+            if (q.date === dayKey()) {
+              var sv = parseInt(q.count, 10) || 0;
+              if (sv > self.count(e)) self.set(e, sv);
+            }
+            resolve();
+          }).catch(function () { if (!done) { done = true; clearTimeout(t); } resolve(); });
+        }, null) || (clearTimeout(t), resolve());
+      });
+      return self.loaded[e];
+    },
+    check: function (e) {
+      var t = tierNow(), limit = LIMITS[t], used = this.count(e);
+      return { ok: used < limit, used: used, limit: limit, left: Math.max(0, limit - used), tier: t };
+    },
+    consume: function (e) {
+      var n = this.count(e) + 1;
+      this.set(e, n);
+      var self = this;
+      clearTimeout(self.syncT);
+      self.syncT = setTimeout(function () {
+        if (!fbReady()) return;
+        tryDo(function () {
+          W.setDoc(W.doc(W.db, 'users', e), { msgQuota: { date: dayKey(), count: self.count(e) } }, { merge: true }).catch(noop);
+        });
+      }, 1500);
+      return n;
+    }
+  };
+
+  var LimitUI = {
+    sheet: function (html) {
+      var old = document.getElementById('sp-limit-sheet'); if (old) old.remove();
+      var d = document.createElement('div');
+      d.id = 'sp-limit-sheet'; d.setAttribute('role', 'alert');
+      d.innerHTML = html + '<div><button type="button">OK</button></div>';
+      d.querySelector('button').onclick = function () { d.remove(); };
+      document.body.appendChild(d);
+      setTimeout(function () { if (d.parentNode) d.remove(); }, 9000);
+    },
+    limit: function (c) {
+      var msg = '🚫 <b>Daily message limit reached</b> — ' + c.used + '/' + c.limit + ' (' + TIER_NAME[c.tier] + ').<br>';
+      if (c.tier === 'free') msg += 'Upgrade to <b>⭐ PRO</b> for 180/day or <b>👑 PRO+</b> for 360/day.';
+      else if (c.tier === 'pro') msg += 'Upgrade to <b>👑 PRO+</b> for 360 messages/day.';
+      else msg += 'You have used all 360 PRO+ messages today.';
+      msg += '<br>Your limit resets at midnight (device date).';
+      this.sheet(msg);
+    },
+    low: function (c) {
+      if (c.left === 10 || c.left === 3 || c.left === 0) {
+        toast(c.left === 0 ? '⚠️ That was your last message for today (' + c.limit + '/' + c.limit + ').' : '⚠️ Only ' + c.left + ' messages left today (' + TIER_NAME[c.tier] + ' limit ' + c.limit + ').');
+      }
+    }
+  };
+
+  function wrapTextSender(inputId, countable) {
+    return function (orig) {
+      return mark(async function () {
+        var self = this, args = arguments, e = email();
+        if (!e) return orig.apply(self, args);
+        await Q.ensureLoaded(e);
+        var inp = document.getElementById(inputId);
+        var before = ((inp && inp.value) || '').trim();
+        if (!before) return orig.apply(self, args);
+        if (countable && !countable()) return orig.apply(self, args);
+        var c = Q.check(e);
+        if (!c.ok) { LimitUI.limit(c); return; }
+        var res = await orig.apply(self, args);
+        var after = ((inp && inp.value) || '').trim();
+        if (after !== before) { Q.consume(e); LimitUI.low(Q.check(e)); } // input cleared => message was accepted
+        return res;
+      }, orig);
+    };
+  }
+  interceptFn('sendChatMessage', wrapTextSender('chat-input'));
+  interceptFn('sendPrivateDmMessage', wrapTextSender('dm-message-input', function () { return !!W._activeDmPartnerEmail; }));
+  interceptFn('sendPrivateDmVoicePayload', function (orig) {
+    return mark(function () {
+      var e = email();
+      if (!e || !W._activeDmPartnerEmail) return orig.apply(this, arguments);
+      var c = Q.check(e);
+      if (!c.ok) { LimitUI.limit(c); return; }
+      var r = orig.apply(this, arguments);
+      Q.consume(e); LimitUI.low(Q.check(e));
+      return r;
+    }, orig);
+  });
+  W.SPChatQuota = {
+    limits: LIMITS,
+    status: function () { var e = email(); return e ? Q.check(e) : null; }
+  };
+  /* warm the counter right after login */
+  whenFirebase(function () { var n = 0; var t = setInterval(function () { var e = email(); if (e) { Q.ensureLoaded(e); clearInterval(t); } else if (++n > 120) clearInterval(t); }, 1000); });
+
+  /* =====================================================================
+   * 2. PLAY STORE SAFE MODE  (₹ -> SP Points)
+   * ===================================================================== */
+  var HAS_RUPEE = /₹|\bINR\b|\bRs\.?\s*\d/;
+  var RUPEE_RE = /₹\s*|\bINR\s*|\bRs\.?\s*(?=\d)/g;
+  var ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
+  var SAFE = { on: false, nodes: new Set(), orig: new WeakMap(), obs: null, busy: false };
+  function conv(s) { return (typeof s === 'string' && s) ? s.replace(RUPEE_RE, 'SP Points ') : s; }
+  function P(s) { return SAFE.on ? conv(s) : s; }
+
+  function convText(n) {
+    if (!n || n.nodeType !== 3 || !HAS_RUPEE.test(n.nodeValue)) return;
+    var p = n.parentNode; if (!p || /^(SCRIPT|STYLE|TEXTAREA|NOSCRIPT)$/.test(p.nodeName)) return;
+    if (!SAFE.orig.has(n)) { SAFE.orig.set(n, n.nodeValue); SAFE.nodes.add(n); }
+    n.nodeValue = conv(n.nodeValue);
+  }
+  function convAttrs(el) {
+    for (var i = 0; i < ATTRS.length; i++) {
+      var a = ATTRS[i], v = el.getAttribute && el.getAttribute(a);
+      if (v && HAS_RUPEE.test(v)) {
+        if (!el.hasAttribute('data-sp-o-' + a)) el.setAttribute('data-sp-o-' + a, v);
+        el.setAttribute(a, conv(v));
+      }
+    }
+  }
+  function convertTree(root) {
+    if (!root) return;
+    if (root.nodeType === 3) { convText(root); return; }
+    if (root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), list = [];
+    while (tw.nextNode()) { if (HAS_RUPEE.test(tw.currentNode.nodeValue)) list.push(tw.currentNode); }
+    list.forEach(convText);
+    if (root.querySelectorAll) {
+      if (root.nodeType === 1) convAttrs(root);
+      root.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(convAttrs);
+    }
+  }
+  function revertAll() {
+    SAFE.nodes.forEach(function (n) { if (n.isConnected && SAFE.orig.has(n)) n.nodeValue = SAFE.orig.get(n); });
+    SAFE.nodes.clear();
+    ATTRS.forEach(function (a) {
+      document.querySelectorAll('[data-sp-o-' + a + ']').forEach(function (el) {
+        el.setAttribute(a, el.getAttribute('data-sp-o-' + a)); el.removeAttribute('data-sp-o-' + a);
+      });
+    });
+  }
+  function startObserver() {
+    if (SAFE.obs) return;
+    SAFE.obs = new MutationObserver(function (muts) {
+      if (!SAFE.on || SAFE.busy) return;
+      SAFE.busy = true;
+      try {
+        for (var i = 0; i < muts.length; i++) {
+          var m = muts[i];
+          if (m.type === 'childList') { for (var j = 0; j < m.addedNodes.length; j++) convertTree(m.addedNodes[j]); }
+          else if (m.type === 'characterData') convText(m.target);
+          else if (m.type === 'attributes' && m.target.nodeType === 1) convAttrs(m.target);
+        }
+        if (SAFE.nodes.size > 6000) SAFE.nodes.forEach(function (n) { if (!n.isConnected) SAFE.nodes.delete(n); });
+      } catch (e) {}
+      SAFE.busy = false;
+      SAFE.obs.takeRecords();
+    });
+    SAFE.obs.observe(document.documentElement, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+  }
+  function setSafe(on) {
+    on = !!on;
+    var was = SAFE.on;
+    SAFE.on = on;
+    document.documentElement.classList.toggle('sp-safe-mode', on);
+    lsSet('sp_safe_mode', on ? '1' : '0');
+    if (on) { startObserver(); if (document.body) { SAFE.busy = true; convertTree(document.body); SAFE.busy = false; if (SAFE.obs) SAFE.obs.takeRecords(); } if (document.title) document.title = conv(document.title); }
+    else if (was) { if (SAFE.obs) { SAFE.obs.disconnect(); SAFE.obs = null; } revertAll(); }
+    renderAdminCards();
+  }
+  W.SPSafeMode = { enable: function () { setSafe(true); }, disable: function () { setSafe(false); }, isOn: function () { return SAFE.on; } };
+
+  /* showToast / alert text */
+  interceptFn('showToast', function (orig) { return mark(function (m) { return orig.call(this, SAFE.on ? conv(m) : m); }, orig); });
+
+  /* instant apply from cache (before Firebase answers) */
+  (function bootSafe() {
+    var cached = lsGet('sp_safe_mode');
+    var qs = tryDo(function () { return new URLSearchParams(location.search).get('safe'); }, null);
+    var initial = qs === '1' ? true : (cached === '1' || (cached === null && W.SP_SAFE_MODE_DEFAULT === true));
+    if (initial) { SAFE.on = true; document.documentElement.classList.add('sp-safe-mode'); startObserver(); }
+    document.addEventListener('DOMContentLoaded', function () { if (SAFE.on) setSafe(true); });
+  })();
+  whenFirebase(function () {
+    tryDo(function () {
+      W.onSnapshot(W.doc(W.db, 'settings', 'appMode'), function (snap) {
+        var d = (snap && snap.exists && snap.exists()) ? snap.data() : null;
+        var on = d ? d.playStoreSafeMode === true : (W.SP_SAFE_MODE_DEFAULT === true);
+        if (on !== SAFE.on) setSafe(on); else renderAdminCards();
+      }, noop);
+    });
+  });
+
+  /* ---------- admin card ---------- */
+  function canToggleSafe() {
+    var e = email();
+    return !!(W.isSuperAdminGlobal || (e && tryDo(function () { return W.isAdminEmail && W.isAdminEmail(e); }, false)));
+  }
+  function cardHtml() {
+    var on = SAFE.on;
+    return '<h4>🛡️ Play Store Review Safe Mode</h4>' +
+      '<div class="sp-upg-row"><div style="flex:1;min-width:180px">' + (on ? '<b style="color:#34d399">ON</b> — every rupee symbol is shown as “SP Points”.' : '<b style="color:#fbbf24">OFF</b> — normal rupee prices are visible.') +
+      '<div style="opacity:.7;font-weight:500;margin-top:2px">Turn ON before submitting to / while Google reviews the app. Applies live to all users.</div></div>' +
+      '<button type="button" class="sp-sw" role="switch" aria-checked="' + on + '" data-sp="safe" aria-label="Play Store safe mode"></button></div>' +
+      '<h4 style="margin-top:12px">📊 Poster Generator</h4>' +
+      '<div class="sp-upg-row" style="margin-top:4px"><button type="button" class="sp-upg-btn" data-sp="poster">Generate Point Table / Bracket Poster</button></div>';
+  }
+  function renderAdminCards() {
+    ['console-super-admin', 'console-admin-host'].forEach(function (id) {
+      var host = document.getElementById(id); if (!host) return;
+      var card = host.querySelector(':scope > .sp-upg-card');
+      if (!card) { card = document.createElement('div'); card.className = 'sp-upg-card'; host.insertBefore(card, host.firstChild); }
+      var html = cardHtml();
+      if (card.__h !== html) { card.innerHTML = html; card.__h = html; }
+    });
+  }
+  document.addEventListener('click', function (ev) {
+    var b = ev.target && ev.target.closest && ev.target.closest('.sp-upg-card [data-sp]'); if (!b) return;
+    var act = b.getAttribute('data-sp');
+    if (act === 'poster') { W.SPPoster.open(); return; }
+    if (act === 'safe') {
+      if (!canToggleSafe()) { toast('🔒 Only admins can change Safe Mode.'); return; }
+      var next = !SAFE.on;
+      if (!fbReady()) { toast('⏳ Connecting to server… try again.'); return; }
+      b.disabled = true;
+      W.setDoc(W.doc(W.db, 'settings', 'appMode'), { playStoreSafeMode: next, updatedAt: Date.now(), updatedBy: email() }, { merge: true })
+        .then(function () { setSafe(next); toast(next ? '🛡️ Safe Mode ON — ₹ hidden everywhere' : '✅ Safe Mode OFF — ₹ visible'); })
+        .catch(function (err) { toast('❌ Could not save: ' + ((err && err.message) || 'try again')); })
+        .then(function () { b.disabled = false; });
+    }
+  }, true);
+  setInterval(function () { if (document.visibilityState === 'visible') renderAdminCards(); }, 1200);
+
+  /* =====================================================================
+   * 3. POSTER GENERATOR  (Canvas, live Firestore data)
+   * ===================================================================== */
+  var PW = 1080, PH = 1350, PS = 2; // logical size, 2x scale => 2160x2700 HD
+  var POSTER = { matches: [], opts: [], type: 'table', optId: '', canvas: null, blobUrl: '', busy: false };
+
+  function loadMatches() {
+    var p = fbReady() && W.getDocs && W.collection
+      ? W.getDocs(W.collection(W.db, 'matches')).then(function (s) { return s.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); }); })
+      : Promise.reject(new Error('offline'));
+    return p.catch(function () { return (W.allMatches || []).slice(); });
+  }
+  function num(v) { v = parseFloat(v); return isFinite(v) ? v : 0; }
+  function sortRank(a, b) { return num(b.totalScore) - num(a.totalScore) || num(b.kills) - num(a.kills); }
+  function buildOptions(matches) {
+    var out = [];
+    matches.slice().sort(function (a, b) { return num(b.createdAt) - num(a.createdAt); }).forEach(function (m) {
+      (Array.isArray(m.publishedScoreboards) ? m.publishedScoreboards : []).forEach(function (sb, i) {
+        if (sb && Array.isArray(sb.rankings) && sb.rankings.length) {
+          out.push({ id: m.id + '#' + i, match: m, sb: sb, label: (m.title || 'Match') + ' • ' + (sb.stageName || m.stage || 'Stage') + (sb.groupName ? ' • ' + sb.groupName : '') });
+        }
+      });
+    });
+    return out;
+  }
+  function aggregate(matches) {
+    var map = {};
+    matches.forEach(function (m) {
+      (Array.isArray(m.publishedScoreboards) ? m.publishedScoreboards : []).forEach(function (sb) {
+        (sb && sb.rankings || []).forEach(function (r) {
+          var k = String(r.teamName || 'Unknown').trim().toUpperCase();
+          var o = map[k] || (map[k] = { teamName: k, totalScore: 0, kills: 0, place: 0, wins: 0, played: 0 });
+          o.totalScore += num(r.totalScore); o.kills += num(r.kills); o.played++;
+          if (Number(r.place) === 1) o.wins++;
+        });
+      });
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).sort(sortRank);
+  }
+
+  /* canvas helpers */
+  function mkCanvas() { var c = document.createElement('canvas'); c.width = PW * PS; c.height = PH * PS; var x = c.getContext('2d'); x.scale(PS, PS); return { c: c, x: x }; }
+  function rr(x, px, py, w, h, r) { x.beginPath(); x.moveTo(px + r, py); x.arcTo(px + w, py, px + w, py + h, r); x.arcTo(px + w, py + h, px, py + h, r); x.arcTo(px, py + h, px, py, r); x.arcTo(px, py, px + w, py, r); x.closePath(); }
+  function fit(x, t, maxW) { t = String(t == null ? '' : t); if (!maxW || x.measureText(t).width <= maxW) return t; while (t.length > 1 && x.measureText(t + '…').width > maxW) t = t.slice(0, -1); return t + '…'; }
+  var FONT = '"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+  function T(x, t, px, py, size, weight, color, align, maxW) {
+    x.font = weight + ' ' + size + 'px ' + FONT; x.fillStyle = color; x.textAlign = align || 'left'; x.textBaseline = 'alphabetic';
+    x.fillText(fit(x, t, maxW), px, py);
+  }
+  function drawBg(x) {
+    var g = x.createLinearGradient(0, 0, PW, PH); g.addColorStop(0, '#050914'); g.addColorStop(.55, '#0b1430'); g.addColorStop(1, '#14081f');
+    x.fillStyle = g; x.fillRect(0, 0, PW, PH);
+    var r1 = x.createRadialGradient(PW * .88, 110, 10, PW * .88, 110, 560); r1.addColorStop(0, 'rgba(0,242,254,.30)'); r1.addColorStop(1, 'rgba(0,242,254,0)'); x.fillStyle = r1; x.fillRect(0, 0, PW, PH);
+    var r2 = x.createRadialGradient(PW * .1, PH * .95, 10, PW * .1, PH * .95, 620); r2.addColorStop(0, 'rgba(251,191,36,.20)'); r2.addColorStop(1, 'rgba(251,191,36,0)'); x.fillStyle = r2; x.fillRect(0, 0, PW, PH);
+    x.save(); x.globalAlpha = .045; x.strokeStyle = '#fff'; x.lineWidth = 2;
+    for (var i = -PH; i < PW; i += 38) { x.beginPath(); x.moveTo(i, PH); x.lineTo(i + PH, 0); x.stroke(); }
+    x.restore();
+    rr(x, 18, 18, PW - 36, PH - 36, 30); x.strokeStyle = 'rgba(0,242,254,.5)'; x.lineWidth = 3; x.stroke();
+  }
+  function drawBrand(x) {
+    var li = document.getElementById('custom-app-logo-img'), lx = 62, ly = 48, ls = 84;
+    var drewLogo = false;
+    if (li && li.complete && li.naturalWidth > 0) {
+      tryDo(function () { x.save(); x.beginPath(); x.arc(lx + ls / 2, ly + ls / 2, ls / 2, 0, Math.PI * 2); x.clip(); x.drawImage(li, lx, ly, ls, ls); x.restore(); drewLogo = true; });
+    }
+    if (!drewLogo) { x.beginPath(); x.arc(lx + ls / 2, ly + ls / 2, ls / 2, 0, Math.PI * 2); x.fillStyle = '#00f2fe'; x.fill(); T(x, 'SP', lx + ls / 2, ly + ls / 2 + 14, 38, 900, '#04121a', 'center'); }
+    T(x, 'SATTA PAI ESPORTS', 168, 92, 46, 900, '#ffffff', 'left', 820);
+    T(x, 'OFFICIAL FREE FIRE CUSTOM ROOMS & TOURNAMENTS', 168, 126, 20, 700, '#00f2fe', 'left', 820);
+  }
+  function drawFooter(x) {
+    x.fillStyle = 'rgba(255,255,255,.12)'; x.fillRect(60, PH - 92, PW - 120, 2);
+    var d = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
+    T(x, 'Generated ' + d + ' • Join the next custom room on Satta Pai Esports', PW / 2, PH - 52, 21, 600, 'rgba(255,255,255,.75)', 'center', PW - 140);
+    T(x, '#SattaPaiEsports  #FreeFire  #Esports', PW / 2, PH - 26, 17, 700, '#fbbf24', 'center');
+  }
+  function pill(x, text, cx, cy, color) {
+    x.font = '900 24px ' + FONT; var w = x.measureText(text).width + 56;
+    rr(x, cx - w / 2, cy - 22, w, 44, 22); x.fillStyle = color; x.fill();
+    T(x, text, cx, cy + 9, 24, 900, '#04121a', 'center');
+  }
+  var MEDAL = ['#fbbf24', '#d1d5db', '#cd7f32'];
+  var MEDAL_BG = ['rgba(251,191,36,.18)', 'rgba(209,213,219,.14)', 'rgba(205,127,50,.16)'];
+
+  function drawTablePoster(o) {
+    var cv = mkCanvas(), x = cv.x;
+    drawBg(x); drawBrand(x);
+    var title = P(o.title || 'Tournament');
+    T(x, title, PW / 2, 232, 54, 900, '#fbbf24', 'center', PW - 120);
+    T(x, P(o.sub || ''), PW / 2, 276, 24, 600, 'rgba(255,255,255,.85)', 'center', PW - 120);
+    pill(x, o.badge || 'POINT TABLE', PW / 2, 330, '#00f2fe');
+    var rows = o.rows.slice().sort(sortRank).slice(0, 18), n = rows.length;
+    var top = 440, bottom = PH - 110, avail = bottom - top - 44;
+    var rowH = Math.max(40, Math.min(74, Math.floor(avail / Math.max(n, 1))));
+    var hy = top - 10;
+    T(x, '#', 92, hy, 20, 800, '#00f2fe', 'center');
+    T(x, 'TEAM', 150, hy, 20, 800, '#00f2fe', 'left');
+    T(x, o.col2 || 'KILLS', 690, hy, 20, 800, '#00f2fe', 'center');
+    T(x, o.col3 || 'PLACE', 810, hy, 20, 800, '#00f2fe', 'center');
+    T(x, 'PTS', 990, hy, 20, 800, '#00f2fe', 'center');
+    var fs = Math.round(rowH * .4);
+    rows.forEach(function (r, i) {
+      var y = top + 8 + i * rowH, h = rowH - 8;
+      rr(x, 50, y, 980, h, 14); x.fillStyle = i < 3 ? MEDAL_BG[i] : (i % 2 ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.065)'); x.fill();
+      if (i < 3) { rr(x, 50, y, 9, h, 4); x.fillStyle = MEDAL[i]; x.fill(); }
+      var cy = y + h / 2 + fs * .35;
+      T(x, String(i + 1), 92, cy, fs, 900, i < 3 ? MEDAL[i] : '#e5e7eb', 'center');
+      T(x, r.teamName || '—', 150, cy, fs, 800, '#ffffff', 'left', 470);
+      T(x, String(num(r.kills)), 690, cy, fs, 700, '#e5e7eb', 'center');
+      var c3 = o.mode === 'overall' ? String(r.wins || 0) : (r.isEliminated ? 'ELIM' : (r.place ? '#' + r.place : '-'));
+      T(x, c3, 810, cy, fs, 700, '#e5e7eb', 'center');
+      T(x, String(num(r.totalScore)), 990, cy, Math.round(fs * 1.1), 900, i < 3 ? MEDAL[i] : '#00f2fe', 'center');
+    });
+    if (!n) T(x, 'Results will be published soon', PW / 2, 700, 34, 700, 'rgba(255,255,255,.7)', 'center');
+    drawFooter(x);
+    return cv.c;
+  }
+
+  function drawBracketPoster(matches) {
+    var cv = mkCanvas(), x = cv.x;
+    drawBg(x); drawBrand(x);
+    T(x, 'TOURNAMENT BRACKET', PW / 2, 232, 54, 900, '#fbbf24', 'center', PW - 120);
+    pill(x, 'ROAD TO THE FINALS', PW / 2, 290, '#00f2fe');
+    /* group by stage, order stages by first creation time */
+    var stages = {}, order = [];
+    matches.slice().sort(function (a, b) { return num(a.createdAt) - num(b.createdAt); }).forEach(function (m) {
+      var s = String(m.stage || 'Matches'); if (!stages[s]) { stages[s] = []; order.push(s); } stages[s].push(m);
+    });
+    order = order.slice(-4);
+    var cols = order.length;
+    if (!cols) { T(x, 'No matches yet', PW / 2, 700, 34, 700, 'rgba(255,255,255,.7)', 'center'); drawFooter(x); return cv.c; }
+    var gapX = 34, left = 50, colW = Math.floor((PW - left * 2 - gapX * (cols - 1)) / cols);
+    var areaTop = 400, areaBot = PH - 200, areaH = areaBot - areaTop, pos = [];
+    order.forEach(function (s, ci) {
+      var list = stages[s].slice(-8), k = list.length, gap = 20;
+      var ch = Math.min(190, Math.floor((areaH - gap * (k - 1)) / k));
+      var totalH = ch * k + gap * (k - 1), y0 = areaTop + Math.floor((areaH - totalH) / 2), cx = left + ci * (colW + gapX);
+      T(x, s.toUpperCase(), cx + colW / 2, y0 - 18, 22, 900, '#00f2fe', 'center', colW);
+      pos[ci] = [];
+      list.forEach(function (m, i) {
+        var y = y0 + i * (ch + gap);
+        pos[ci].push({ x: cx, y: y, w: colW, h: ch, m: m });
+      });
+    });
+    /* connectors first (under cards) */
+    x.save(); x.strokeStyle = 'rgba(0,242,254,.55)'; x.lineWidth = 3;
+    for (var c = 0; c < cols - 1; c++) {
+      var a = pos[c], b = pos[c + 1];
+      a.forEach(function (p, i) {
+        var t = b[Math.min(b.length - 1, Math.floor(i * b.length / a.length))];
+        var x1 = p.x + p.w, y1 = p.y + p.h / 2, x2 = t.x, y2 = t.y + t.h / 2, mx = x1 + (x2 - x1) / 2;
+        x.beginPath(); x.moveTo(x1, y1); x.lineTo(mx, y1); x.lineTo(mx, y2); x.lineTo(x2, y2); x.stroke();
+      });
+    }
+    x.restore();
+    var champion = '';
+    pos.forEach(function (colArr, ci) {
+      colArr.forEach(function (p) {
+        rr(x, p.x, p.y, p.w, p.h, 16); x.fillStyle = 'rgba(12,20,44,.96)'; x.fill(); x.strokeStyle = 'rgba(0,242,254,.5)'; x.lineWidth = 2; x.stroke();
+        var m = p.m, fsT = p.w < 200 ? 17 : 20, pad = 14;
+        T(x, P(m.title || 'Match'), p.x + pad, p.y + 30, fsT, 900, '#fbbf24', 'left', p.w - pad * 2);
+        var sb = Array.isArray(m.publishedScoreboards) && m.publishedScoreboards[0], rk = sb && Array.isArray(sb.rankings) ? sb.rankings.slice().sort(sortRank) : [];
+        var maxLines = p.h >= 140 ? 3 : (p.h >= 100 ? 2 : 1);
+        if (rk.length) {
+          for (var i = 0; i < Math.min(maxLines, rk.length); i++) {
+            var ly = p.y + 62 + i * 30;
+            T(x, (i + 1) + '. ' + (rk[i].teamName || ''), p.x + pad, ly, fsT - 2, 700, i === 0 ? '#fbbf24' : '#e5e7eb', 'left', p.w - pad * 2 - 56);
+            T(x, String(num(rk[i].totalScore)), p.x + p.w - pad, ly, fsT - 2, 900, '#00f2fe', 'right');
+          }
+          if (ci === cols - 1 && m.status === 'ended' && rk[0] && !champion) champion = rk[0].teamName || '';
+        } else {
+          T(x, P(m.time || 'TBD'), p.x + pad, p.y + 66, fsT - 2, 600, 'rgba(255,255,255,.7)', 'left', p.w - pad * 2);
+          T(x, (m.status === 'ended' ? 'COMPLETED' : 'UPCOMING'), p.x + pad, p.y + 94, fsT - 4, 800, '#34d399', 'left');
+        }
+      });
+    });
+    if (champion) { rr(x, 160, PH - 176, PW - 320, 44, 22); x.fillStyle = '#fbbf24'; x.fill(); T(x, '👑 CHAMPION: ' + champion, PW / 2, PH - 146, 24, 900, '#1a1203', 'center', PW - 380); }
+    drawFooter(x);
+    return cv.c;
+  }
+
+  function renderPoster() {
+    var p = POSTER, canvas = null;
+    if (p.type === 'bracket') canvas = drawBracketPoster(p.matches);
+    else if (p.type === 'overall') {
+      canvas = drawTablePoster({ title: 'Overall Leaderboard', sub: 'All published matches combined', badge: 'OVERALL STANDINGS', col2: 'KILLS', col3: 'WINS', mode: 'overall', rows: aggregate(p.matches) });
+    } else {
+      var o = p.opts.filter(function (z) { return z.id === p.optId; })[0] || p.opts[0];
+      if (!o) { canvas = drawTablePoster({ title: 'No published results yet', sub: '', rows: [] }); }
+      else {
+        var m = o.match, sb = o.sb;
+        var sub = [sb.stageName || m.stage, sb.groupName, m.map, m.prize ? 'Prize Pool ₹' + m.prize : ''].filter(Boolean).join('  •  ');
+        canvas = drawTablePoster({ title: m.title || 'Match', sub: sub, badge: 'POINT TABLE', rows: sb.rankings });
+      }
+    }
+    p.canvas = canvas;
+    return new Promise(function (resolve) {
+      canvas.toBlob(function (blob) {
+        if (p.blobUrl) tryDo(function () { URL.revokeObjectURL(p.blobUrl); });
+        p.blob = blob; p.blobUrl = blob ? URL.createObjectURL(blob) : '';
+        resolve();
+      }, 'image/jpeg', 0.93);
+    });
+  }
+  function fileName() {
+    var base = POSTER.type === 'bracket' ? 'Bracket' : (POSTER.type === 'overall' ? 'Leaderboard' : 'PointTable');
+    return 'SattaPai_' + base + '_' + dayKey().replace(/-/g, '') + '.jpg';
+  }
+  function posterCaption() {
+    return POSTER.type === 'bracket' ? '🏆 Satta Pai Esports — Tournament Bracket' : '📊 Satta Pai Esports — Point Table\nJoin the next custom room!';
+  }
+
+  function posterShare(saveOnly) {
+    var p = POSTER; if (!p.blob) return;
+    if (isNativeApp()) {
+      var url = p.canvas.toDataURL('image/jpeg', .95), b64 = url.split(',')[1] || '';
+      nativeMsg((saveOnly ? 'save_image:' : 'share_image:') + fileName() + '|' + b64);
+      return;
+    }
+    var file = tryDo(function () { return new File([p.blob], fileName(), { type: 'image/jpeg' }); }, null);
+    if (!saveOnly && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Satta Pai Esports', text: posterCaption() }).catch(function (e) { if (e && e.name !== 'AbortError') downloadPoster(); });
+      return;
+    }
+    downloadPoster();
+    if (!saveOnly) toast('📥 Saved. Open WhatsApp / Instagram and attach the image.');
+  }
+  function downloadPoster() {
+    var a = document.createElement('a'); a.href = POSTER.blobUrl; a.download = fileName(); document.body.appendChild(a); a.click(); setTimeout(function () { a.remove(); }, 500);
+  }
+
+  function modalEl() { return document.getElementById('sp-poster-modal'); }
+  function closeModal() { var m = modalEl(); if (m) m.remove(); if (POSTER.blobUrl) { tryDo(function () { URL.revokeObjectURL(POSTER.blobUrl); }); POSTER.blobUrl = ''; } }
+  function paintModal(status) {
+    var m = modalEl(); if (!m) return;
+    var p = POSTER;
+    var optHtml = p.opts.map(function (o) { return '<option value="' + esc(o.id) + '"' + (o.id === p.optId ? ' selected' : '') + '>' + esc(P(o.label)) + '</option>'; }).join('');
+    m.innerHTML = '<div class="sp-pm"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:14px;color:#00f2fe">📊 Poster Generator</b><button type="button" data-pz="close" style="background:none;border:0;color:#fff;font-size:20px;cursor:pointer" aria-label="Close">✕</button></div>' +
+      '<div class="sp-tabs"><button type="button" class="sp-tab' + (p.type === 'table' ? ' on' : '') + '" data-pz="t-table">Point Table</button><button type="button" class="sp-tab' + (p.type === 'overall' ? ' on' : '') + '" data-pz="t-overall">Overall</button><button type="button" class="sp-tab' + (p.type === 'bracket' ? ' on' : '') + '" data-pz="t-bracket">Bracket</button></div>' +
+      (p.type === 'table' && p.opts.length ? '<select data-pz="opt">' + optHtml + '</select>' : '') +
+      (status ? '<div style="margin-top:14px;text-align:center;color:#fbbf24">' + esc(status) + '</div>' : (p.blobUrl ? '<img alt="Generated poster preview" src="' + p.blobUrl + '">' : '')) +
+      '<div class="sp-actions"><button type="button" class="sp-upg-btn" data-pz="share"' + (p.blobUrl ? '' : ' disabled') + '>📤 Share (WhatsApp / Instagram)</button><button type="button" class="sp-upg-btn gold" data-pz="save"' + (p.blobUrl ? '' : ' disabled') + '>💾 Save</button></div></div>';
+  }
+  async function regenerate() {
+    if (POSTER.busy) { POSTER.again = true; return; }
+    POSTER.busy = true;
+    do {
+      POSTER.again = false;
+      paintModal('Generating HD poster…');
+      try {
+        if (document.fonts && document.fonts.ready) await Promise.race([document.fonts.ready, new Promise(function (r) { setTimeout(r, 1200); })]);
+        await new Promise(function (r) { requestAnimationFrame(function () { setTimeout(r, 0); }); });
+        if (!modalEl()) break;
+        await renderPoster();
+        paintModal('');
+      } catch (e) { paintModal('❌ Could not generate poster: ' + ((e && e.message) || 'try again')); }
+    } while (POSTER.again && modalEl());
+    POSTER.busy = false;
+  }
+  W.SPPoster = {
+    open: async function () {
+      closeModal();
+      var m = document.createElement('div'); m.id = 'sp-poster-modal'; document.body.appendChild(m);
+      m.addEventListener('click', function (ev) {
+        var t = ev.target; if (t === m) { closeModal(); return; }
+        var b = t.closest && t.closest('[data-pz]'); if (!b) return;
+        var a = b.getAttribute('data-pz');
+        if (a === 'close') closeModal();
+        else if (a === 'share') posterShare(false);
+        else if (a === 'save') posterShare(true);
+        else if (a.indexOf('t-') === 0) { POSTER.type = a.slice(2); regenerate(); }
+      });
+      m.addEventListener('change', function (ev) { var s = ev.target; if (s && s.getAttribute('data-pz') === 'opt') { POSTER.optId = s.value; regenerate(); } });
+      paintModal('Fetching live match data…');
+      try {
+        POSTER.matches = await loadMatches();
+        POSTER.opts = buildOptions(POSTER.matches);
+        POSTER.optId = POSTER.opts[0] ? POSTER.opts[0].id : '';
+        POSTER.type = POSTER.opts.length ? 'table' : (POSTER.matches.length ? 'bracket' : 'table');
+        if (!POSTER.matches.length) { paintModal('No matches found yet.'); return; }
+        await regenerate();
+      } catch (e) { paintModal('❌ ' + ((e && e.message) || 'Failed to load matches')); }
+    },
+    close: closeModal
+  };
+  W.openSattaPaiPoster = function () { return W.SPPoster.open(); };
+
+  /* =====================================================================
+   * 4. TURN credential refresh (static config is in <head>: window.SP_ICE_SERVERS)
+   *    settings/webrtc  ->  { meteredApp:"yourapp", meteredApiKey:"..." }  OR  { iceServersJson:"[{...}]" }
+   * ===================================================================== */
+  function setIce(list) {
+    if (!Array.isArray(list) || !list.length || !Array.isArray(W.SP_ICE_SERVERS)) return;
+    var ok = list.filter(function (s) { return s && s.urls; });
+    if (!ok.length) return;
+    var stunKeep = W.SP_ICE_SERVERS.filter(function (s) { return String(s.urls).indexOf('stun:') === 0 && !s.username; });
+    W.SP_ICE_SERVERS.splice.apply(W.SP_ICE_SERVERS, [0, W.SP_ICE_SERVERS.length].concat(stunKeep, ok)); // in place: existing configs see it
+    W.SP_ICE_SOURCE = 'custom';
+  }
+  function refreshTurn() {
+    if (!fbReady()) return;
+    W.getDoc(W.doc(W.db, 'settings', 'webrtc')).then(function (snap) {
+      var d = (snap && snap.exists && snap.exists()) ? snap.data() : null; if (!d) return;
+      if (d.iceServersJson) { setIce(JSON.parse(d.iceServersJson)); return; }
+      if (d.meteredApp && d.meteredApiKey) {
+        return fetch('https://' + encodeURIComponent(d.meteredApp) + '.metered.live/api/v1/turn/credentials?apiKey=' + encodeURIComponent(d.meteredApiKey))
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('metered ' + r.status)); }).then(setIce);
+      }
+    }).catch(noop);
+  }
+  whenFirebase(function () { refreshTurn(); setInterval(refreshTurn, 6 * 3600 * 1000); });
+
+  /* =====================================================================
+   * 5. FCM TOKEN BRIDGE (native Android -> Firestore)
+   * ===================================================================== */
+  W.onNativeFcmToken = function (token) {
+    token = String(token || '').trim(); if (!token) return;
+    lsSet('sp_fcm_token', token); saveFcm();
+  };
+  function saveFcm() {
+    var t = lsGet('sp_fcm_token'), e = email();
+    if (!t || !e || !fbReady() || lsGet('sp_fcm_saved_' + e) === t) return;
+    W.setDoc(W.doc(W.db, 'users', e), { fcm: { token: t, at: Date.now(), platform: 'android' } }, { merge: true })
+      .then(function () { lsSet('sp_fcm_saved_' + e, t); }).catch(noop);
+  }
+  if (isNativeApp()) {
+    var asks = 0;
+    var askT = setInterval(function () { nativeMsg('request_fcm_token'); saveFcm(); if (++asks > 40 || (lsGet('sp_fcm_token') && email() && lsGet('sp_fcm_saved_' + email()) === lsGet('sp_fcm_token'))) clearInterval(askT); }, 4000);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') { nativeMsg('request_fcm_token'); saveFcm(); } });
+  }
+
+  /* =====================================================================
+   * 6. TRUE 10-MINUTE PRE-MATCH SIREN (foreground; FCM covers background)
+   * ===================================================================== */
+  var MONTHS = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+  /* Free-text match time ("Today 8 PM", "Tomorrow 7:30 PM", "05 Nov 9 PM", "2026-11-05 21:00") -> epoch ms, IST. NaN if unknown. */
+  function parseMatchStart(str, nowMs) {
+    if (!str) return NaN;
+    var s = String(str).trim().toLowerCase(), IST = 330 * 60000;
+    var nowI = new Date((nowMs || Date.now()) + IST);
+    var y = nowI.getUTCFullYear(), mo = nowI.getUTCMonth(), d = nowI.getUTCDate(), m;
+    if ((m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/))) { y = +m[1]; mo = +m[2] - 1; d = +m[3]; }
+    else if ((m = s.match(/(\d{1,2})(?:st|nd|rd|th)?\s*([a-z]{3})[a-z]*/)) && MONTHS[m[2]] !== undefined) { d = +m[1]; mo = MONTHS[m[2]]; }
+    else if ((m = s.match(/\b(\d{1,2})[\/-](\d{1,2})(?:[\/-](\d{2,4}))?\b/))) { d = +m[1]; mo = +m[2] - 1; if (m[3]) y = +m[3] < 100 ? 2000 + (+m[3]) : +m[3]; }
+    else if (/tomorrow|kal\b/.test(s)) { var t = new Date(Date.UTC(y, mo, d + 1)); y = t.getUTCFullYear(); mo = t.getUTCMonth(); d = t.getUTCDate(); }
+    var h = NaN, mi = 0;
+    if ((m = s.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/))) { h = +m[1] % 12 + (m[3] === 'pm' ? 12 : 0); mi = m[2] ? +m[2] : 0; }
+    else if ((m = s.match(/\b([01]?\d|2[0-3]):([0-5]\d)\b/))) { h = +m[1]; mi = +m[2]; }
+    else if (/noon/.test(s)) { h = 12; }
+    if (isNaN(h)) return NaN;
+    return Date.UTC(y, mo, d, h, mi) - IST;
+  }
+  W.SPParseMatchStart = parseMatchStart;
+
+  function sirenTick() {
+    try {
+      if (W._sirenAlertEnabled === false) return;
+      var e = email(); if (!e) return;
+      var now = Date.now(), teams = W.allTeams || [], matches = W.allMatches || [];
+      matches.forEach(function (m) {
+        if (!m || m.status === 'ended') return;
+        var mine = teams.filter(function (t) { return String(t.userEmail || '').toLowerCase() === e && t.matchId === m.id && t.status !== 'banned'; });
+        if (!mine.length) return;
+        var start = parseMatchStart(m.time, now); if (isNaN(start)) return;
+        var delta = start - now;
+        if (delta > 10 * 60000 || delta <= 0) return;
+        var key = 'sp_t10_' + m.id + '_' + start;
+        if (lsGet(key)) return;
+        lsSet(key, '1');
+        var grp = String(mine[0].slotGroup || 'TEAM A').toUpperCase(), gr = (m.groupRooms && m.groupRooms[grp]) || { roomId: m.roomId, roomPass: m.roomPass };
+        var mins = Math.max(1, Math.ceil(delta / 60000));
+        var body = 'Match: ' + (m.title || '') + ' • starts in ' + mins + ' min' + (gr && gr.roomId ? '\nRoom ID: ' + gr.roomId + ' • Pass: ' + (gr.roomPass || 'None') : '\nRoom ID will be published soon — stay ready!');
+        if (typeof W.testMatchRoomSirenNow === 'function') tryDo(function () { W.testMatchRoomSirenNow(); });
+        if (typeof W.triggerSystemMatchNotification === 'function') tryDo(function () { W.triggerSystemMatchNotification('🚨 Match starts in ' + mins + ' min!', body); });
+        toast('🚨 ' + (m.title || 'Match') + ' starts in ' + mins + ' min' + (gr && gr.roomId ? ' • Room ' + gr.roomId : ''));
+      });
+    } catch (err) {}
+  }
+  setInterval(sirenTick, 20000);
+})();
+
+</script>
 </body>
 </html>

@@ -8,8 +8,8 @@ on:
 env:
   # 📌 HOW TO UPDATE APK VERSION (e.g. 1.0.0 -> 1.0.1):
   # Simply change APP_VERSION_NAME to "1.0.1" and increment APP_VERSION_CODE to "101"!
-  APP_VERSION_NAME: "1.0.8"
-  APP_VERSION_CODE: "108"
+  APP_VERSION_NAME: "1.0.9"
+  APP_VERSION_CODE: "109"
 
 jobs:
   build:
@@ -862,10 +862,8 @@ jobs:
               String savedInstalledTs = _prefs?.getString('sp_installed_apk_ts') ?? '0';
 
               if (savedVer.isNotEmpty && savedVer != kCurrentNativeAppVersion) {
-                savedEmail = '';
-                savedUid = '';
-                savedGuest = '0';
-                _clearNativeAuthSession();
+                // Preserve user login session across app updates while updating stored version!
+                savedVer = kCurrentNativeAppVersion;
                 _prefs?.setString('sp_saved_app_version', kCurrentNativeAppVersion);
               } else if (savedVer.isEmpty && (savedEmail.isNotEmpty || savedGuest == '1')) {
                 savedVer = kCurrentNativeAppVersion;
@@ -1143,7 +1141,8 @@ jobs:
                   });
                 }
 
-                final String localUrl = 'http://127.0.0.1:' + port.toString() + '/index.html';
+                await controller.clearCache();
+                final String localUrl = 'http://127.0.0.1:' + port.toString() + '/index.html?v=' + kCurrentNativeAppVersion + '_' + DateTime.now().millisecondsSinceEpoch.toString();
                 await controller.loadRequest(Uri.parse(localUrl));
                 Future.delayed(const Duration(milliseconds: 900), () => _checkPendingNotificationDeepLink());
 
@@ -1205,9 +1204,16 @@ jobs:
           echo "Building APK v${APP_VERSION_NAME} (versionCode: ${AUTO_BUILD_NUMBER})..."
 
           flutter build apk --release --build-name="${APP_VERSION_NAME}" --build-number="${AUTO_BUILD_NUMBER}"
+          flutter build appbundle --release --build-name="${APP_VERSION_NAME}" --build-number="${AUTO_BUILD_NUMBER}"
 
-      - name: Upload Release APK
+      - name: Upload Release APK (For Direct Phone Install & Update)
         uses: actions/upload-artifact@v4
         with:
           name: Satta-Pai-Release-APK
           path: app_build/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Play Store AAB Bundle (For Google Play Console Upload)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Satta-Pai-PlayStore-AAB
+          path: app_build/build/app/outputs/bundle/release/app-release.aab

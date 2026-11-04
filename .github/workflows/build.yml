@@ -884,7 +884,7 @@ jobs:
 
               final String bootScript = '<script id="sp-native-boot-bridge">'
                   'window.__SP_NATIVE_STORAGE__ = ' + jsonEncode(bootPayload) + ';'
-                  'window.CURRENT_APP_APK_VERSION = "' + kCurrentNativeAppVersion + '";'
+                  'window.CURRENT_APP_APK_VERSION = ' + jsonEncode(savedInstalledVer.isNotEmpty ? savedInstalledVer : kCurrentNativeAppVersion) + ';'
                   'try {'
                   '  sessionStorage.setItem("sp_intro_shown_session", "1");'
                   '  sessionStorage.setItem("sp_intro_seen_session", "1");'
@@ -1179,9 +1179,7 @@ jobs:
                   body: SafeArea(
                     child: _isReady && _controller != null
                         ? WebViewWidget(controller: _controller!)
-                        : const Center(
-                            child: CircularProgressIndicator(color: Color(0xFF00F2FE)),
-                          ),
+                        : const SizedBox.shrink(),
                   ),
                 ),
               );

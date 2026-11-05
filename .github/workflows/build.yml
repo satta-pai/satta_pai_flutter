@@ -46,6 +46,37 @@ jobs:
           mkdir -p assets/www
           cp /tmp/web_backup/index.html assets/www/index.html
 
+          # 🚀 V26.0 AUTOMATIC CLOUD MODULAR SPLITTER (Splits single mobile-uploaded app.html into
+          #    separate sp-styles.css, sp-core.js, and sp-modules.js inside the APK automatically for V8 Bytecode Caching!)
+          python3 - << 'SPLIT_EOF'
+          import re
+          with open("assets/www/index.html", "r", encoding="utf-8") as f:
+              raw = f.read()
+
+          # 1. Extract unified <style id="sp-unified-modular-css"> into external assets/www/sp-styles.css
+          m_css = re.search(r'<style id="sp-unified-modular-css">(.*?)</style>', raw, flags=re.S)
+          if m_css:
+              with open("assets/www/sp-styles.css", "w", encoding="utf-8") as cf:
+                  cf.write(m_css.group(1))
+              raw = raw[:m_css.start()] + '<link rel="stylesheet" href="/sp-styles.css">' + raw[m_css.end():]
+
+          # 2. Extract the two large <script type="module"> blocks into sp-core.js and sp-modules.js
+          mod_scripts = list(re.finditer(r'<script type="module">(.*?)</script>', raw, flags=re.S))
+          if len(mod_scripts) >= 3:
+              s_core = mod_scripts[0]
+              s_mods = mod_scripts[-1]
+              with open("assets/www/sp-core.js", "w", encoding="utf-8") as jf1:
+                  jf1.write(s_core.group(1))
+              with open("assets/www/sp-modules.js", "w", encoding="utf-8") as jf2:
+                  jf2.write(s_mods.group(1))
+              raw = raw[:s_mods.start()] + '<script type="module" src="/sp-modules.js"></script>' + raw[s_mods.end():]
+              raw = raw[:s_core.start()] + '<script type="module" src="/sp-core.js"></script>' + raw[s_core.end():]
+
+          with open("assets/www/index.html", "w", encoding="utf-8") as f:
+              f.write(raw)
+          print("Successfully split app.html into index.html + sp-styles.css + sp-core.js + sp-modules.js!")
+          SPLIT_EOF
+
           flutter pub add webview_flutter webview_flutter_android url_launcher shared_preferences
 
           python3 - << 'PYEOF'
@@ -53,7 +84,7 @@ jobs:
               content = f.read()
 
           if "assets/www/" not in content:
-              asset_block = "\n  assets:\n    - assets/www/index.html\n"
+              asset_block = "\n  assets:\n    - assets/www/\n"
               if "uses-material-design: true" in content:
                   content = content.replace("uses-material-design: true", "uses-material-design: true" + asset_block, 1)
               else:
@@ -920,6 +951,12 @@ jobs:
               try {
                 _prefs = await SharedPreferences.getInstance();
                 final indexHtml = await rootBundle.loadString('assets/www/index.html');
+                String cachedCss = '';
+                String cachedCoreJs = '';
+                String cachedModulesJs = '';
+                try { cachedCss = await rootBundle.loadString('assets/www/sp-styles.css'); } catch (_) {}
+                try { cachedCoreJs = await rootBundle.loadString('assets/www/sp-core.js'); } catch (_) {}
+                try { cachedModulesJs = await rootBundle.loadString('assets/www/sp-modules.js'); } catch (_) {}
 
                 try {
                   _server = await HttpServer.bind(
@@ -946,6 +983,27 @@ jobs:
                       }
                     } catch (_) {}
                     req.response.statusCode = 404;
+                    await req.response.close();
+                    return;
+                  }
+                  if (req.uri.path == '/sp-styles.css' && cachedCss.isNotEmpty) {
+                    req.response.headers.contentType = ContentType('text', 'css', charset: 'utf-8');
+                    req.response.headers.set('Cache-Control', 'public, max-age=86400');
+                    req.response.write(cachedCss);
+                    await req.response.close();
+                    return;
+                  }
+                  if (req.uri.path == '/sp-core.js' && cachedCoreJs.isNotEmpty) {
+                    req.response.headers.contentType = ContentType('application', 'javascript', charset: 'utf-8');
+                    req.response.headers.set('Cache-Control', 'public, max-age=86400');
+                    req.response.write(cachedCoreJs);
+                    await req.response.close();
+                    return;
+                  }
+                  if (req.uri.path == '/sp-modules.js' && cachedModulesJs.isNotEmpty) {
+                    req.response.headers.contentType = ContentType('application', 'javascript', charset: 'utf-8');
+                    req.response.headers.set('Cache-Control', 'public, max-age=86400');
+                    req.response.write(cachedModulesJs);
                     await req.response.close();
                     return;
                   }

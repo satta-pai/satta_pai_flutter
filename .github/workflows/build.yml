@@ -80,11 +80,15 @@ jobs:
           flutter pub add webview_flutter webview_flutter_android url_launcher shared_preferences
 
           python3 - << 'PYEOF'
+          import os
           with open("pubspec.yaml", "r") as f:
               content = f.read()
 
+          www_files = sorted(os.listdir("assets/www"))
+          asset_lines = "\n".join(f"    - assets/www/{fn}" for fn in www_files)
+          asset_block = f"\n  assets:\n{asset_lines}\n"
+
           if "assets/www/" not in content:
-              asset_block = "\n  assets:\n    - assets/www/\n"
               if "uses-material-design: true" in content:
                   content = content.replace("uses-material-design: true", "uses-material-design: true" + asset_block, 1)
               else:
@@ -92,25 +96,31 @@ jobs:
 
           with open("pubspec.yaml", "w") as f:
               f.write(content)
+          print("Updated pubspec.yaml with assets:", www_files)
           PYEOF
 
           python3 - << 'PYEOF'
           import re, base64, os, shutil, json
 
-          with open("assets/www/index.html", "r", encoding="utf-8") as f:
+          # Read from the unsplit full source HTML (/tmp/web_backup/index.html) so VIP_CUSTOM_APP_ICONS is always found!
+          src_html_path = "/tmp/web_backup/index.html" if os.path.exists("/tmp/web_backup/index.html") else "assets/www/index.html"
+          with open(src_html_path, "r", encoding="utf-8") as f:
               html = f.read()
 
-          res_dir = "android/app/src/main/res"
-          for root, dirs, files in os.walk(res_dir):
-              for file in files:
-                  if file.startswith("ic_launcher"):
-                      os.remove(os.path.join(root, file))
+          # Also append sp-core.js and sp-modules.js if present so nothing is ever missed
+          for extra_js in ["assets/www/sp-core.js", "assets/www/sp-modules.js"]:
+              if os.path.exists(extra_js):
+                  with open(extra_js, "r", encoding="utf-8") as jf:
+                      html += "\n" + jf.read()
 
-          m = re.search(r'id="custom-app-logo-img"\s+src="data:image/[^;]+;base64,([^"]+)"', html)
-          default_bytes = base64.b64decode(m.group(1)) if m else b""
+          # Guaranteed valid fallback WebP icon bytes (in case regex ever misses)
+          FALLBACK_WEBP = base64.b64decode("UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA=")
+
+          m = re.search(r'data:image/(?:webp|png|jpeg);base64,([A-Za-z0-9+/=]{200,})', html)
+          default_bytes = base64.b64decode(m.group(1)) if m else FALLBACK_WEBP
 
           vip_icons = {}
-          vm = re.search(r'window\.VIP_CUSTOM_APP_ICONS\s*=\s*(\{.*?\});', html)
+          vm = re.search(r'window\.VIP_CUSTOM_APP_ICONS\s*=\s*(\{.*?\});', html, flags=re.S)
           if vm:
               try:
                   parsed = json.loads(vm.group(1))
@@ -118,23 +128,30 @@ jobs:
                       durl = v.get("dataUrl", "")
                       if "base64," in durl:
                           vip_icons[k] = base64.b64decode(durl.split("base64,", 1)[1])
-              except Exception:
-                  pass
+              except Exception as e:
+                  print("Warning parsing VIP_CUSTOM_APP_ICONS:", e)
+
+          main_icon = vip_icons.get("icon_cyan") or default_bytes or FALLBACK_WEBP
+
+          res_dir = "android/app/src/main/res"
+          for root, dirs, files in os.walk(res_dir):
+              for file in files:
+                  if file.startswith("ic_launcher"):
+                      os.remove(os.path.join(root, file))
 
           for folder in ["mipmap-mdpi", "mipmap-hdpi", "mipmap-xhdpi", "mipmap-xxhdpi", "mipmap-xxxhdpi"]:
               target_dir = os.path.join(res_dir, folder)
               os.makedirs(target_dir, exist_ok=True)
-              main_icon = vip_icons.get("icon_cyan") or default_bytes
-              if main_icon:
-                  with open(os.path.join(target_dir, "ic_launcher.webp"), "wb") as out:
-                      out.write(main_icon)
-                  with open(os.path.join(target_dir, "ic_launcher_round.webp"), "wb") as out:
-                      out.write(main_icon)
+              with open(os.path.join(target_dir, "ic_launcher.webp"), "wb") as out:
+                  out.write(main_icon)
+              with open(os.path.join(target_dir, "ic_launcher_round.webp"), "wb") as out:
+                  out.write(main_icon)
               for key in ["icon_cyan", "icon_gold", "icon_purple", "icon_fire"]:
-                  ibytes = vip_icons.get(key) or main_icon
-                  if ibytes:
-                      with open(os.path.join(target_dir, f"ic_{key}.webp"), "wb") as out:
-                          out.write(ibytes)
+                  ibytes = vip_icons.get(key) or main_icon or FALLBACK_WEBP
+                  with open(os.path.join(target_dir, f"ic_{key}.webp"), "wb") as out:
+                      out.write(ibytes)
+
+          print("Verified mipmap icons generated:", os.listdir(os.path.join(res_dir, "mipmap-hdpi")))
           PYEOF
 
           python3 - << 'PYEOF'

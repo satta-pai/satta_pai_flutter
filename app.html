@@ -3,8 +3,8 @@
 <head>
     <script id="sp-v24-ota-boot-engine">
         window.IS_SATTA_PAI_APP_BUILD = true;
-        window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
-        window.EMBEDDED_RELEASE_TAG = 'v28.0';
+        window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
+        window.EMBEDDED_RELEASE_TAG = 'v29.0';
         (function() {
             try {
                 // If user applied an In-App Local OTA HTML Override that is newer than the APK's bundled HTML, boot it seamlessly!
@@ -2658,7 +2658,7 @@ html.theme-ghost-live {
         }
         html:not(.sp-no-animations) .chat-bubble.tg-bubble-pressed,
         html:not(.sp-no-animations) .dm-swipe-bubble.tg-bubble-pressed {
-            transform: scale(0.955) !important;
+            transform: scale(0.97);
             box-shadow: 0 0 18px rgba(16, 185, 129, 0.38) !important;
         }
 
@@ -3301,6 +3301,55 @@ html[class*="theme-"] .bg-emerald-500,
 html[class*="theme-"] #dm-floating-call-pip {
     background: var(--btn-bg) !important;
     border-color: var(--accent-primary) !important;
+}
+
+
+/* =====================================================================
+   💎 V29.0 INSTAGRAM/SP-ORIGIN CHAT, SWIPE-TO-REPLY & PRIVATE DM POLISH
+   ===================================================================== */
+/* 1. Allow smooth horizontal Swipe-to-Reply while keeping native vertical scroll */
+.chat-bubble,
+.dm-swipe-bubble {
+    touch-action: pan-y !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+.chat-bubble.sp-swiping-active,
+.dm-swipe-bubble.sp-swiping-active {
+    transition: none !important;
+    will-change: transform !important;
+}
+
+/* 2. Clean spacious Private DM layout (Hide redundant clutter bars) */
+#dm-free-privacy-bar,
+#dm-tactical-quick-bar {
+    display: none !important;
+}
+
+/* 3. Instagram-Style Quoted Reply Bubble Above Message */
+.sp-insta-reply-quote-box {
+    margin-bottom: 5px;
+    padding: 5px 9px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.28);
+    border-left: 3px solid var(--accent-primary);
+    font-size: 10.5px;
+    line-height: 1.25;
+}
+.sp-insta-reply-quote-sender {
+    font-weight: 800;
+    color: var(--accent-primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 1px;
+}
+.sp-insta-reply-quote-text {
+    color: rgba(241, 245, 249, 0.88);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 220px;
 }
 
 </style>
@@ -31695,14 +31744,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
                         }
                         const docId = m.id || m.clientMsgId;
                         if (docId && !String(docId).startsWith('local_') && window.setDoc && window.doc && window.db) {
-                            window.setDoc(window.doc(window.db, 'dm_messages', docId), { status: 'read', readAt: now }, { merge: true }).then(() => {
-                                // Delete read relay message from Firestore after 4s (WhatsApp architecture: saved in user's local storage, saves Firebase quota & prevents re-notification!)
-                                setTimeout(() => {
-                                    if (window.deleteDoc && window.doc && window.db) {
-                                        window.deleteDoc(window.doc(window.db, 'dm_messages', docId)).catch(() => {});
-                                    }
-                                }, 4000);
-                            }).catch(() => {});
+                            window.setDoc(window.doc(window.db, 'dm_messages', docId), { status: 'read', readAt: now }, { merge: true }).catch(() => {});
                         }
                     }
                 });
@@ -33200,7 +33242,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // =========================================================================
         (function() {
             window.APP_BUILD_RELEASE_ID = 'v24.0_1793800850746';
-            window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
 
             // 1. Fix the '1.0.0' Version Trap:
             //    Always sync CURRENT_APP_APK_VERSION from installed_apk_ver or latest embedded build!
@@ -33496,7 +33538,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // =========================================================================
         (function() {
             window.APP_BUILD_RELEASE_ID = 'v25.0_1793804713874';
-            window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
 
             // ------------------------------------------------------------------
             // 1. WHATSAPP / TELEGRAM EMOJI DRAWER (OPENS BELOW INPUT BOX,
@@ -33682,7 +33724,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // =========================================================================
         (function() {
             window.APP_BUILD_RELEASE_ID = 'v26.0_1793841585664';
-            window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
 
             // 1. Sync html.sp-chat-active-mode whenever #chat-fullscreen opens or closes
             //    When Chat is open, <main>, <header>, and <nav> are suspended from browser layout/paint!
@@ -33743,7 +33785,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // =========================================================================
         (function() {
             window.APP_BUILD_RELEASE_ID = 'v27.0_1793842388083';
-            window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
 
             // ------------------------------------------------------------------
             // 1. SP-ORIGIN PRISM UI: MAGNETIC BOTTOM DOCK PILL & ORBIT SHORTCUTS
@@ -33907,16 +33949,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
             window.addEventListener('touchstart', wakeEcoGpuOnTouch, { passive: true });
             window.addEventListener('pointerdown', wakeEcoGpuOnTouch, { passive: true });
 
-            const origGetOpenAppModal = window.getOpenAppModal;
-            if (typeof origGetOpenAppModal === 'function') {
-                window.getOpenAppModal = function() {
-                    // If user hasn't touched the screen for >6 seconds, report idle sleep to pause background canvas RAF!
-                    if (Date.now() - _lastUserInteractionTs > 6000) {
-                        return 'eco-idle-sleep';
-                    }
-                    return origGetOpenAppModal.apply(this, arguments);
-                };
-            }
+/* V29.0: Kept getOpenAppModal pure for accurate hardware Back button navigation */
 
             // ------------------------------------------------------------------
             // 3. CRYPTOGRAPHIC HMAC-STYLE TAMPER-PROOF ECONOMY VAULT +
@@ -34043,7 +34076,7 @@ GHOST SQUAD, 0, 11, 39</textarea>
         // =========================================================================
         (function() {
             window.APP_BUILD_RELEASE_ID = 'v28.0_1793844173900';
-            window.EMBEDDED_HTML_BUILD_TS = 1793844173900;
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
 
             const THEME_HEX_MAP = {
                 'whatsapp': '#10b981',
@@ -34086,6 +34119,871 @@ GHOST SQUAD, 0, 11, 39</textarea>
             // Sync theme colors immediately on boot
             window.syncAllThemeColorsEverywhere();
             setTimeout(() => window.syncAllThemeColorsEverywhere(), 350);
+        })();
+
+    
+
+        // =========================================================================
+        // 🚀 V29.0 MASTER FIX ENGINE:
+        //    1. Fix "URL Manipulation Blocked" False-Positive Toast Everywhere
+        //    2. Always Show Player NICKNAME in Global & Private Chat (Never Player ID!)
+        //    3. Smooth Bidirectional Swipe-to-Reply + Instagram One-Time Reply Clear
+        //    4. Private DM Full Overhaul (Clean UI, Persistent History, Full Directory)
+        // =========================================================================
+        (function() {
+            window.APP_BUILD_RELEASE_ID = 'v29.0_1793848756296';
+            window.EMBEDDED_HTML_BUILD_TS = 1793848756296;
+
+            // ------------------------------------------------------------------
+            // 1. FIX "URL Manipulation Blocked by Satta Pai Security Firewall!"
+            //    (pushAppHistoryState was setting #chat-fullscreen / #modal-id in URL hash!)
+            // ------------------------------------------------------------------
+            window.pushAppHistoryState = function(stateObj) {
+                try {
+                    if (window.history && window.history.pushState) {
+                        const safeTab = (stateObj && stateObj.tab) ? stateObj.tab : (window.currentActiveTab || 'home');
+                        const safeHash = ['home', 'matches', 'roadmap', 'chat', 'profile', 'register-paid', 'register-free', 'teams'].includes(safeTab)
+                            ? ('#' + safeTab)
+                            : '#home';
+                        window.history.pushState(stateObj || { type: 'tab', tab: 'home' }, '', window.location.pathname + safeHash);
+                    }
+                } catch(e) {}
+            };
+
+            // Override enforceUrlTamperFirewall so internal modal/chat navigation NEVER triggers false-positive warning toast!
+            const MALICIOUS_URL_QUERY_RX = /(<script|%3cscript|javascript:|sql|union\s+select|admin=1|superadmin=1|hack=1|bypass=1)/i;
+            window.enforceUrlTamperFirewall = function() {
+                try {
+                    const loc = window.location;
+                    const search = String(loc.search || '');
+                    const hash = String(loc.hash || '').toLowerCase();
+
+                    // Only block if query string contains an actual exploit payload
+                    if (search && MALICIOUS_URL_QUERY_RX.test(search)) {
+                        const cleanUrl = loc.origin && loc.origin !== 'null' ? (loc.origin + loc.pathname) : loc.pathname;
+                        window.history.replaceState(null, '', cleanUrl);
+                        return;
+                    }
+
+                    // If a non-admin manually types #teams or #admin in the URL bar, silently redirect to #home without annoying toast
+                    if ((hash === '#teams' || hash === '#admin' || hash === '#superadmin') &&
+                        !window.isSuperAdminGlobal &&
+                        !(typeof window.isAdminEmail === 'function' && window.isAdminEmail(window.loggedEmail)) &&
+                        !(typeof window.isHostEmail === 'function' && window.isHostEmail(window.loggedEmail))) {
+                        window.history.replaceState(null, '', loc.pathname + '#home');
+                        if (window.currentActiveTab === 'teams' && typeof window.switchTab === 'function') {
+                            window.switchTab('home', false);
+                        }
+                    }
+                } catch(e) {}
+            };
+
+            // ------------------------------------------------------------------
+            // 2. LIVE FIRESTORE PLAYERS DIRECTORY SYNC + STRICT NICKNAME DISPLAY
+            //    ("சாட்ல உள்ள போகும்போது பிளேயர்ஸோட நிக்நேம் ஷோ ஆகாம அவங்களோட பிளேயர் ஐடி தான் காட்டுது, அதை பிக்ஸ் பண்ணு")
+            // ------------------------------------------------------------------
+            const isPlayerIdOrPlaceholder = (str) => {
+                const s = String(str || '').trim();
+                if (!s) return true;
+                if (/^(Player\s+)?SP-[0-9A-Z]+$/i.test(s)) return true;
+                if (/^UID:\s*/i.test(s)) return true;
+                if (/^Player$/i.test(s)) return true;
+                if (s.includes('@')) return true;
+                return false;
+            };
+
+            window.getPublicPlayerDisplayName = function(emailRaw, uDataObj, msgFallbackName) {
+                const em = String(emailRaw || '').trim().toLowerCase();
+                if (!em || em === 'guest') return 'Guest Player';
+                const u = uDataObj || (window.userCache && window.userCache[em]) || {};
+
+                // 1. Check Nickname (`ign` or `nickname`) in userCache first
+                const nick = String(u.ign || u.nickname || '').trim();
+                if (nick && !isPlayerIdOrPlaceholder(nick)) {
+                    return nick;
+                }
+
+                // 2. Check Squad Leader IGN in registered tournament teams
+                if (Array.isArray(window.allTeams)) {
+                    const tm = window.allTeams.find(t => String(t.userEmail || t.leaderEmail || '').toLowerCase() === em && t.leaderName);
+                    if (tm && String(tm.leaderName).trim() && !isPlayerIdOrPlaceholder(tm.leaderName)) {
+                        return String(tm.leaderName).trim();
+                    }
+                }
+
+                // 3. Check Message's saved displayName / senderName (if it is a real name, NOT "Player SP-XXXX" or "SP-XXXX")
+                const fb = String(msgFallbackName || '').trim();
+                if (fb && !isPlayerIdOrPlaceholder(fb)) {
+                    return fb;
+                }
+
+                // 4. Check Username (`u.username`) in userCache
+                const uname = String(u.username || u.name || u.displayName || '').trim();
+                if (uname && !isPlayerIdOrPlaceholder(uname)) {
+                    return uname;
+                }
+
+                // 5. If this user's profile hasn't been fetched from Firestore yet, fetch it now in background and re-render!
+                if (em.includes('@') && window.getDoc && window.doc && window.db && (!window._fetchingUserNickSet || !window._fetchingUserNickSet.has(em))) {
+                    window._fetchingUserNickSet = window._fetchingUserNickSet || new Set();
+                    window._fetchingUserNickSet.add(em);
+                    window.getDoc(window.doc(window.db, 'users', em)).then(snap => {
+                        if (snap && snap.exists()) {
+                            const d = snap.data() || {};
+                            window.userCache = window.userCache || {};
+                            const prev = window.userCache[em] || {};
+                            window.userCache[em] = {
+                                ...prev,
+                                ...d,
+                                email: em,
+                                ign: d.ign || d.nickname || prev.ign || '',
+                                username: d.username || d.name || prev.username || '',
+                                dpBase64: d.dpBase64 || d.dp || prev.dpBase64 || '',
+                                playerId: d.playerId || prev.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '')
+                            };
+                            window._lastGlobalChatDomSig = '';
+                            window._lastActiveDmDomSig = '';
+                            if (typeof window.renderChatMessages === 'function') window.renderChatMessages(true);
+                            if (typeof window.renderDmInboxList === 'function') window.renderDmInboxList();
+                            if (typeof window.renderActiveDmConversation === 'function') window.renderActiveDmConversation(true);
+                        }
+                    }).catch(() => {});
+                }
+
+                // 6. Clean fallback derived from email prefix (formatted nicely, e.g. "Loki") instead of raw SP-ID!
+                const prefix = em.split('@')[0].replace(/[0-9._-]+/g, ' ').trim();
+                if (prefix && prefix.length >= 2) {
+                    return prefix.charAt(0).toUpperCase() + prefix.slice(1);
+                }
+                return 'Arena Player';
+            };
+
+            window.getFriendlyFallbackName = function(email, msgDisplayName) {
+                return window.getPublicPlayerDisplayName(email, null, msgDisplayName);
+            };
+
+            // Sync all players from `users` collection so Nicknames & DPs are immediately available in Global Chat & Private DM!
+            window.syncAllArenaPlayersDirectoryLive = function() {
+                if (window._allUsersDirListenerBound || !window.onSnapshot || !window.collection || !window.db) return;
+                window._allUsersDirListenerBound = true;
+                try {
+                    window.onSnapshot(window.collection(window.db, 'users'), (snap) => {
+                        let updatedAny = false;
+                        snap.docs.forEach(docSnap => {
+                            const d = docSnap.data() || {};
+                            const rawId = String(docSnap.id || '').trim().toLowerCase();
+                            const em = String(d.email || d.userEmail || (rawId.includes('@') ? rawId : '')).trim().toLowerCase();
+                            if (!em || !em.includes('@')) return;
+                            window.userCache = window.userCache || {};
+                            const prev = window.userCache[em] || {};
+                            const realIgn = String(d.ign || d.nickname || (!isPlayerIdOrPlaceholder(prev.ign) ? prev.ign : '') || '').trim();
+                            const realUname = String(d.username || d.name || (!isPlayerIdOrPlaceholder(prev.username) ? prev.username : '') || '').trim();
+                            window.userCache[em] = {
+                                ...prev,
+                                ...d,
+                                email: em,
+                                ign: realIgn,
+                                nickname: realIgn,
+                                username: realUname,
+                                playerId: d.playerId || prev.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : 'SP-1000'),
+                                dpBase64: d.dpBase64 || d.dp || d.photoURL || prev.dpBase64 || '',
+                                isOnline: Boolean(d.isOnline),
+                                lastSeenAt: Number(d.lastSeenAt || d.updatedAt || prev.lastSeenAt || 0)
+                            };
+                            updatedAny = true;
+                        });
+                        if (updatedAny) {
+                            window._lastGlobalChatDomSig = '';
+                            window._lastActiveDmDomSig = '';
+                            const chatFs = document.getElementById('chat-fullscreen');
+                            if (chatFs && chatFs.classList.contains('active')) {
+                                if (window._currentChatTabMode === 'dm') {
+                                    if (typeof window.renderDmInboxList === 'function') window.renderDmInboxList();
+                                    if (typeof window.renderActiveDmConversation === 'function') window.renderActiveDmConversation(true);
+                                } else {
+                                    if (typeof window.renderChatMessages === 'function') window.renderChatMessages(true);
+                                }
+                            }
+                        }
+                    }, () => { window._allUsersDirListenerBound = false; });
+                } catch(e) {
+                    window._allUsersDirListenerBound = false;
+                }
+            };
+            setTimeout(window.syncAllArenaPlayersDirectoryLive, 300);
+
+            // Fix hydratePlayersDirectoryFromChatsAndTeams so it NEVER overwrites Nickname with SP-ID!
+            window.hydratePlayersDirectoryFromChatsAndTeams = function() {
+                try {
+                    window.userCache = window.userCache || {};
+                    (window.allTeams || []).forEach(t => {
+                        const em = String(t.userEmail || t.leaderEmail || '').trim().toLowerCase();
+                        if (!em || !em.includes('@')) return;
+                        const ex = window.userCache[em] || {};
+                        const ldr = String(t.leaderName || '').trim();
+                        window.userCache[em] = {
+                            ...ex,
+                            email: em,
+                            ign: (!isPlayerIdOrPlaceholder(ex.ign) ? ex.ign : (!isPlayerIdOrPlaceholder(ldr) ? ldr : '')),
+                            username: (!isPlayerIdOrPlaceholder(ex.username) ? ex.username : (!isPlayerIdOrPlaceholder(ldr) ? ldr : '')),
+                            gameUid: ex.gameUid || t.gameUid || '',
+                            playerId: ex.playerId || t.ownerPlayerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '')
+                        };
+                    });
+                    (window.allChatMessages || []).forEach(m => {
+                        const em = String(m.userEmail || m.email || m.senderEmail || '').trim().toLowerCase();
+                        if (!em || !em.includes('@')) return;
+                        const ex = window.userCache[em] || {};
+                        const mName = String(m.displayName || m.username || m.senderName || '').trim();
+                        window.userCache[em] = {
+                            ...ex,
+                            email: em,
+                            ign: (!isPlayerIdOrPlaceholder(ex.ign) ? ex.ign : (!isPlayerIdOrPlaceholder(mName) ? mName : '')),
+                            username: (!isPlayerIdOrPlaceholder(ex.username) ? ex.username : (!isPlayerIdOrPlaceholder(mName) ? mName : '')),
+                            dpBase64: ex.dpBase64 || m.dpBase64 || '',
+                            playerId: ex.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : ''),
+                            lastChatAt: Math.max(Number(ex.lastChatAt || 0), Number(m.timestamp || 0))
+                        };
+                    });
+                    (window._allDmMessages || []).forEach(m => {
+                        const em = String(m.senderEmail || '').trim().toLowerCase();
+                        if (!em || !em.includes('@')) return;
+                        const ex = window.userCache[em] || {};
+                        const sName = String(m.senderName || '').trim();
+                        window.userCache[em] = {
+                            ...ex,
+                            email: em,
+                            ign: (!isPlayerIdOrPlaceholder(ex.ign) ? ex.ign : (!isPlayerIdOrPlaceholder(sName) ? sName : '')),
+                            username: (!isPlayerIdOrPlaceholder(ex.username) ? ex.username : (!isPlayerIdOrPlaceholder(sName) ? sName : '')),
+                            playerId: ex.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : ''),
+                            lastChatAt: Math.max(Number(ex.lastChatAt || 0), Number(m.timestamp || 0))
+                        };
+                    });
+                } catch(e) {}
+            };
+
+            // ------------------------------------------------------------------
+            // 3. INSTAGRAM-GRADE SWIPE-TO-REPLY (LEFT OR RIGHT SWIPE) +
+            //    ONE-TIME REPLY QUOTE CONSUMPTION (NEVER STICKS TO NEXT MESSAGE!)
+            // ------------------------------------------------------------------
+            window.setChatReplyQuote = function(mode, msgKey, fallbackSender = '', fallbackText = '') {
+                const cleanMode = mode === 'dm' ? 'dm' : 'global';
+                const key = String(msgKey || '').trim();
+                const domEl = key ? document.querySelector(`[data-msg-id="${CSS.escape ? CSS.escape(key) : key}"]`) : null;
+                const domSender = (domEl && domEl.getAttribute('data-msg-sender')) || fallbackSender || '';
+                const domText = (domEl && domEl.getAttribute('data-msg-text')) || fallbackText || '';
+
+                if (cleanMode === 'dm') {
+                    const msg = (window._allDmMessages || []).find(m => m && (m.id === key || m.clientMsgId === key));
+                    const rawSender = msg ? window.getPublicPlayerDisplayName(msg.senderEmail, null, msg.senderName) : domSender;
+                    const sName = (!isPlayerIdOrPlaceholder(rawSender) ? rawSender : domSender) || 'Player';
+                    const sText = domText || (msg ? (msg.audioData ? '🎤 Voice Message' : String(msg.message || '').slice(0, 90)) : 'Message');
+                    window._activeDmReplyQuote = { id: key, name: sName, text: sText };
+                    const bar = document.getElementById('dm-reply-quote-bar');
+                    const nEl = document.getElementById('dm-reply-quote-sender');
+                    const tEl = document.getElementById('dm-reply-quote-text');
+                    if (nEl) nEl.textContent = '↩ Replying to ' + sName;
+                    if (tEl) tEl.textContent = sText;
+                    if (bar) bar.classList.remove('hidden');
+                    const inp = document.getElementById('dm-message-input');
+                    if (inp) {
+                        inp.placeholder = `↩ Reply to ${sName}...`;
+                        inp.focus();
+                    }
+                } else {
+                    const msg = (window.allChatMessages || []).find(m => m && (m.id === key || m.clientMsgId === key));
+                    const rawSender = msg ? window.getPublicPlayerDisplayName(msg.userEmail || msg.email, null, msg.displayName || msg.username) : domSender;
+                    const sName = (!isPlayerIdOrPlaceholder(rawSender) ? rawSender : domSender) || 'Player';
+                    const sText = domText || (msg ? String(msg.message || '').slice(0, 90) : 'Message');
+                    window._activeGlobalReplyQuote = { id: key, name: sName, text: sText };
+                    const gBar = document.getElementById('global-reply-quote-bar');
+                    const gnEl = document.getElementById('global-reply-quote-sender');
+                    const gtEl = document.getElementById('global-reply-quote-text');
+                    if (gnEl) gnEl.textContent = '↩ Replying to ' + sName;
+                    if (gtEl) gtEl.textContent = sText;
+                    if (gBar) gBar.classList.remove('hidden');
+                    const inp = document.getElementById('chat-input');
+                    if (inp) {
+                        inp.placeholder = `↩ Reply to ${sName}...`;
+                        inp.focus();
+                    }
+                }
+            };
+
+            window.clearChatReplyQuote = function(mode) {
+                if (!mode || mode === 'global' || mode === 'all') {
+                    window._activeGlobalReplyQuote = null;
+                    document.getElementById('global-reply-quote-bar')?.classList.add('hidden');
+                    const gInp = document.getElementById('chat-input');
+                    if (gInp) gInp.placeholder = 'Type a message...';
+                }
+                if (!mode || mode === 'dm' || mode === 'all') {
+                    window._activeDmReplyQuote = null;
+                    document.getElementById('dm-reply-quote-bar')?.classList.add('hidden');
+                    const dInp = document.getElementById('dm-message-input');
+                    if (dInp) dInp.placeholder = 'Write a private message...';
+                }
+            };
+
+            // Bind Responsive Bidirectional Swipe-to-Reply on both Global Chat and Private DM
+            // (Supports swiping Right on incoming messages AND swiping Left or Right on own messages, just like Instagram!)
+            const bindSmoothSwipeToReplyV29 = (boxId, mode) => {
+                const box = document.getElementById(boxId);
+                if (!box || box.dataset.v29SwipeBound) return;
+                box.dataset.v29SwipeBound = '1';
+
+                let startX = 0, startY = 0;
+                let activeBubble = null;
+                let activeMsgId = '';
+                let isSwipingHoriz = false;
+                let swipeTriggered = false;
+
+                const getBubbleFromTarget = (target) => {
+                    if (!target || !target.closest) return null;
+                    return target.closest('[data-msg-id], .chat-bubble, .dm-swipe-bubble');
+                };
+
+                box.addEventListener('touchstart', (ev) => {
+                    const t = ev.touches && ev.touches[0];
+                    if (!t) return;
+                    const b = getBubbleFromTarget(ev.target);
+                    if (!b) return;
+                    activeBubble = b;
+                    activeMsgId = b.getAttribute('data-msg-id') || '';
+                    startX = t.clientX;
+                    startY = t.clientY;
+                    isSwipingHoriz = false;
+                    swipeTriggered = false;
+                }, { passive: true });
+
+                box.addEventListener('touchmove', (ev) => {
+                    const t = ev.touches && ev.touches[0];
+                    if (!t || !activeBubble) return;
+                    const dx = t.clientX - startX;
+                    const dy = t.clientY - startY;
+
+                    if (!isSwipingHoriz) {
+                        if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+                            isSwipingHoriz = true;
+                            activeBubble.classList.remove('tg-bubble-pressed');
+                            activeBubble.classList.add('sp-swiping-active');
+                        } else if (Math.abs(dy) > 14) {
+                            activeBubble = null;
+                            return;
+                        }
+                    }
+
+                    if (isSwipingHoriz) {
+                        // Allow swiping right (+dx) or swiping left (-dx) up to 58px
+                        const clampedShift = Math.max(-58, Math.min(58, dx * 0.85));
+                        activeBubble.style.setProperty('transform', `translate3d(${clampedShift}px, 0, 0)`, 'important');
+                        if (Math.abs(dx) >= 28 && !swipeTriggered) {
+                            swipeTriggered = true;
+                            if (navigator.vibrate) {
+                                try { navigator.vibrate(14); } catch(e) {}
+                            }
+                        }
+                    }
+                }, { passive: true });
+
+                const endSwipeGesture = (ev) => {
+                    if (!activeBubble) return;
+                    const b = activeBubble;
+                    const mId = activeMsgId;
+                    b.classList.remove('sp-swiping-active');
+                    b.style.removeProperty('transform');
+
+                    const ch = ev.changedTouches && ev.changedTouches[0];
+                    if (isSwipingHoriz && ch) {
+                        const dx = ch.clientX - startX;
+                        const dy = ch.clientY - startY;
+                        if (Math.abs(dx) >= 26 && Math.abs(dy) < 60) {
+                            window._justSwipedBubbleTs = Date.now();
+                            const sName = b.getAttribute('data-msg-sender') || '';
+                            const sText = b.getAttribute('data-msg-text') || '';
+                            window.setChatReplyQuote(mode, mId, sName, sText);
+                        }
+                    }
+                    activeBubble = null;
+                    activeMsgId = '';
+                    isSwipingHoriz = false;
+                    swipeTriggered = false;
+                };
+
+                box.addEventListener('touchend', endSwipeGesture, { passive: true });
+                box.addEventListener('touchcancel', endSwipeGesture, { passive: true });
+            };
+
+            bindSmoothSwipeToReplyV29('chat-messages', 'global');
+            bindSmoothSwipeToReplyV29('dm-messages-scroll-box', 'dm');
+
+            // ------------------------------------------------------------------
+            // 4. OVERHAUL PRIVATE DM & GLOBAL CHAT SEND + RENDER (INSTAGRAM-STYLE
+            //    ONE-TIME REPLY QUOTE & FULL NICKNAME DISPLAY!)
+            // ------------------------------------------------------------------
+            let _lastGlobalSendTapTs = 0;
+            let _lastDmSendTapTs = 0;
+
+            // Wrap sendChatMessage so Reply Quote is ALWAYS consumed once and cleared before next message!
+            const origSendGlobalV28 = window.sendChatMessage;
+            window.sendChatMessage = async function() {
+                const now = Date.now();
+                if (now - _lastGlobalSendTapTs < 320) return; // Prevent accidental double-tap duplicate send
+                const inp = document.getElementById('chat-input');
+                if (!inp || !String(inp.value || '').trim()) return;
+                _lastGlobalSendTapTs = now;
+                try {
+                    await origSendGlobalV28.apply(this, arguments);
+                } finally {
+                    // Immediately clear Global Reply Quote so the NEXT message NEVER shows the old reply!
+                    window.clearChatReplyQuote('global');
+                }
+            };
+
+            // Clean, Bulletproof sendPrivateDmMessage with One-Time Reply Quote Consumption!
+            window.sendPrivateDmMessage = async function() {
+                const now = Date.now();
+                if (now - _lastDmSendTapTs < 320) return;
+                if (!window.loggedEmail && typeof window.checkLoginState === 'function') window.checkLoginState();
+                if (!window.loggedEmail || window.loggedEmail === 'guest') {
+                    window.showToast('🔐 Sign in first to send Private DMs!');
+                    window.openLoginScreenModal(true);
+                    return;
+                }
+                const myEm = window.loggedEmail.toLowerCase();
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                if (!partner) {
+                    window.showToast('⚠️ Select a player first to send a Private DM!');
+                    return;
+                }
+                if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(partner)) {
+                    window.showToast('🚫 Cannot send message — user is blocked!');
+                    return;
+                }
+                const inp = document.getElementById('dm-message-input');
+                const rawText = window.sanitizeSafeTextInput ? window.sanitizeSafeTextInput(inp?.value || '', 250) : String(inp?.value || '').trim().slice(0, 250);
+                if (!rawText) return;
+                _lastDmSendTapTs = now;
+
+                const text = window.aiMaskBadWords ? window.aiMaskBadWords(rawText) : rawText;
+                if (inp) inp.value = '';
+
+                // Consume the active reply quote ONCE right now, then immediately clear the reply bar!
+                const consumedQuote = window._activeDmReplyQuote ? { ...window._activeDmReplyQuote } : null;
+                window.clearChatReplyQuote('dm');
+
+                const myU = (window.userCache && window.userCache[myEm]) || window.currentUserProfile || {};
+                const clientMsgId = 'dm_' + now + '_' + Math.random().toString(36).slice(2, 8);
+                const threadId = [myEm, partner].sort().join('__');
+                const partnerOnline = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(partner));
+                const initialStatus = partnerOnline ? 'delivered' : 'sent';
+
+                const isMeProPlus = Boolean(window.isCurrentUserProPlus && window.isCurrentUserProPlus());
+                const isMeVip = Boolean(isMeProPlus || (window.isCurrentUserVip && window.isCurrentUserVip()));
+                const noFwd = Boolean(isMeVip && window.isMyForwardLockEnabled && window.isMyForwardLockEnabled());
+                const cleanSenderName = window.getPublicPlayerDisplayName(myEm, myU, '');
+
+                const payload = {
+                    id: clientMsgId,
+                    clientMsgId,
+                    threadId,
+                    participants: [myEm, partner],
+                    senderEmail: myEm,
+                    receiverEmail: partner,
+                    senderUid: window.loggedUid || '',
+                    senderName: cleanSenderName,
+                    isProPlus: isMeProPlus,
+                    isVip: isMeVip,
+                    vipTier: isMeProPlus ? 'pro_plus' : (isMeVip ? 'pro' : 'free'),
+                    vipSkin: localStorage.getItem('satta_pai_vip_bubble_skin') || (isMeVip ? 'gold' : ''),
+                    noForward: noFwd,
+                    replyToText: consumedQuote ? String(consumedQuote.text || '') : '',
+                    replyToName: consumedQuote ? String(consumedQuote.name || '') : '',
+                    message: text,
+                    status: initialStatus,
+                    deliveredAt: partnerOnline ? now : 0,
+                    readAt: 0,
+                    timestamp: now
+                };
+
+                window.mergeDmSnapshotsWithLocal([payload]);
+                window._lastActiveDmDomSig = '';
+                window.renderActiveDmConversation(true);
+                window.renderDmInboxList();
+
+                if (window.setDoc && window.doc && window.db) {
+                    window.setDoc(window.doc(window.db, 'dm_messages', clientMsgId), payload).then(() => {
+                        if (!window._dmListenerStarted && typeof window.startDmRealtimeListener === 'function') {
+                            window.startDmRealtimeListener(true);
+                        }
+                    }).catch((err) => {
+                        console.warn('DM sync warning:', err);
+                    });
+                }
+            };
+
+            // Upgrade switchChatTabMode so switching between Global & Private DM clears stale reply/emoji/typing bars!
+            const prevSwitchModeV28 = window.switchChatTabMode;
+            window.switchChatTabMode = function(mode) {
+                window.clearChatReplyQuote('all');
+                document.getElementById('global-emoji-picker-bar')?.classList.add('hidden');
+                document.getElementById('dm-emoji-picker-bar')?.classList.add('hidden');
+                document.getElementById('global-typing-indicator-bar')?.classList.add('hidden');
+                document.getElementById('dm-typing-indicator-bar')?.classList.add('hidden');
+                window.syncAllArenaPlayersDirectoryLive();
+                return prevSwitchModeV28.apply(this, arguments);
+            };
+
+            // Upgrade openPrivateDmConversationWith:
+            // - Clears any previous partner's reply quote
+            // - Shows ONLY the Partner's Nickname + VIP Badge in Header (NOT SP-XXXX!)
+            // - Does NOT auto-focus input (so keyboard doesn't jump up over messages!)
+            window.openPrivateDmConversationWith = function(partnerEmailRaw) {
+                let partner = String(partnerEmailRaw || '').trim().toLowerCase();
+                if (!partner) return;
+                window.hydratePlayersDirectoryFromChatsAndTeams();
+                if (!partner.includes('@')) {
+                    const foundEntry = Object.entries(window.userCache || {}).find(([em, u]) => {
+                        const pid = String(u?.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '')).toLowerCase();
+                        const nm = String(u?.username || '').toLowerCase();
+                        const ign = String(u?.ign || u?.nickname || '').toLowerCase();
+                        return pid === partner || nm === partner || ign === partner;
+                    });
+                    if (foundEntry) partner = foundEntry[0].toLowerCase();
+                }
+                window._activeDmPartnerEmail = partner;
+                window.clearChatReplyQuote('dm');
+                document.getElementById('dm-emoji-picker-bar')?.classList.add('hidden');
+                document.getElementById('dm-inbox-view')?.classList.add('hidden');
+                document.getElementById('dm-conversation-view')?.classList.remove('hidden');
+
+                if (partner.includes('@') && window.getDoc && window.doc && window.db) {
+                    window.getDoc(window.doc(window.db, 'users', partner)).then(snap => {
+                        if (snap && snap.exists()) {
+                            const d = snap.data() || {};
+                            const prev = (window.userCache && window.userCache[partner]) || {};
+                            window.userCache[partner] = {
+                                ...prev,
+                                ...d,
+                                email: partner,
+                                ign: d.ign || d.nickname || prev.ign || '',
+                                username: d.username || d.name || prev.username || '',
+                                dpBase64: d.dpBase64 || d.dp || prev.dpBase64 || '',
+                                isOnline: Boolean(d.isOnline),
+                                lastSeenAt: Number(d.lastSeenAt || d.updatedAt || 0),
+                                hideLastSeen: Boolean(d.hideLastSeen)
+                            };
+                            if (window._activeDmPartnerEmail === partner) {
+                                window._lastActiveDmDomSig = '';
+                                window.renderActiveDmConversation(true);
+                            }
+                        }
+                    }).catch(() => {});
+                }
+
+                const u = (window.userCache && window.userCache[partner]) || {};
+                const name = window.getPublicPlayerDisplayName(partner, u, '');
+                const dp = window.resolveUserDpUrl ? window.resolveUserDpUrl(partner, u, null, name) : '';
+                const isOnline = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(partner));
+                const lastSeenTxt = window.getFormattedPartnerLastSeen ? window.getFormattedPartnerLastSeen(partner) : (isOnline ? '🟢 Online' : 'Offline');
+
+                const dpEl = document.getElementById('dm-active-partner-dp');
+                const dotEl = document.getElementById('dm-active-partner-online-dot');
+                const nmEl = document.getElementById('dm-active-partner-name');
+                const sbEl = document.getElementById('dm-active-partner-sub');
+                if (dpEl) dpEl.src = dp;
+                if (dotEl) {
+                    if (isOnline) dotEl.classList.remove('hidden');
+                    else dotEl.classList.add('hidden');
+                }
+                if (nmEl) {
+                    const isPP = Boolean(window.isEmailProPlus && window.isEmailProPlus(partner));
+                    const isP = Boolean(!isPP && window.isEmailVip && window.isEmailVip(partner));
+                    const badge = isPP ? (window.SP_SVG_PRO_PLUS_BADGE || '') : (isP ? (window.SP_SVG_PRO_BADGE || '') : '');
+                    nmEl.innerHTML = `${window.escapeHTML(name)} ${badge}`;
+                }
+                if (sbEl) {
+                    sbEl.textContent = lastSeenTxt;
+                    sbEl.className = isOnline
+                        ? 'text-[9.5px] font-mono text-emerald-400 font-bold truncate'
+                        : 'text-[9.5px] font-mono text-slate-400 truncate';
+                }
+
+                if (typeof window.markPartnerDmMessagesAsRead === 'function') {
+                    window.markPartnerDmMessagesAsRead(partner);
+                }
+                window._lastActiveDmDomSig = '';
+                window.renderActiveDmConversation(true);
+                if (typeof window.updateDmUnreadBadge === 'function') window.updateDmUnreadBadge();
+            };
+
+            // Upgrade renderDmInboxList so:
+            // - Every player card shows their real Nickname (NOT Player SP-XXXX!)
+            // - Shows Active Chats + Online Players + Registered Arena Players so you can DM anyone easily!
+            window.renderDmInboxList = function(searchRaw) {
+                const box = document.getElementById('dm-inbox-threads-list');
+                if (!box) return;
+                if (!window.loggedEmail && typeof window.checkLoginState === 'function') window.checkLoginState();
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!myEm || myEm === 'guest') {
+                    box.innerHTML = `
+                        <div class="cyber-card p-5 text-center space-y-2.5 border border-emerald-500/30">
+                            <div class="text-2xl">🔐</div>
+                            <div class="text-xs font-extrabold text-white">Sign In Required for Private DM</div>
+                            <p class="text-[10.5px] text-slate-400">Sign in with your Google account to send and receive 1-to-1 private messages with Arena players.</p>
+                            <button type="button" onclick="window.closeFullScreenChat(); window.openLoginScreenModal(true);" class="btn-theme px-4 py-2 text-xs font-bold cursor-pointer">Sign In Now</button>
+                        </div>
+                    `;
+                    return;
+                }
+                window.hydratePlayersDirectoryFromChatsAndTeams();
+                window.syncAllArenaPlayersDirectoryLive();
+                const q = String(searchRaw ?? (document.getElementById('dm-user-search-input')?.value || '')).trim().toLowerCase();
+                const pins = window.getMyPinnedDmPartners ? window.getMyPinnedDmPartners() : [];
+
+                const partnerMap = new Map();
+                (window._allDmMessages || []).forEach(m => {
+                    if (!m || !m.message || String(m.id || '').startsWith('call_signal__')) return;
+                    const s = String(m.senderEmail || '').toLowerCase();
+                    const r = String(m.receiverEmail || '').toLowerCase();
+                    if (s === myEm && r && r !== myEm) {
+                        const prev = partnerMap.get(r);
+                        if (!prev || Number(m.timestamp || 0) >= Number(prev.timestamp || 0)) partnerMap.set(r, m);
+                    } else if (r === myEm && s && s !== myEm) {
+                        const prev = partnerMap.get(s);
+                        if (!prev || Number(m.timestamp || 0) >= Number(prev.timestamp || 0)) partnerMap.set(s, m);
+                    }
+                });
+
+                const matchesQuery = (em, u) => {
+                    if (!q) return true;
+                    const nick = String(window.getPublicPlayerDisplayName(em, u, '') || '').toLowerCase();
+                    const uname = String(u?.username || '').toLowerCase();
+                    const ign = String(u?.ign || u?.nickname || '').toLowerCase();
+                    const pid = String(u?.playerId || (window.getStablePlayerId ? window.getStablePlayerId(em) : '')).toLowerCase();
+                    return nick.includes(q) || uname.includes(q) || ign.includes(q) || pid.includes(q) || em.includes(q);
+                };
+
+                const partners = Array.from(partnerMap.keys()).filter(em => {
+                    if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(em)) return false;
+                    return matchesQuery(em, (window.userCache && window.userCache[em]) || {});
+                });
+
+                partners.sort((a, b) => {
+                    const aPin = pins.includes(a) ? 1 : 0;
+                    const bPin = pins.includes(b) ? 1 : 0;
+                    if (aPin !== bPin) return bPin - aPin;
+                    const mA = partnerMap.get(a);
+                    const mB = partnerMap.get(b);
+                    return Number(mB?.timestamp || 0) - Number(mA?.timestamp || 0);
+                });
+
+                const otherArenaPlayers = Object.entries(window.userCache || {})
+                    .map(([em, u]) => ({ em: em.toLowerCase(), u: u || {} }))
+                    .filter(x => x.em !== myEm && x.em.includes('@') && !partnerMap.has(x.em) && !(window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(x.em)) && matchesQuery(x.em, x.u))
+                    .sort((a, b) => {
+                        const aOn = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(a.em)) ? 1 : 0;
+                        const bOn = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(b.em)) ? 1 : 0;
+                        if (aOn !== bOn) return bOn - aOn;
+                        return Number(b.u.lastSeenAt || b.u.lastChatAt || 0) - Number(a.u.lastSeenAt || a.u.lastChatAt || 0);
+                    })
+                    .slice(0, 30);
+
+                const renderCard = (em, lastMsg) => {
+                    const u = (window.userCache && window.userCache[em]) || {};
+                    const fallbackFromMsg = lastMsg ? (String(lastMsg.senderEmail || '').toLowerCase() === em ? lastMsg.senderName : '') : '';
+                    const name = window.getPublicPlayerDisplayName(em, u, fallbackFromMsg);
+                    const dp = window.resolveUserDpUrl ? window.resolveUserDpUrl(em, u, null, name) : '';
+                    const isPinned = pins.includes(em);
+                    const isOnline = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(em));
+                    const isPP = Boolean(window.isEmailProPlus && window.isEmailProPlus(em));
+                    const isP = Boolean(!isPP && window.isEmailVip && window.isEmailVip(em));
+                    const badge = isPP ? (window.SP_SVG_PRO_PLUS_BADGE || '') : (isP ? (window.SP_SVG_PRO_BADGE || '') : '');
+                    const isUnread = Boolean(lastMsg && String(lastMsg.senderEmail || '').toLowerCase() === em && (!window.isDmMessageAlreadyRead || !window.isDmMessageAlreadyRead(lastMsg, myEm)));
+                    const timeStr = lastMsg?.timestamp
+                        ? new Date(lastMsg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        : (isOnline ? '🟢 Online' : 'Tap to Chat');
+                    const previewText = lastMsg
+                        ? (lastMsg.audioData ? '🎤 Voice Message' : (window.aiMaskBadWords ? window.aiMaskBadWords(lastMsg.message) : lastMsg.message))
+                        : (u.username ? `@${u.username} • Tap to start private chat` : 'Tap to start 1-to-1 private chat');
+
+                    let myTickHtml = '';
+                    if (lastMsg && String(lastMsg.senderEmail || '').toLowerCase() === myEm) {
+                        if (lastMsg.status === 'read' || Number(lastMsg.readAt || 0) > 0) {
+                            myTickHtml = '<span style="color:#38bdf8;font-weight:900;" class="mr-1">✓✓</span>';
+                        } else if (lastMsg.status === 'delivered' || Number(lastMsg.deliveredAt || 0) > 0 || isOnline) {
+                            myTickHtml = '<span class="text-slate-300 font-bold mr-1">✓✓</span>';
+                        } else {
+                            myTickHtml = '<span class="text-slate-400 font-bold mr-1">✓</span>';
+                        }
+                    }
+
+                    return `
+                        <div onclick="window.openPrivateDmConversationWith('${window.escapeJsStr(em)}')" class="cyber-card p-2.5 flex items-center justify-between gap-2.5 cursor-pointer hover:border-emerald-400/60 transition">
+                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                <div class="relative shrink-0">
+                                    <img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(name)}')" class="w-10 h-10 rounded-full object-cover border border-emerald-400/50" alt="DP">
+                                    <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-slate-500'} ring-2 ring-zinc-950"></span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-1.5">
+                                        ${isPinned ? '<span class="text-[10px]" title="Pinned">📌</span>' : ''}
+                                        <span class="font-extrabold text-white text-xs truncate">${window.escapeHTML(name)}</span>
+                                        ${badge}
+                                    </div>
+                                    <div class="text-[10.5px] ${isUnread ? 'text-white font-bold' : 'text-slate-400'} truncate mt-0.5">${myTickHtml}${window.escapeHTML(previewText)}</div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-1 shrink-0">
+                                <span class="text-[9.5px] font-mono text-slate-400">${timeStr}</span>
+                                ${isUnread ? '<span class="px-1.5 py-0.2 rounded-full bg-emerald-500 text-black text-[8.5px] font-black">NEW</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                };
+
+                let htmlOut = '';
+                if (partners.length > 0) {
+                    htmlOut += `<div class="text-[10px] font-extrabold uppercase tracking-wider px-1 pb-0.5" style="color: var(--accent-primary);">💬 Active Conversations</div>`;
+                    htmlOut += partners.map(em => renderCard(em, partnerMap.get(em))).join('');
+                }
+                if (otherArenaPlayers.length > 0) {
+                    htmlOut += `<div class="pt-2 pb-0.5 text-[10px] font-extrabold uppercase tracking-wider px-1 flex items-center gap-1.5" style="color: var(--accent-primary);"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Arena Players Directory</span></div>`;
+                    htmlOut += otherArenaPlayers.map(x => renderCard(x.em, null)).join('');
+                }
+                if (!htmlOut) {
+                    htmlOut = `
+                        <div class="cyber-card p-5 text-center space-y-2 border border-white/10">
+                            <div class="text-2xl">💬</div>
+                            <div class="text-xs font-extrabold text-white">No Matching Players Found</div>
+                            <p class="text-[10.5px] text-slate-400">Tap any player's avatar in Global Chat or search by Nickname / Username above to start a 1-to-1 Private Chat.</p>
+                        </div>
+                    `;
+                }
+                box.innerHTML = htmlOut;
+            };
+
+            // Upgrade renderActiveDmConversation so:
+            // - Header shows ONLY Partner Nickname + VIP Badge (no SP-XXXX clutter)
+            // - Each bubble has sleek Instagram/SP-Origin layout + Nickname meta header + Quoted Reply bar ONLY on messages that actually have replyToText!
+            window.renderActiveDmConversation = function(forceRebuild = false) {
+                const box = document.getElementById('dm-messages-scroll-box');
+                const partner = (window._activeDmPartnerEmail || '').toLowerCase();
+                const myEm = (window.loggedEmail || '').toLowerCase();
+                if (!box || !partner || !myEm) return;
+
+                const isOnline = Boolean(window.isPlayerCurrentlyOnline && window.isPlayerCurrentlyOnline(partner));
+                const sbEl = document.getElementById('dm-active-partner-sub');
+                const dotEl = document.getElementById('dm-active-partner-online-dot');
+                const nmEl = document.getElementById('dm-active-partner-name');
+                const pU = (window.userCache && window.userCache[partner]) || {};
+                const pNick = window.getPublicPlayerDisplayName(partner, pU, '');
+                if (nmEl) {
+                    const isPP = Boolean(window.isEmailProPlus && window.isEmailProPlus(partner));
+                    const isP = Boolean(!isPP && window.isEmailVip && window.isEmailVip(partner));
+                    const badge = isPP ? (window.SP_SVG_PRO_PLUS_BADGE || '') : (isP ? (window.SP_SVG_PRO_BADGE || '') : '');
+                    nmEl.innerHTML = `${window.escapeHTML(pNick)} ${badge}`;
+                }
+                if (sbEl && (!sbEl.textContent || !sbEl.textContent.includes('typing'))) {
+                    sbEl.textContent = window.getFormattedPartnerLastSeen ? window.getFormattedPartnerLastSeen(partner) : (isOnline ? '🟢 Online' : 'Offline');
+                }
+                if (dotEl) {
+                    if (isOnline) dotEl.classList.remove('hidden');
+                    else dotEl.classList.add('hidden');
+                }
+
+                if (window.isUserBlockedEitherWay && window.isUserBlockedEitherWay(partner)) {
+                    box.innerHTML = '<div class="cyber-card p-4 text-center text-rose-300 text-xs my-auto">🚫 This conversation is blocked. Unblock to send or view messages.</div>';
+                    return;
+                }
+
+                const threadMsgs = (window._allDmMessages || []).filter(m => {
+                    if (!m || !m.message || String(m.id || '').startsWith('call_signal__')) return false;
+                    const s = String(m.senderEmail || '').toLowerCase();
+                    const r = String(m.receiverEmail || '').toLowerCase();
+                    return (s === myEm && r === partner) || (s === partner && r === myEm);
+                }).slice(-55);
+
+                const myU = (window.userCache && window.userCache[myEm]) || {};
+                const myNick = window.getPublicPlayerDisplayName(myEm, myU, '');
+
+                const sig = partner + '::' + pNick + '::' + myNick + '::' + threadMsgs.map(m => {
+                    const rx = m.reactions ? JSON.stringify(m.reactions) : '';
+                    return `${m.id || m.clientMsgId}:${m.message}:${m.replyToText || ''}:${m.status || ''}:${m.readAt || 0}:${rx}`;
+                }).join('|') + '::rate=' + (window._currentVoicePlaybackRate || 1);
+
+                if (!forceRebuild && window._lastActiveDmDomSig === sig && box.children.length > 0) {
+                    return;
+                }
+                window._lastActiveDmDomSig = sig;
+
+                if (threadMsgs.length === 0) {
+                    box.innerHTML = `<div class="text-center text-xs text-slate-400 my-auto py-8">🔒 Private 1-to-1 Chat with <b class="text-white">${window.escapeHTML(pNick)}</b>. Say Vanakkam!</div>`;
+                    return;
+                }
+
+                box.innerHTML = threadMsgs.map(m => {
+                    const isMe = String(m.senderEmail || '').toLowerCase() === myEm;
+                    const sEm = isMe ? myEm : partner;
+                    const u = (window.userCache && window.userCache[sEm]) || {};
+                    const resolvedName = isMe ? myNick : window.getPublicPlayerDisplayName(sEm, u, m.senderName);
+                    const dp = window.resolveUserDpUrl ? window.resolveUserDpUrl(sEm, u, m, resolvedName) : '';
+                    const tStr = new Date(m.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const censoredMsg = window.aiMaskBadWords ? window.aiMaskBadWords(m.message || '') : (m.message || '');
+
+                    let tickHtml = '';
+                    if (isMe) {
+                        const isRead = (m.status === 'read' || Number(m.readAt || 0) > 0);
+                        const isDelivered = isRead || m.status === 'delivered' || Number(m.deliveredAt || 0) > 0 || isOnline;
+                        if (isRead) {
+                            tickHtml = `<span style="color:#38bdf8;font-weight:900;" class="ml-1" title="Read">✓✓</span>`;
+                        } else if (isDelivered) {
+                            tickHtml = `<span class="text-slate-200 font-extrabold ml-1" title="Delivered">✓✓</span>`;
+                        } else {
+                            tickHtml = `<span class="text-slate-300 font-bold ml-1" title="Sent">✓</span>`;
+                        }
+                    }
+
+                    const msgKey = m.clientMsgId || m.id || ('dm_' + (m.timestamp || Date.now()));
+                    m.id = m.id || msgKey;
+                    m.clientMsgId = m.clientMsgId || msgKey;
+
+                    const replyBoxHtml = (m.replyToText && String(m.replyToText).trim())
+                        ? `<div class="sp-insta-reply-quote-box"><div class="sp-insta-reply-quote-sender"><span>↩</span><span>${window.escapeHTML(m.replyToName || 'Player')}</span></div><div class="sp-insta-reply-quote-text">${window.escapeHTML(m.replyToText)}</div></div>`
+                        : '';
+
+                    const bodyHtml = m.audioData
+                        ? `<div class="flex items-center gap-2 py-1 min-w-[180px]" onclick="event.stopPropagation(); window.togglePlayDmVoiceNote(this, '${window.escapeJsStr(msgKey)}')">
+                               <button type="button" class="w-7 h-7 rounded-full bg-amber-400 text-black flex items-center justify-center font-black text-xs shrink-0"><span class="dm-voice-play-icon">▶</span></button>
+                               <div class="flex-1 flex items-center gap-0.5 h-3">
+                                   <span class="w-1 h-2 bg-emerald-300 rounded"></span><span class="w-1 h-3 bg-emerald-300 rounded"></span><span class="w-1 h-1.5 bg-emerald-300 rounded"></span>
+                               </div>
+                               <span class="text-[9px] font-mono font-bold text-amber-200">${Number(m.audioDuration || 1)}s</span>
+                               <button type="button" onclick="event.stopPropagation(); window.cycleVoicePlaybackRate(this, '${window.escapeJsStr(msgKey)}')" class="dm-voice-speed-pill px-1.5 py-0.5 rounded bg-black/40 text-white text-[9px] font-mono font-bold">${window._currentVoicePlaybackRate || 1}x</button>
+                           </div>`
+                        : `<div class="break-words leading-relaxed select-none">${window.escapeHTML(censoredMsg)}</div>`;
+
+                    const headerLabel = isMe ? `You (${window.escapeHTML(resolvedName)})` : window.escapeHTML(resolvedName);
+
+                    return `
+                        <div class="chat-row ${isMe ? 'own' : ''}">
+                            <img src="${dp}" onerror="this.onerror=null;this.src=window.getFallbackGamerAvatarSvg('${window.escapeJsStr(resolvedName)}')" class="chat-avatar w-8 h-8 rounded-full object-cover shrink-0 border border-emerald-400/50 cursor-pointer" alt="DP" onclick="window.openDmPartnerProfileModal()">
+                            <div class="chat-content">
+                                <span class="chat-meta">${headerLabel} • ${tStr}${tickHtml}</span>
+                                <div data-msg-id="${window.escapeHTML(msgKey)}" data-msg-sender="${window.escapeHTML(resolvedName)}" data-msg-text="${window.escapeHTML(m.audioData ? '🎤 Voice Message' : (m.message || ''))}" onclick="if(!window._justSwipedBubbleTs || (Date.now()-window._justSwipedBubbleTs)>400) window.openDmMessageActionsModal('${window.escapeJsStr(msgKey)}')" class="dm-swipe-bubble chat-bubble ${isMe ? 'chat-own dm-own-theme-bubble' : 'chat-other'}">
+                                    ${replyBoxHtml}
+                                    ${bodyHtml}
+                                    ${window.renderMessageReactionsPillHtml ? window.renderMessageReactionsPillHtml(m) : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                box.scrollTop = box.scrollHeight;
+                if (typeof window.animateNewLastChatBubbleOnly === 'function') {
+                    window.animateNewLastChatBubbleOnly('dm-messages-scroll-box');
+                }
+            };
         })();
 
     </script>
